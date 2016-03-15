@@ -1,0 +1,16 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public abstract class SpecialCondition
+{
+    public Unit unit; // the unit this special belongs to
+
+    public bool rval;
+
+    public abstract bool eval();
+
+    public SpecialCondition(Unit u)
+    {
+        unit = u;
+    }
+}

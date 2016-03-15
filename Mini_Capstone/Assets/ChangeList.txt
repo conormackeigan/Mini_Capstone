@@ -1,0 +1,14 @@
+===========================================
+CHANGELIST
+===========================================
+
+V.0.0.1
+- Added Basic Game Managers (Game Director, Player, Network)
+- Added Test Units for Dev purposes
+- Player is able to select and move units with touch/mouse controls
+
+V.0.0.2
+- Changed grid size to 48x48
+- Centralized logic from infantry unit to GameDirector
+- Added "temporary scaffolding" FSM and state interactions
+- Units can now be selected, deselected, moved, unmoved, and have their moves committed via menu buttons

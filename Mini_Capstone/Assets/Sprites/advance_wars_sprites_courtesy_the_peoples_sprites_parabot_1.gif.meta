@@ -1,0 +1,365 @@
+fileFormatVersion: 2
+guid: 76235e61a91e87c479b1d726d92376c6
+timeCreated: 1455498707
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: advance_wars_sprites
+    21300002: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_1
+    21300004: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_2
+    21300006: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_3
+    21300008: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_4
+    21300010: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_5
+    21300012: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_6
+    21300014: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_7
+    21300016: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_8
+    21300018: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_9
+    21300020: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_10
+    21300022: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_11
+    21300024: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_12
+    21300026: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_13
+    21300028: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_14
+    21300030: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_15
+    21300032: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_16
+    21300034: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_17
+    21300036: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_18
+    21300038: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_19
+    21300040: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_20
+    21300042: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_21
+    21300044: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_22
+    21300046: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_23
+    21300048: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_24
+    21300050: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_25
+    21300052: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_26
+    21300054: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_27
+    21300056: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_0
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 1
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_0
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 648
+        width: 49
+        height: 56
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_1
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 647
+        width: 51
+        height: 56
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_2
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 646
+        width: 51
+        height: 58
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_3
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 650
+        width: 63
+        height: 54
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_4
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 572
+        width: 65
+        height: 59
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_5
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 577
+        width: 65
+        height: 54
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_6
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 572
+        width: 65
+        height: 56
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_7
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 577
+        width: 63
+        height: 56
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_8
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 458
+        width: 97
+        height: 112
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_9
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 460
+        width: 97
+        height: 112
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_10
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 446
+        width: 97
+        height: 123
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_11
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 441
+        width: 95
+        height: 121
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_12
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 350
+        width: 79
+        height: 98
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_13
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 353
+        width: 85
+        height: 90
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_14
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 342
+        width: 85
+        height: 94
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_15
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 343
+        width: 80
+        height: 84
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_16
+      rect:
+        serializedVersion: 2
+        x: 25
+        y: 233
+        width: 95
+        height: 110
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_17
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 238
+        width: 97
+        height: 96
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_18
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 231
+        width: 89
+        height: 104
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_19
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 227
+        width: 87
+        height: 113
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_20
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 120
+        width: 97
+        height: 102
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_21
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 127
+        width: 97
+        height: 98
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_22
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 124
+        width: 97
+        height: 98
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_23
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 121
+        width: 97
+        height: 96
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_24
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 7
+        width: 97
+        height: 106
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_25
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 12
+        width: 97
+        height: 96
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_26
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 8
+        width: 97
+        height: 106
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: advance_wars_sprites_courtesy_the_peoples_sprites_parabot_1_27
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 9
+        width: 97
+        height: 96
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
