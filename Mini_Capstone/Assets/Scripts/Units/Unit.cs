@@ -132,8 +132,16 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
-                gameObject.SetActive(false);
+                if (GameDirector.Instance.numOfPlayers == 1)
+                {
+                    ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
+                    Destroy(gameObject);
+                    //gameObject.SetActive(false);
+                }
+                else
+                {
+                    gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered);
+                }
             }
         }
 
@@ -271,16 +279,6 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
         }
-
-        //{
-        //    isDead = true;
-        //    // calling the RPC
-        //    if (GameDirector.Instance.numOfPlayers == 2)
-        //    {
-        //        GameObject.Find("Network Manager").GetComponent<NetworkingMain>().photonView.RPC("TaggedPlayer", PhotonTargets.All);
-        //    }
-        //}
-
     }
 
     // deselects unit, either after unit turn or as a result of the cancel button in selected state

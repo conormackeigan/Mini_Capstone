@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class uInfantry : Unit
 {
-
     private Vector3 correctPlayerPos; // Networking Purposes
 
     protected override void Start()
@@ -70,17 +69,16 @@ public class uInfantry : Unit
         {
             // We own this player: send the others our data
             stream.SendNext(transform.position);
-            stream.SendNext(isDead);
-
+            stream.SendNext(pos.x);
+            stream.SendNext(pos.y);
         }
         else
         {
             // Network player, receive data
             this.correctPlayerPos = (Vector3)stream.ReceiveNext();
-            this.isDead = (bool)stream.ReceiveNext();
-
+            pos.x = (int)stream.ReceiveNext();
+            pos.y = (int)stream.ReceiveNext();
         }
     }
-
 
 }

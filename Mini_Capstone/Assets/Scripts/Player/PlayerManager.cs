@@ -16,18 +16,6 @@ public class PlayerManager : Singleton<PlayerManager>
 
     // Update is called once per frame
     void Update () {
-        if (GameDirector.Instance.gameState == GameDirector.GameState.BOARD && GameDirector.Instance.numOfPlayers == 2)
-        {
-            if (currentPlayersTurn == getCurrentPlayer().playerID)
-            {
-                TurnLabel.GetComponent<Text>().text = "Your Turn";
-            }
-            else
-            {
-                TurnLabel.GetComponent<Text>().text = "Enemy Turn";
-
-            }
-        }
     }
 
     public void endGame()
@@ -40,18 +28,6 @@ public class PlayerManager : Singleton<PlayerManager>
         players.Clear();
 
         currentPlayersTurn = 1;
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.isWriting)
-        {
-            stream.SendNext(currentPlayersTurn);
-        }
-        else
-        {
-            currentPlayersTurn = (int)stream.ReceiveNext();
-        }
     }
 
     public void setUpNPlayers(int n)
@@ -110,8 +86,11 @@ public class PlayerManager : Singleton<PlayerManager>
             else
             {
                 TurnLabel.GetComponent<Text>().text = "Enemy Turn";
-
             }
+        }
+        else
+        {
+            gameObject.GetPhotonView().RPC("NextTurn", PhotonTargets.AllBuffered, currentPlayersTurn);
         }
     }
 
