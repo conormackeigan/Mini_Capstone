@@ -16,6 +16,7 @@ public class uInfantry : Unit
         actions.Add("Wait");
         actions.Add("Attack");
 
+        maxHealth = 10;
         health = 10;
         defense = 4;
         physAtk = 5;
@@ -37,8 +38,7 @@ public class uInfantry : Unit
         Equip(rifle);
         Weapon beamsword = new BeamSword(this);
         weapons.Add(beamsword);
-        Equip(beamsword);
-        
+        Equip(beamsword);       
 
     }
 

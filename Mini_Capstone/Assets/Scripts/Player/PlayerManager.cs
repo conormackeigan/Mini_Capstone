@@ -57,6 +57,8 @@ public class PlayerManager : Singleton<PlayerManager>
             string s = (PhotonNetwork.player.ID) + "Player";
             testPlayer.GetComponent<Player>().initPlayer(s, (PhotonNetwork.player.ID), Color.red, true);
         }
+
+        UIManager.Instance.animateTurnPanel();
     }
 
     public void nextTurn()
@@ -87,11 +89,14 @@ public class PlayerManager : Singleton<PlayerManager>
             {
                 TurnLabel.GetComponent<Text>().text = "Enemy Turn";
             }
+
+            UIManager.Instance.animateTurnPanel();
         }
         else
         {
             gameObject.GetPhotonView().RPC("NextTurn", PhotonTargets.AllBuffered, currentPlayersTurn);
         }
+
     }
 
     public Player getCurrentPlayer()

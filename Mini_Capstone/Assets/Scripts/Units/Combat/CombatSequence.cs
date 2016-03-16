@@ -106,12 +106,12 @@ public class CombatSequence : MonoBehaviour
     {
         // display information
         attackerDamageText.text = attackerDamage.ToString();
-        attackerAccuracyText.text = attackerHitrate.ToString();
+        attackerAccuracyText.text = ((int)attackerHitrate).ToString();
 
         if (retaliation)
         {
             defenderDamageText.text = defenderDamage.ToString();
-            defenderAccuracyText.text = defenderHitrate.ToString();
+            defenderAccuracyText.text = ((int)defenderHitrate).ToString();
         }
         else
         {
@@ -151,27 +151,22 @@ public class CombatSequence : MonoBehaviour
                 ChangeSelection(i, attacker);                
             }
 
-            ui.transform.GetChild(0).gameObject.SetActive(true);
-            ui.transform.GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].name; // NAME
-            ui.transform.GetChild(1).gameObject.SetActive(true);
-            ui.transform.GetChild(1).GetComponent<Text>().text = attacker.weapons[i - 1].power.ToString(); // WEAPON POWER
-            ui.transform.GetChild(2).gameObject.SetActive(true);
-            ui.transform.GetChild(2).GetComponent<Text>().text = attacker.weapons[i - 1].rangeMin + "-" + attacker.weapons[i - 1].rangeMax; // RANGE
-            ui.transform.GetChild(3).gameObject.SetActive(true);
-            ui.transform.GetChild(3).GetComponent<Text>().text = (attacker.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
-            ui.transform.GetChild(4).gameObject.SetActive(true);
+            ui.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].name; // NAME
+            ui.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].power.ToString(); // WEAPON POWER
+            ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].rangeMin + "-" + attacker.weapons[i - 1].rangeMax; // RANGE
+            ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (attacker.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
 
             if (attacker.weapons[i - 1].actionable)
-                ui.transform.GetChild(4).GetComponent<Text>().text = "Yes";
+                ui.transform.GetChild(5).GetComponent<Text>().text = "Yes";
             else
-                ui.transform.GetChild(4).GetComponent<Text>().text = "No";
+                ui.transform.GetChild(5).GetComponent<Text>().text = "No";
 
             //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
-            ui.transform.GetChild(5).gameObject.SetActive(true);
+            ui.transform.GetChild(6).gameObject.SetActive(true);
             if ((!attacker.weapons[i - 1].actionable && attacker.pos != attacker.selectPos) ||
                  (!attacker.weapons[i - 1].ContainsRange(distance)))
             {
-                ui.transform.GetChild(5).gameObject.SetActive(false); // disable button (4th child)
+                ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
             }
             
         }
@@ -448,17 +443,11 @@ public class CombatSequence : MonoBehaviour
 
     public void EnableUI()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            UI.transform.GetChild(i).gameObject.SetActive(true);
-        }
+        UI.SetActive(true);
     }
 
     public void DisableUI()
     {
-        for (int i = 0; i < 3; i++)
-        {
-            UI.transform.GetChild(i).gameObject.SetActive(false);
-        }
+        UI.SetActive(false);
     }
 }

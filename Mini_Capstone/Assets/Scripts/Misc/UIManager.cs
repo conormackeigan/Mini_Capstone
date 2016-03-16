@@ -7,19 +7,24 @@ public class UIManager : Singleton<UIManager>
 
     GameObject[] boardObjets;
     GameObject[] lobbyObjects;
+    GameObject[] unitObjects;
 
     public GameObject friendlyPanel;
     public GameObject enemyPanel;
+    public GameObject attackButton;
+    public GameObject waitButton;
+    public GameObject turnPanel;
 
     // Use this for initialization
     void Start () {
 
         boardObjets = GameObject.FindGameObjectsWithTag("BoardUI");
         lobbyObjects = GameObject.FindGameObjectsWithTag("LobbyUI");
+        unitObjects = GameObject.FindGameObjectsWithTag("UnitUI");
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 
         GameDirector.GameState gameState = GameDirector.Instance.gameState;
 
@@ -33,6 +38,11 @@ public class UIManager : Singleton<UIManager>
             for (int i = 0; i < boardObjets.Length; i++)
             {
                 boardObjets[i].SetActive(false);
+            }
+
+            for (int i = 0; i < unitObjects.Length; i++)
+            {
+                unitObjects[i].SetActive(false);
             }
 
         }
@@ -59,6 +69,32 @@ public class UIManager : Singleton<UIManager>
 
     }
 
+    public void setUnitUI(bool b)
+    {
+        for (int i = 0; i < unitObjects.Length; i++)
+        {
+            unitObjects[i].SetActive(b);
+        }
+    }
+
+    public void activateAttackButton()
+    {
+        attackButton.SetActive(true);
+        waitButton.SetActive(false);
+    }
+
+    public void deactivateAttackButton()
+    {
+        attackButton.SetActive(false);
+        waitButton.SetActive(true);
+    }
+
+    public void animateTurnPanel()
+    {
+        turnPanel.SetActive(true);
+
+    }
+
     public void ActivateFriendPanel(Unit u)
     {
         friendlyPanel.SetActive(true);
@@ -66,8 +102,9 @@ public class UIManager : Singleton<UIManager>
         friendlyPanel.transform.Find("UnitName").GetComponent<Text>().text = u.unitName;
         friendlyPanel.transform.Find("UnitImage").GetComponent<Image>().sprite = u.sprite;
         friendlyPanel.transform.Find("UnitHealthValue").GetComponent<Text>().text = u.health.ToString();
-        friendlyPanel.transform.Find("UnitAttackValue").GetComponent<Text>().text = u.physAtk.ToString();
-        friendlyPanel.transform.Find("UnitDefenceValue").GetComponent<Text>().text = u.defense.ToString();
+
+        friendlyPanel.transform.Find("HealthSlider").GetComponent<Slider>().maxValue = u.maxHealth;
+        friendlyPanel.transform.Find("HealthSlider").GetComponent<Slider>().value = u.health;
 
     }
 
@@ -100,7 +137,6 @@ public class UIManager : Singleton<UIManager>
             TileMarker.Instance.Clear();
         }
     }
-    
 
     // TODO: THIS LOGIC + DESELECT AND RESET METHODS ARE A MESS, CLEAN UP SOON
     public void ConfirmAction()

@@ -135,8 +135,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 if (GameDirector.Instance.numOfPlayers == 1)
                 {
                     ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
-                    Destroy(gameObject);
-                    //gameObject.SetActive(false);
+                    //Destroy(gameObject);
+                    gameObject.SetActive(false);
                 }
                 else
                 {
@@ -270,6 +270,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 TileMarker.Instance.markAttackTiles(this);
 
                 UIManager.Instance.ActivateFriendPanel(this);
+                UIManager.Instance.setUnitUI(true);
 
                 createOverlay();
             }
@@ -277,6 +278,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // Attack unit with currently selected
         else if (TileMarker.Instance.attackTiles.ContainsKey(pos))
         {
+            UIManager.Instance.activateAttackButton();
             currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
         }
     }
@@ -294,6 +296,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         TileMarker.Instance.Clear();
 
         UIManager.Instance.DeactivateFriendPanel();
+        UIManager.Instance.deactivateAttackButton();
+        UIManager.Instance.setUnitUI(false);
 
         destroyOverlay();
     }
