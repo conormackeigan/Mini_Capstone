@@ -288,6 +288,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
         UIManager.Instance.DeactivateFriendPanel();      
         UIManager.Instance.deactivateAttackButton();
+        UIManager.Instance.deactivateAoEButton();
         UIManager.Instance.setUnitUI(false);
         destroyOverlay();
     }
