@@ -16,6 +16,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         Moving,
         Waiting, // reached new location, waiting for confirmation or cancel
         Combat,
+        AoE, // state after pressing AoE button; does not revert until cancel or an AoE attack
         Inactive, // greyed out for the turn
         NotTurn // not the unit's turn right now, no actions available
     }
@@ -260,6 +261,18 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         UIManager.Instance.setUnitUI(true);
         createOverlay();
 
+        //if unit has at least one AoE weapon, make the AoE button available
+        bool AoE = false;
+        foreach(Weapon w in weapons)
+        {
+            if (w.AoE)
+                AoE = true;            
+        }
+        if (AoE)
+        {
+            UIManager.Instance.activateAoEButton();
+        }
+
         Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxSelect);
     }
 
@@ -427,6 +440,20 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         }
 
         return false;
+    }
+
+    //==========================================
+    // Area of Effect:
+    //==========================================
+    public void AoEBegin()
+    {
+        state = UnitState.AoE;
+
+        // clear all markers from selection
+        TileMarker.Instance.Clear();
+
+        // mark AoE attack tiles
+        TileMarker.Instance.markAoETiles(this);
     }
 
     public void createOverlay()

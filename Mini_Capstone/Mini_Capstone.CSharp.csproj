@@ -58,20 +58,14 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Plugins\WebSocket\websocket-sharp.dll</HintPath>
-    </Reference>
     <Reference Include="Photon3Unity3D">
       <HintPath>Assets\Plugins\Photon3Unity3D.dll</HintPath>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Plugins\WebSocket\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +75,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\AnimationDestroyer.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\CustomTypes.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Extensions.cs" />
@@ -144,6 +139,7 @@
     <Compile Include="Assets\Scripts\Map\MapScript.cs" />
     <Compile Include="Assets\Scripts\Map\TerrainLayer.cs" />
     <Compile Include="Assets\Scripts\Map\TileMarker.cs" />
+    <Compile Include="Assets\Scripts\Map\Tiles\AoEResponder.cs" />
     <Compile Include="Assets\Scripts\Map\Tiles\AttackTileScript.cs" />
     <Compile Include="Assets\Scripts\Map\Tiles\ForestTile.cs" />
     <Compile Include="Assets\Scripts\Map\Tiles\MeadowTile.cs" />
@@ -171,6 +167,7 @@
     <Compile Include="Assets\Scripts\Units\Buffs\TrooperBuff.cs" />
     <Compile Include="Assets\Scripts\Units\Combat\CombatSequence.cs" />
     <Compile Include="Assets\Scripts\Units\Combat\CrosshairsController.cs" />
+    <Compile Include="Assets\Scripts\Units\Combat\Weapons\AoE\Frag.cs" />
     <Compile Include="Assets\Scripts\Units\Combat\Weapons\BeamSword.cs" />
     <Compile Include="Assets\Scripts\Units\Combat\Weapons\Rifle.cs" />
     <Compile Include="Assets\Scripts\Units\Combat\Weapons\Specials\CombatCondition.cs" />

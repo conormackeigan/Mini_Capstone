@@ -8,10 +8,12 @@ public class TileMarker : Singleton<TileMarker>
     TerrainLayer terrain;
     public Dictionary<Vector2i, GameObject> travTiles; // keeps track of all marked traversible tiles by their pos
     public Dictionary<Vector2i, GameObject> attackTiles; // keeps track of all tiles that can currently be attacked
+    public Dictionary<Vector2i, GameObject> AoETiles; // keeps track of all purple tiles (AoE aimers)
 
     // Sprites:
     public GameObject travMarker;
     public GameObject attackMarker;
+    public GameObject AoEMarker;
 
     // Use this for initialization
     void Start()
@@ -20,9 +22,11 @@ public class TileMarker : Singleton<TileMarker>
 
         travMarker = Resources.Load("Tiles/TravMarker") as GameObject;
         attackMarker = Resources.Load("Tiles/AttackMarker") as GameObject;
+        AoEMarker = Resources.Load("Tiles/AoEMarker") as GameObject;
 
         travTiles = new Dictionary<Vector2i, GameObject>();
         attackTiles = new Dictionary<Vector2i, GameObject>();
+        AoETiles = new Dictionary<Vector2i, GameObject>();
     }
 
     // Update is called once per frame
@@ -117,12 +121,6 @@ public class TileMarker : Singleton<TileMarker>
     // marks tiles a unit can attack in red
     public void markAttackTiles(Unit unit)
     {
-        // if unit doesn't have any weapons gtfo of here
-        if (unit.weapons.Count == 0)
-        {
-            return;
-        }
-
         List<int> ranges = new List<int>(); // all attackable ranges
         int max = 0; // the maximum range of attack, to reduce number of tiles to process
 
@@ -131,6 +129,11 @@ public class TileMarker : Singleton<TileMarker>
         {
             if (!w.actionable && unit.state != Unit.UnitState.Selected)
             { // if the weapon is not actionable, it can only be used at beginning of turn
+                continue;
+            }
+
+            if (w.AoE)
+            { // AoE weapons are handled through the AoE button, not unit selecting
                 continue;
             }
 
@@ -156,10 +159,57 @@ public class TileMarker : Singleton<TileMarker>
                 // if distance from processing tile to unit is in ranges, mark it
                 if (ranges.Contains(unit.Pos.Distance(j, i)))
                 {
-                    GameObject marker = Instantiate(attackMarker, GLOBAL.gridToWorld(j, i), Quaternion.identity) as GameObject;
-                    attackTiles.Add(new Vector2i(j, i), marker);
+                    addAttackTile(new Vector2i(j, i));
                 }
             }
+        }
+    }
+
+    public void addAttackTile(Vector2i pos)
+    {
+        GameObject marker = Instantiate(attackMarker, GLOBAL.gridToWorld(pos), Quaternion.identity) as GameObject;
+        attackTiles.Add(pos, marker);
+    }
+
+    public void addAoETile(Vector2i pos)
+    {
+        GameObject marker = Instantiate(AoEMarker, GLOBAL.gridToWorld(pos), Quaternion.identity) as GameObject;
+        AoETiles.Add(pos, marker);
+    }
+
+    //===============================
+    // Area of Effect Tile Marking:
+    //===============================
+    public void markAoETiles(Unit unit)
+    {
+        // use different colour marker than regular attack tiles to be explicit???????????
+
+        foreach (Weapon w in unit.weapons)
+        {
+            if (!w.AoE)
+                continue;
+
+            // if the weapon is non-directional, apply its pattern to all tiles within its ranges
+            if (!w.directional)
+            {
+                // y first (bottom-left to top-right)
+                for (int i = Mathf.Max(unit.pos.y - w.rangeMax, 0); i <= Mathf.Min(unit.pos.y + w.rangeMax, MapScript.Instance.Height); i++)
+                {
+                    for (int j = Mathf.Max(unit.pos.x - w.rangeMax, 0); j <= Mathf.Min(unit.pos.x + w.rangeMax, MapScript.Instance.Width); j++)
+                    {
+                        if (unit.pos.Distance(j, i) >= w.rangeMin && unit.pos.Distance(j, i) <= w.rangeMax)
+                        {
+                            addAoETile(new Vector2i(j, i));
+                        }
+                    }
+                }
+            }
+
+            else // Directional Weapon:
+            {
+
+            }
+
         }
     }
 
@@ -177,6 +227,12 @@ public class TileMarker : Singleton<TileMarker>
             Destroy(entry.Value);
         }
         attackTiles.Clear();
+
+        foreach (KeyValuePair<Vector2i, GameObject> entry in AoETiles)
+        {
+            Destroy(entry.Value);
+        }
+        AoETiles.Clear();
     }
 
     // calls clear and mark trav/attack tiles

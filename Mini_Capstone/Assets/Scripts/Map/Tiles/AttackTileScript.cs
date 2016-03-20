@@ -12,8 +12,10 @@ public class AttackTileScript : MonoBehaviour
         darkenFlag = true;
         waitFlag = false;
 
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.7f);
+        //gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.7f);
         color = gameObject.GetComponent<SpriteRenderer>().color;
+        color.a = 0.7f;
+        gameObject.GetComponent<SpriteRenderer>().color = color;
     }
 
 

@@ -37,12 +37,23 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
         {
             if (currentPlayer.selectedObject.tag == "Unit")
             {
-                //if the tile is marked as traversable travel to it
+                // if the tile is marked as traversable travel to it
                 Vector2i tilePos = GLOBAL.worldToGrid(transform.position);
+
                 if (TileMarker.Instance.travTiles.ContainsKey(tilePos))
                 {
                     currentPlayer.selectedObject.GetComponent<Unit>().TravelToPos(tilePos);
                     TileMarker.Instance.Clear();
+                }
+
+                // if the tile is marked with an AoE tile, begin AoE selection
+                else if (TileMarker.Instance.AoETiles.ContainsKey(tilePos))
+                {
+                    // STORE ATTACK ROOT LOCATION AND OPEN AoE WEAPON SELECT
+                    // AoE weapon select is an aesthetic duplicate of the regular weapon select, but has behaviours specific to AoE sequence
+                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(GLOBAL.worldToGrid(transform.position));
+
+                    TileMarker.Instance.Clear(); // clear purple tiles
                 }
             }
         }

@@ -38,7 +38,13 @@ public class CombatSequence : MonoBehaviour
     public Text defenderDamageText;
     public Text defenderAccuracyText;
 
-    public GameObject wepSelect; // weapon select UI parent gameobject
+    //====================
+    // Area of Effect:
+    //====================
+    public GameObject AoEUI; // weapon select UI parent gameobject
+    public Vector2i AoERoot; // the root of the current (or most recently stored) AoE attack
+    public Weapon AoEWeapon; // the selected weapon for AoE attack
+    public bool AoESequence = false; // if a real-time AoE sequence is occurring
 
     //DEBUG:
     public float multiplier;
@@ -64,9 +70,17 @@ public class CombatSequence : MonoBehaviour
 
     public void Update()
     {
+        // regular real-time combat sequence
         if (!preCombat)
         {
             Combat();
+        }
+
+        // AoE real-time sequence
+        else if (AoESequence)
+        {
+            AoEWeapon.AoESequence(timer);
+            timer += Time.deltaTime;
         }
     }
 
@@ -126,21 +140,25 @@ public class CombatSequence : MonoBehaviour
         EnableUI();
 
         // Weapon Select window
-        WeaponSelect();
+        WeaponSelect(attacker);
     }
 
     // generates weapon select windows for both units (come up w/ badass chart format)
     // TODO: case is hardcoded with attacker variable. expand sequence for defender too
-    public void WeaponSelect()
+    public void WeaponSelect(Unit unit, bool AoE = false)
     {
-        Debug.Log("Wep Select");
         // INFO: max of 5 weapons so make the select menu static. if the unit has < 5 weps, the bottom entries of the list will read "---" (see eustrath combat screen)
 
         // Start new weapon select screen by disabling all wep slots that aren't used
         for (int i = 1; i <= 5; i++)
         {
-            GameObject ui = GameObject.Find("Attack" + i);
-            if (i > attacker.weapons.Count)
+            GameObject ui;
+            if (!AoE)
+                ui = GameObject.Find("Attack" + i);
+            else
+                ui = GameObject.Find("AoEAttack" + i);
+
+            if (i > unit.weapons.Count)
             { // don't have a weapon to fill this slot, leave it blank
                 for (int j = 0; j < ui.transform.childCount; j++)
                 {
@@ -150,28 +168,41 @@ public class CombatSequence : MonoBehaviour
                 continue;
             }
 
-            // if this is the default selected weapon, highlight it
-            if (attacker.equipped == attacker.weapons[i - 1])
+            // if this is the default selected weapon, highlight it (no highlights for AoE menu)
+            if (unit.equipped == unit.weapons[i - 1] && !AoE)
             {
-                ChangeSelection(i, attacker);
+                ChangeSelection(i, unit);
             }
 
-            ui.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].name; // NAME
-            ui.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].power.ToString(); // WEAPON POWER
-            ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = attacker.weapons[i - 1].rangeMin + "-" + attacker.weapons[i - 1].rangeMax; // RANGE
-            ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (attacker.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
+            ui.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].name; // NAME
+            ui.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].power.ToString(); // WEAPON POWER
+            ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].rangeMin + "-" + unit.weapons[i - 1].rangeMax; // RANGE
+            ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (unit.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
 
-            if (attacker.weapons[i - 1].actionable)
+            if (unit.weapons[i - 1].actionable)
                 ui.transform.GetChild(5).GetComponent<Text>().text = "Yes";
             else
                 ui.transform.GetChild(5).GetComponent<Text>().text = "No";
 
-            //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
+            // BUTTON ENABLING:
             ui.transform.GetChild(6).gameObject.SetActive(true);
-            if ((!attacker.weapons[i - 1].actionable && attacker.pos != attacker.selectPos) ||
-                 (!attacker.weapons[i - 1].ContainsRange(distance)))
+
+            if (!AoE)
             {
-                ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
+                
+                if ((!unit.weapons[i - 1].actionable && unit.pos != unit.selectPos) ||
+                     (!unit.weapons[i - 1].ContainsRange(distance)))
+                {
+                    ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                }
+            }
+            else // only add buttons to AoE weapons in range of selected root tile
+            {
+                if (!unit.weapons[i - 1].AoE || !unit.weapons[i - 1].ContainsRange(AoERoot.Distance(PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().pos)))
+                {
+                    ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                }
             }
 
         }
@@ -357,6 +388,7 @@ public class CombatSequence : MonoBehaviour
         //Finish();
     }
 
+    // TODO: IMPLEMENT QUICK HEALTH LOSS SEQUENCE (health bar drain)
     void Combat()
     {
         timer += Time.deltaTime;
@@ -438,6 +470,8 @@ public class CombatSequence : MonoBehaviour
                     {
                         defender.snapToGridPos();
 
+                        attacker.CheckDead(); // process death for attacker
+
                         Finish();
                     }
 
@@ -446,6 +480,55 @@ public class CombatSequence : MonoBehaviour
         }
 
     }
+
+
+    //===============================
+    // Area of Effect:
+    //===============================
+    public void AoEWeaponSelect(Vector2i root)
+    {
+        AoEUI.SetActive(true);
+
+        AoERoot = root;
+
+        WeaponSelect(PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>(), true); // display weapon select menu
+    }
+
+    public void AoESelect(int num)
+    {
+        AoEUI.SetActive(false);
+
+        UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
+
+        AoEWeapon = PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().weapons[num - 1];
+
+        // selects the weapon and displays its effective range on the board
+        AoEWeapon.markAoEPattern(AoERoot);
+    }
+
+    // 
+    public void AoEAttack()
+    {
+        TileMarker.Instance.Clear();
+
+        AoESequence = true;
+        timer = 0;
+
+        GLOBAL.setLock(true); // lock input during AoE sequence
+
+        // play animation, offset by half of tilesize to accommodate center anchor
+        Instantiate(AoEWeapon.AoEanim, GLOBAL.gridToWorld(AoERoot) + new Vector3((int)(IntConstants.TileSize) / 2, (int)(IntConstants.TileSize) / 2), Quaternion.identity);
+    }
+
+    // called by AoE animation's AnimationDestroyer on finish
+    public void AoEDamage()
+    {
+
+    }
+
+    //=========================
+    // Clean Up:
+    //=========================
 
     // cleans up when combat sequence has finished
     public void Finish()

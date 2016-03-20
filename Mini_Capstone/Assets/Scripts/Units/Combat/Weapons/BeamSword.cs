@@ -8,7 +8,8 @@ public class BeamSword : Weapon
     public BeamSword(Unit u) : base(u)
     {
         type = WeaponType.Energy;
-        name = "BeamSword";
+        //AoE = false;
+        name = "Beamsword";
         actionable = true;
         power = 15;
         accuracy = 0.99f;
