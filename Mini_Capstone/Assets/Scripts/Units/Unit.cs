@@ -185,7 +185,10 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     selected.deselectUnit();
 
                     if (selected == this)
+                    {
+                        Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxCancel); // not reselecting so play cancel chime
                         return; // don't reselect after deselecting if clicking selected unit
+                    }
                 }
             }
 
@@ -279,6 +282,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     // reverts most recent action via cancel button (combat, waiting and selected states)
     public void ResetUnit()
     {
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxCancel);
+
         // If no actions taken then deselect
         if (state == UnitState.Selected || state == UnitState.Inactive)
         {
@@ -295,6 +300,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             TileMarker.Instance.Clear(); // remarking trav and/or attack tiles so clear current cache
             if (state == UnitState.Waiting || pos == selectPos)
             { // revert to selected if cancelling a move or unmoved combat
+                if (state == UnitState.Combat)
+                    UIManager.Instance.deactivateAttackButton();
+                
                 state = UnitState.Selected;
                 ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
                 GameDirector.Instance.BoardStateChanged(); // update buffs
@@ -302,6 +310,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else
             { // UnitState.Combat post-move, revert to waiting
+                UIManager.Instance.deactivateAttackButton();
                 state = UnitState.Waiting;
                 GameDirector.Instance.BoardStateChanged(); // update buffs
             }

@@ -133,6 +133,7 @@ public class CombatSequence : MonoBehaviour
     // TODO: case is hardcoded with attacker variable. expand sequence for defender too
     public void WeaponSelect()
     {
+        Debug.Log("Wep Select");
         // INFO: max of 5 weapons so make the select menu static. if the unit has < 5 weps, the bottom entries of the list will read "---" (see eustrath combat screen)
 
         // Start new weapon select screen by disabling all wep slots that aren't used
