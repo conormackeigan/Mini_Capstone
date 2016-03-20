@@ -132,16 +132,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                if (GameDirector.Instance.numOfPlayers == 1)
-                {
-                    ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
-                    //Destroy(gameObject);
-                    gameObject.SetActive(false);
-                }
-                else
-                {
-                    gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered);
-                }
+                destroyUnit();
             }
         }
 
@@ -454,6 +445,20 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     {
         Destroy(overlay);
         overlay = null;
+    }
+
+    public void destroyUnit()
+    {
+        if (GameDirector.Instance.numOfPlayers == 1)
+        {
+            ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
+            //Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered);
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)

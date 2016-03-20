@@ -31,6 +31,8 @@ public class ObjectManager : Singleton<ObjectManager>
         objectGrid = new GameObject[map.Width, map.Height];
         clearGrid(); // Initialize unit grid
 
+        
+
         PlayerOneUnits = new List<GameObject>();
         PlayerTwoUnits = new List<GameObject>();
         playerUnits = new List<List<GameObject>>();
@@ -48,8 +50,18 @@ public class ObjectManager : Singleton<ObjectManager>
         map = transform.parent.GetComponent<MapScript>(); //get reference to map parent
         clearGrid(); // Initialize unit grid
 
+        foreach (List<GameObject> units in ObjectManager.Instance.playerUnits)
+        {
+            foreach (GameObject unit in units)
+            {
+                unit.GetComponent<Unit>().destroyUnit();
+            }
+
+        }
+
         PlayerOneUnits = new List<GameObject>();
         PlayerTwoUnits = new List<GameObject>();
+        playerUnits = new List<List<GameObject>>();
 
         UIManager.Instance.DeactivateFriendPanel();
         UIManager.Instance.DeactivateEnemyPanel();
@@ -94,7 +106,7 @@ public class ObjectManager : Singleton<ObjectManager>
             }
             else if (unitScript.playerID == 2)
             {
-                PlayerTwoUnits.Add(objectGrid[pos.x, pos.y]);
+                PlayerTwoUnits.Add(obj);
             }
         }
         else if (obj.tag == "Structure")

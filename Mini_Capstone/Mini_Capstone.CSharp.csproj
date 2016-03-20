@@ -138,6 +138,10 @@
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\SupportLogger.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
     <Compile Include="Assets\Scripts\DEBUG\NetworkObjectMoveTest.cs" />
+    <Compile Include="Assets\Scripts\Map\MapEditor\MapEditor.cs" />
+    <Compile Include="Assets\Scripts\Map\MapEditor\isForest.cs" />
+    <Compile Include="Assets\Scripts\Map\MapEditor\isGrass.cs" />
+    <Compile Include="Assets\Scripts\Map\MapEditor\isMountain.cs" />
     <Compile Include="Assets\Scripts\Map\MapScript.cs" />
     <Compile Include="Assets\Scripts\Map\TerrainLayer.cs" />
     <Compile Include="Assets\Scripts\Map\TileMarker.cs" />
@@ -156,6 +160,7 @@
     <Compile Include="Assets\Scripts\Misc\UIManager.cs" />
     <Compile Include="Assets\Scripts\Networking\AddAttackTileRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\DestroyUnitRPC.cs" />
+    <Compile Include="Assets\Scripts\Networking\EndGameRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\NetworkingMain.cs" />
     <Compile Include="Assets\Scripts\Networking\NextTurnRPC.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />

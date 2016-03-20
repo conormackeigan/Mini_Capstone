@@ -59,11 +59,18 @@ public class GameDirector : Singleton<GameDirector>
 
     public void endGame()
     {
-        PlayerManager.Instance.endGame();
-        TerrainLayer.Instance.endGame();
-        ObjectManager.Instance.endGame();
+        if(numOfPlayers == 1)
+        {
+            PlayerManager.Instance.endGame();
+            TerrainLayer.Instance.endGame();
+            ObjectManager.Instance.endGame();
 
-        gameState = GameState.MAINMENU;
+            gameState = GameState.MAINMENU;
+        }
+        else
+        {
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.All);
+        }
     }
 
     // NOTE : CONFIRM/CANCEL BUTTON LOGIC MOVED TO UIMANAGER (Cleanup Reasons)

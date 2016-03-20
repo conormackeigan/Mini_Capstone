@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.IO;
 
 public class TerrainLayer : Singleton<TerrainLayer>
 {
@@ -42,31 +43,43 @@ public class TerrainLayer : Singleton<TerrainLayer>
         Object untraversable = Resources.Load("Tiles/Untraversable");
         Object forest = Resources.Load("Tiles/ForestTile");
 
+        // Read map editor file
+        if (!File.Exists("MapFile.txt"))
+        {
+            Debug.Log("MapFile.txt does not exist.");
+            return;
+        }
+        StreamReader sr = File.OpenText("MapFile.txt");
+        string input;
+
         //instantiate sample map (meadow(weight 1) + untraversable tiles + forest(weight 2))
         for (int i = 0; i < tiles.GetLength(0); i++)
         {
             for (int j = 0; j < tiles.GetLength(1); j++)
             {
-                if (i == 5 || i == 6)
+
+                input = sr.ReadLine();
+
+                if (input == "Forest")
                 {
                     Instantiate(forest, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
                     tiles[i, j] = new ForestTile(new Vector2i(i, j));
                 }
-                else
+                if (input == "Mountain")
                 {
-                    if (j < MapScript.Instance.Height - 5 && j > 5 && i > 12)
-                    {
-                        Instantiate(untraversable, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
-                        tiles[i, j] = new UntraversableTile(new Vector2i(i, j));
-                    }
-                    else
-                    {
-                        Instantiate(meadow, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
-                        tiles[i, j] = new MeadowTile(new Vector2i(i, j));
-                    }
+                    Instantiate(untraversable, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
+                    tiles[i, j] = new UntraversableTile(new Vector2i(i, j));
+                }
+                if (input == "Grass")
+                {
+                    Instantiate(meadow, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
+                    tiles[i, j] = new MeadowTile(new Vector2i(i, j));
                 }
             }
         }
+
+        sr.Close();
+
     }
 
     public void endGame()

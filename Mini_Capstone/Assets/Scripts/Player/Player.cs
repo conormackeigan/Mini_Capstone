@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
                 //TODO: Note starting units are hard coded for now
                 GameObject unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
                 unitObj.GetComponent<Unit>().playerID = playerID;
-                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(3, 15));
+                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(3, 10));
 
                 unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
                 unitObj.GetComponent<Unit>().playerID = playerID;
@@ -126,15 +126,15 @@ public class Player : MonoBehaviour
 
                 unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
                 unitObj.GetComponent<Unit>().playerID = playerID;
-                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 15));
+                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 10));
 
                 unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
                 unitObj.GetComponent<Unit>().playerID = playerID;
-                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(5, 13));
+                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(5, 12));
 
                 unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
                 unitObj.GetComponent<Unit>().playerID = playerID;
-                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 13));
+                ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 12));
             }
         }
     }
