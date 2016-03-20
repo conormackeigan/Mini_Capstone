@@ -35,6 +35,19 @@ public static class GLOBAL
 
         return v;
     }
+
+    public static void setLock(bool locked)
+    {
+        GameDirector.Instance.locked = locked;
+    }
+
+    public static bool locked()
+    {
+        if (GameDirector.Instance.locked)
+            return true;
+
+        return false;
+    }
 }
 
 public enum IntConstants : int

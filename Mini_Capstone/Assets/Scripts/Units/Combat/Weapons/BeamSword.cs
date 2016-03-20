@@ -8,7 +8,8 @@ public class BeamSword : Weapon
     public BeamSword(Unit u) : base(u)
     {
         type = WeaponType.Energy;
-        name = "BeamSword";
+        //AoE = false;
+        name = "Beamsword";
         actionable = true;
         power = 15;
         accuracy = 0.99f;
@@ -16,5 +17,6 @@ public class BeamSword : Weapon
         rangeMax = 1;
         boardSpecials = new List<Special>();
         boardSpecials.Add(new LightweightSpecial(u));
+        sfx = Resources.Load("Sound/SFX/sfxShock") as AudioClip;
     }
 }

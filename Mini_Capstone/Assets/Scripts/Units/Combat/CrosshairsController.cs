@@ -9,6 +9,8 @@ public class CrosshairsController : MonoBehaviour
     private float prevTimer; // keeping track of intervals
     private bool moving = true;
 
+    public AudioClip sfx;
+
     // Use this for initialization
     void Start()
     {
@@ -45,6 +47,7 @@ public class CrosshairsController : MonoBehaviour
         { // invoke's timing is really bizarre so hardcode it like a scrub
             if (timer >= 0.125f && prevTimer < 0.125f)
             {
+                Camera.main.GetComponent<AudioSource>().PlayOneShot(sfx);
                 BlinkOn();
             }
             else if (timer >= 0.2f && prevTimer < 0.2f)

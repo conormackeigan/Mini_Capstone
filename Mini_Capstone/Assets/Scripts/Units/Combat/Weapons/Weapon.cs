@@ -15,7 +15,7 @@ public abstract class Weapon
     //===============
     public Unit unit; // the unit this weapon belongs to
 
-    public WeaponType type; // physical or energy attack?
+    public WeaponType type; // physical or energy attack?   
 
     public string name;
 
@@ -29,6 +29,16 @@ public abstract class Weapon
    
     public List<Special> boardSpecials; // special attributes this weapon grants the player on the board
     public List<Special> combatSpecials; // special effects this weapon grants in combat
+
+    public AudioClip sfx; // the sfx attached to this weapon
+
+    //=======================
+    // AoE Attributes:
+    //=======================
+    public bool AoE = false; // is this an area of effect weapon?
+    public bool directional = false; // does this AoE have a direction from root node or a radius?
+
+    public GameObject AoEanim; // animation for AoE attacks (or regular attacks if implemented)
 
     public Weapon(Unit u)
     {
@@ -52,5 +62,14 @@ public abstract class Weapon
         }
 
         return false;
+    }
+
+
+    public virtual void markAoEPattern(Vector2i root)
+    { // marks attack pattern from a root node        
+    }
+
+    public virtual void AoESequence(float timer)
+    { // real-time AoE sequence controlled in CombatSequence.Update()
     }
 }

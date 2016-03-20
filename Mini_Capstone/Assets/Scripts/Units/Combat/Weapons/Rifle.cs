@@ -8,6 +8,7 @@ public class Rifle : Weapon
     public Rifle(Unit u) : base(u)
     {
         type = WeaponType.Physical;
+        //AoE = false;
         name = "Rifle";
         actionable = false; // for testing; real rifle is actionable + range 1-2
         power = 8;
@@ -16,5 +17,6 @@ public class Rifle : Weapon
         rangeMax = 3;
         boardSpecials = new List<Special>();
         boardSpecials.Add(new TrooperSpecial(u));
+        sfx = Resources.Load("Sound/SFX/sfxSingleShot") as AudioClip;
     }
 }

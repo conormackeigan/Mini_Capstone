@@ -18,9 +18,13 @@ public class GameDirector : Singleton<GameDirector>
 
     CombatSequence combatSequence;
 
+    public bool locked = false; // locks user input
+
     //AUDIO REFERENCES:
     public AudioClip bgmTitle;
     public AudioClip bgm;
+    public AudioClip sfxSelect;
+    public AudioClip sfxCancel;
 
     // Use this for initialization
     void Start ()
