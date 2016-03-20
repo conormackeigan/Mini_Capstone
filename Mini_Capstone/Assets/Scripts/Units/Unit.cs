@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 {
     //----------------------------------------------------------------------------------------------------------------------
-    // States (TODO: Make FSM, these states are temporary and probably not all necessary)
+    // States:
     //----------------------------------------------------------------------------------------------------------------------
     public enum UnitState
     {
@@ -28,12 +28,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     public string unitPrefabName; // Name of prefab used by unit
     protected GameObject unitPrefab; // Prefab used by unit
 
-    public int playerID { get; set; } // Player controlling unit
-    public List<string> actions; // Available actions for unit
-    //public bool currentlySelected = false;
+    public int playerID; // Player controlling unit
 
     public UnitState state = UnitState.Neutral;
-    //public bool isActive = true;
     public bool animate = false;
 
     //MOVEMENT VARIABLES
@@ -132,16 +129,10 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                if (GameDirector.Instance.numOfPlayers == 1)
-                {
-                    ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
-                    //Destroy(gameObject);
-                    gameObject.SetActive(false);
-                }
-                else
-                {
-                    gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered);
-                }
+                ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
+                gameObject.SetActive(false);
+
+                GLOBAL.setLock(false); // unlock user input
             }
         }
 
@@ -161,7 +152,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         else
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-        }      
+        }
     }
 
     protected virtual void OnGUI()
@@ -171,24 +162,47 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public virtual void OnMouseClick()
     {
-        // TODO: implement spectator mode when not player's turn
+        if (GLOBAL.locked() || state == UnitState.Inactive)
+            return; // locked out of inputs
 
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
-        // if there is a selected unit in moving state, gtfo dont process stuff
-        if (currentPlayer.selectedObject != null)
+
+        //===========================
+        // Clicking on Ally Unit:
+        //===========================
+        if (currentPlayer.playerID == playerID) // player can't input when not turn so don't bother checking
         {
-            if (currentPlayer.selectedObject.tag == "Unit")
+            if (currentPlayer.selectedObject != null)
             {
-                if (currentPlayer.selectedObject.GetComponent<Unit>().state == Unit.UnitState.Moving)
+                // can only switch between units on tap in selected state
+                if (currentPlayer.selectedObject.tag == "Unit")
                 {
-                    return;
+                    Unit selected = currentPlayer.selectedObject.GetComponent<Unit>();
+
+                    if (selected.state != UnitState.Selected)
+                        return;
+
+                    selected.deselectUnit();
+
+                    if (selected == this)
+                        return; // don't reselect after deselecting if clicking selected unit
                 }
             }
-        }
 
-        if (state != UnitState.Inactive)
-        {
             selectUnit();
+        }
+        //===========================
+        // Clicking on Enemy Unit:
+        //===========================
+        else
+        {
+            if (TileMarker.Instance.attackTiles.ContainsKey(pos))
+            {
+                UIManager.Instance.activateAttackButton();
+                currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
+            }
+            else
+                UIManager.Instance.ActivateFriendPanel(this);
         }
     }
 
@@ -223,86 +237,46 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         }
 
         // path has been computed, travel to node at end of list until at destination
-        state = UnitState.Moving;// set unit state
+        state = UnitState.Moving; // set unit state
+        GLOBAL.setLock(true); // lock user input until path is traversed
     }
 
-    // this method handles all cases of clicking on an active unit. TODO: separate logic so this method only selects
+    // select this unit
     public void selectUnit()
     {
-        // If the unit selected belongs to current player
-        int currentTurn = PlayerManager.Instance.getCurrentPlayerTurn();
-        Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
-        if (currentTurn == playerID && currentPlayer.playerID == playerID)
-        {
-            // If same object selected then deselect
-            if (currentPlayer.selectedObject == this.gameObject)
-            {
-                // perhaps we should expand unit info (weapons) when clicking on selected unit?
+        PlayerManager.Instance.getCurrentPlayer().selectedObject = gameObject;
+        state = UnitState.Selected;
+        selectPos = pos;
 
-                //currentPlayer.selectedObject.GetComponent<Unit>().ResetUnit(true);
-                //deselectUnit();
-            }
-            else
-            {
-                // If another object is currently selected, select this unit instead
-                if (currentPlayer.selectedObject != null)
-                {
-                    // cannot interact with other ally units while a unit is selected
-                    return;
+        // mark tiles this unit can attack and reach
+        TileMarker.Instance.Clear();
+        TileMarker.Instance.markTravTiles(this);
+        TileMarker.Instance.markAttackTiles(this);
 
-                    //if (currentPlayer.selectedObject.tag == "Unit")
-                    //{
-                    //    if (currentPlayer.selectedObject.GetComponent<Unit>().state != UnitState.Waiting)
-                    //    { // only select if the currently selected unit is not waiting
-                    //        currentPlayer.selectedObject.GetComponent<Unit>().ResetUnit();
-                    //        currentPlayer.selectedObject.GetComponent<Unit>().deselectUnit();
-                    //    }
-                    //}
-                }
+        UIManager.Instance.ActivateFriendPanel(this);
+        UIManager.Instance.setUnitUI(true);
+        createOverlay();
 
-                currentPlayer.selectedObject = gameObject;
-                state = UnitState.Selected;
-                selectPos = pos;
-
-                // mark tiles this unit can attack and reach
-                TileMarker.Instance.Clear();
-                TileMarker.Instance.markTravTiles(this);
-                TileMarker.Instance.markAttackTiles(this);
-
-                UIManager.Instance.ActivateFriendPanel(this);
-                UIManager.Instance.setUnitUI(true);
-
-                createOverlay();
-            }
-        }
-        // Attack unit with currently selected
-        else if (TileMarker.Instance.attackTiles.ContainsKey(pos))
-        {
-            UIManager.Instance.activateAttackButton();
-            currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
-        }
+        Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxSelect);
     }
 
     // deselects unit, either after unit turn or as a result of the cancel button in selected state
     public void deselectUnit()
     {
         PlayerManager.Instance.getCurrentPlayer().selectedObject = null;
+
         if (state != UnitState.Inactive)
-        {
-            state = UnitState.Neutral;
-        }
+            state = UnitState.Neutral; // if deselecting after turn don't change state
 
-        //clean up tilemarker in case tiles were marked
-        TileMarker.Instance.Clear();
+        TileMarker.Instance.Clear(); //clean up tilemarker in case tiles were marked
 
-        UIManager.Instance.DeactivateFriendPanel();
+        UIManager.Instance.DeactivateFriendPanel();      
         UIManager.Instance.deactivateAttackButton();
         UIManager.Instance.setUnitUI(false);
-
         destroyOverlay();
     }
 
-    // reverts most recent action via cancel button
+    // reverts most recent action via cancel button (combat, waiting and selected states)
     public void ResetUnit()
     {
         // If no actions taken then deselect
@@ -315,16 +289,25 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
             { // cancels combat. button should only be available if combat hasn't been initiated yet (no safeguard checks in place right now)
-                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Cancel();              
+                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Cancel();
             }
 
-            state = UnitState.Selected;
-            ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
-            GameDirector.Instance.BoardStateChanged(); // update buffs
+            TileMarker.Instance.Clear(); // remarking trav and/or attack tiles so clear current cache
+            if (state == UnitState.Waiting || pos == selectPos)
+            { // revert to selected if cancelling a move or unmoved combat
+                state = UnitState.Selected;
+                ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
+                GameDirector.Instance.BoardStateChanged(); // update buffs
+                TileMarker.Instance.markTravTiles(this);
+            }
+            else
+            { // UnitState.Combat post-move, revert to waiting
+                state = UnitState.Waiting;
+                GameDirector.Instance.BoardStateChanged(); // update buffs
+            }
 
-            TileMarker.Instance.Redraw(this);
+            TileMarker.Instance.markAttackTiles(this);
         }
-
     }
 
     // sets unit to inactive
@@ -348,6 +331,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 if (path.Count == 0)
                 { // reached destination
                     state = UnitState.Waiting;
+                    GLOBAL.setLock(false); // inputs are no longer locked
                     ObjectManager.Instance.moveUnitToGridPos(gameObject, prev);
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
@@ -356,7 +340,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             else
             { // haven't reached next node in path yet, continue lerping
                 Vector2i dir = path[path.Count - 1] - prev;// next node in path is guaranteed to be neighbour, so displacement vector = dir vector
-                transform.Translate( (dir * (2 * (1 + Convert.ToInt32(Input.GetKey(KeyCode.Space))))) * (Time.deltaTime * 100) ); // double speed if button held (space for temporarily)
+                transform.Translate((dir * (2 * (1 + Convert.ToInt32(Input.GetKey(KeyCode.Space))))) * (Time.deltaTime * 100)); // double speed if button held (space for temporarily)
             }
         }
     }
@@ -372,15 +356,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         equipped = w;
         GameDirector.Instance.BoardStateChanged();
     }
-    
+
     // this method is called when a marked enemy tile is clicked
     public void Attack(Unit other)
     {
         // PRELIMINARY ATTACK CALCULATIONS (PRE-CONFIRM)
-
         TileMarker.Instance.Clear();
-
-        // TODO: develop dmg calculation formula
 
         state = UnitState.Combat;
 
@@ -393,17 +374,6 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         GameObject combatSequence = GameObject.Find("CombatSequence");
         combatSequence.GetComponent<CombatSequence>().active = true;
         combatSequence.GetComponent<CombatSequence>().Enable(this, other);
-
-        // **obsolete: handled in combatsequence enable now** crosshair lockon (calls StartCombatSequence() on complete) 
-        //GameObject crosshairs = Instantiate(Resources.Load("Crosshairs"), GLOBAL.gridToWorld(pos), Quaternion.identity) as GameObject;
-        //crosshairs.GetComponent<CrosshairsController>().target = other.pos;
-    }
-    
-    // called after Attack() and crosshair movement. Prepares a battle sequence for confirmation/cancel
-    public void StartCombatSequence()
-    {
-        // Hook up proper references and enable combat sequence controller
-
     }
 
     //update stats w/ buffs
@@ -435,8 +405,19 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
         if (health <= 0)
         {
-            isDead = true;
+            health = 0;
         }
+    }
+
+    public bool CheckDead()
+    {
+        if (health <= 0)
+        {
+            isDead = true;
+            return true;
+        }
+
+        return false;
     }
 
     public void createOverlay()

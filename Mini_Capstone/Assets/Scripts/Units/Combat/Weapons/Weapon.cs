@@ -30,6 +30,8 @@ public abstract class Weapon
     public List<Special> boardSpecials; // special attributes this weapon grants the player on the board
     public List<Special> combatSpecials; // special effects this weapon grants in combat
 
+    public AudioClip sfx; // the sfx attached to this weapon
+
     public Weapon(Unit u)
     {
         //===================

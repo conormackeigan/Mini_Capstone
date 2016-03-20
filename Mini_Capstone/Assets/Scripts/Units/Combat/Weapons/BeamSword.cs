@@ -16,5 +16,6 @@ public class BeamSword : Weapon
         rangeMax = 1;
         boardSpecials = new List<Special>();
         boardSpecials.Add(new LightweightSpecial(u));
+        sfx = Resources.Load("Sound/SFX/sfxShock") as AudioClip;
     }
 }

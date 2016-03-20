@@ -12,9 +12,9 @@ public class uInfantry : Unit
 
         unitName = "Infantry";
 
-        actions.Add("Move");
-        actions.Add("Wait");
-        actions.Add("Attack");
+        //actions.Add("Move");
+        //actions.Add("Wait");
+        //actions.Add("Attack");
 
         maxHealth = 10;
         health = 10;
