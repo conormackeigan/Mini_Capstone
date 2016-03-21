@@ -180,37 +180,30 @@ public class TileMarker : Singleton<TileMarker>
     //===============================
     // Area of Effect Tile Marking:
     //===============================
-    public void markAoETiles(Unit unit)
+    public void markAoETiles(Weapon weapon)
     {
-        // use different colour marker than regular attack tiles to be explicit???????????
-
-        foreach (Weapon w in unit.weapons)
+        // if the weapon is non-directional, apply its pattern to all tiles within its ranges
+        if (!weapon.directional)
         {
-            if (!w.AoE)
-                continue;
-
-            // if the weapon is non-directional, apply its pattern to all tiles within its ranges
-            if (!w.directional)
+            // y first (bottom-left to top-right)
+            for (int i = Mathf.Max(weapon.unit.pos.y - weapon.rangeMax, 0); i <= Mathf.Min(weapon.unit.pos.y + weapon.rangeMax, MapScript.Instance.Height); i++)
             {
-                // y first (bottom-left to top-right)
-                for (int i = Mathf.Max(unit.pos.y - w.rangeMax, 0); i <= Mathf.Min(unit.pos.y + w.rangeMax, MapScript.Instance.Height); i++)
+                for (int j = Mathf.Max(weapon.unit.pos.x - weapon.rangeMax, 0); j <= Mathf.Min(weapon.unit.pos.x + weapon.rangeMax, MapScript.Instance.Width); j++)
                 {
-                    for (int j = Mathf.Max(unit.pos.x - w.rangeMax, 0); j <= Mathf.Min(unit.pos.x + w.rangeMax, MapScript.Instance.Width); j++)
+                    if (weapon.unit.pos.Distance(j, i) >= weapon.rangeMin && weapon.unit.pos.Distance(j, i) <= weapon.rangeMax)
                     {
-                        if (unit.pos.Distance(j, i) >= w.rangeMin && unit.pos.Distance(j, i) <= w.rangeMax)
-                        {
-                            addAoETile(new Vector2i(j, i));
-                        }
+                        addAoETile(new Vector2i(j, i));
                     }
                 }
             }
+        }
 
-            else // Directional Weapon:
-            {
-
-            }
+        else // Directional Weapon:
+        {
 
         }
+
+        
     }
 
 

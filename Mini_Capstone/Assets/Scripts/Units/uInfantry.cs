@@ -34,15 +34,13 @@ public class uInfantry : Unit
         weapons = new List<Weapon>();
 
         Weapon rifle = new Rifle(this);
-        //weapons.Add(rifle);
-        //Equip(rifle);
+        weapons.Add(rifle);
+        Equip(rifle);
         Weapon beamsword = new BeamSword(this);
-        //weapons.Add(beamsword);
-        //Equip(beamsword);      
+        weapons.Add(beamsword);
+        Equip(beamsword);      
         Weapon frag = new Frag(this);
-        weapons.Add(frag);
-        Equip(frag); 
-
+        weapons.Add(frag); 
     }
 
     protected override void Update()

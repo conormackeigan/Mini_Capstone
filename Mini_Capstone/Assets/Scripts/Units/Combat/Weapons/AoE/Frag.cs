@@ -17,7 +17,7 @@ public class Frag : Weapon
         actionable = false;
         power = 10;
         accuracy = 0.85f;
-        rangeMin = 1;
+        rangeMin = 0;
         rangeMax = 3;
         boardSpecials = new List<Special>();
         //boardSpecials.Add();

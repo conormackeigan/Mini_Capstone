@@ -18,6 +18,9 @@ public class CrosshairsController : MonoBehaviour
         displacement = GLOBAL.gridToWorld(target) - transform.position;
 
         timer = 0;
+
+        // disable UI until lockon complete
+        UIManager.Instance.setUnitUI(false);
     }
 
     // Update is called once per frame
@@ -86,5 +89,9 @@ public class CrosshairsController : MonoBehaviour
     void Finish()
     { //send signal to display pre-combat information
         GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Begin();
+
+        // reactivate unit UI
+        UIManager.Instance.setUnitUI(true);
+        UIManager.Instance.activateAttackButton();
     }
 }

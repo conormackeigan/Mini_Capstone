@@ -49,11 +49,10 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
                 // if the tile is marked with an AoE tile, begin AoE selection
                 else if (TileMarker.Instance.AoETiles.ContainsKey(tilePos))
                 {
-                    // STORE ATTACK ROOT LOCATION AND OPEN AoE WEAPON SELECT
-                    // AoE weapon select is an aesthetic duplicate of the regular weapon select, but has behaviours specific to AoE sequence
-                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(GLOBAL.worldToGrid(transform.position));
-
                     TileMarker.Instance.Clear(); // clear purple tiles
+                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
+                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoERoot = GLOBAL.worldToGrid(transform.position);
+                    UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
                 }
             }
         }

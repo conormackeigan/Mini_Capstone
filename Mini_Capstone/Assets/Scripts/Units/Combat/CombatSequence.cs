@@ -197,9 +197,9 @@ public class CombatSequence : MonoBehaviour
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
                 }
             }
-            else // only add buttons to AoE weapons in range of selected root tile
+            else // only add buttons to AoE weapons
             {
-                if (!unit.weapons[i - 1].AoE || !unit.weapons[i - 1].ContainsRange(AoERoot.Distance(PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().pos)))
+                if (!unit.weapons[i - 1].AoE)
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
                 }
@@ -498,23 +498,26 @@ public class CombatSequence : MonoBehaviour
     {
         AoEUI.SetActive(false);
 
-        UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
-
         AoEWeapon = PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().weapons[num - 1];
 
-        // selects the weapon and displays its effective range on the board
-        AoEWeapon.markAoEPattern(AoERoot);
+        TileMarker.Instance.markAoETiles(AoEWeapon);
     }
 
-    // 
+    // called by attack button to instigate an AoE damage sequence
     public void AoEAttack()
     {
         TileMarker.Instance.Clear();
+
+        // attacking unit has committed to this AoE weapon for the turn so equip it
+        PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Equip(AoEWeapon);
 
         AoESequence = true;
         timer = 0;
 
         GLOBAL.setLock(true); // lock input during AoE sequence
+
+        UIManager.Instance.setUnitUI(false); // disable unit UI (unit turn is done after attack sequence anyway)
+        UIManager.Instance.deactivateConfirmButton();
 
         // play animation, offset by half of tilesize to accommodate center anchor
         Instantiate(AoEWeapon.AoEanim, GLOBAL.gridToWorld(AoERoot) + new Vector3((int)(IntConstants.TileSize) / 2, (int)(IntConstants.TileSize) / 2), Quaternion.identity);
@@ -523,7 +526,8 @@ public class CombatSequence : MonoBehaviour
     // called by AoE animation's AnimationDestroyer on finish
     public void AoEDamage()
     {
-
+        // use AoEWeapon and AoERoot to search appropriate tiles for units to damage
+        // TODO: store previously marked attack tiles for quick processing (remove red markers but maintain coords)
     }
 
     //=========================
@@ -567,6 +571,12 @@ public class CombatSequence : MonoBehaviour
             defender.Equip(defenderOrigWep);
         }
 
+    }
+
+    // called when cancel button is pressed in the middle of an AoE attack
+    public void CancelAoE()
+    {
+        AoEUI.SetActive(false);
     }
 
     public void EnableUI()

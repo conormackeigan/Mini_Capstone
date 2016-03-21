@@ -201,8 +201,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         else
         {
             if (TileMarker.Instance.attackTiles.ContainsKey(pos))
-            {
-                UIManager.Instance.activateAttackButton();
+            {               
                 currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
             }
             else
@@ -229,6 +228,10 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     // makes the unit travel to its destination
     public void TravelToPos(Vector2i destination)
     {
+        // disable UI until destination reached
+        UIManager.Instance.setUnitUI(false);
+        UIManager.Instance.deactivateAoEButton();
+
         path = new List<Vector2i>(); // tile nodes of the path to be travelled
 
         Tile curr = TerrainLayer.Instance.Tiles[destination.x, destination.y]; // destination node
@@ -286,6 +289,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
         TileMarker.Instance.Clear(); //clean up tilemarker in case tiles were marked
 
+        UIManager.Instance.deactivateAoEButton();
         UIManager.Instance.DeactivateFriendPanel();      
         UIManager.Instance.deactivateAttackButton();
         UIManager.Instance.setUnitUI(false);
@@ -316,10 +320,11 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 if (state == UnitState.Combat)
                     UIManager.Instance.deactivateAttackButton();
                 
-                state = UnitState.Selected;
+                //state = UnitState.Selected;
                 ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
                 GameDirector.Instance.BoardStateChanged(); // update buffs
-                TileMarker.Instance.markTravTiles(this);
+                //TileMarker.Instance.markTravTiles(this);
+                selectUnit();
             }
             else
             { // UnitState.Combat post-move, revert to waiting
@@ -328,7 +333,18 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 GameDirector.Instance.BoardStateChanged(); // update buffs
             }
 
-            TileMarker.Instance.markAttackTiles(this);
+            //TileMarker.Instance.markAttackTiles(this);
+        }
+        //==========================================
+        // AoE Reset Cases:
+        //==========================================
+        else if (state == UnitState.AoE)
+        {
+            // just force unit to selected state regardless of phase if in AoE state
+            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().CancelAoE();
+            UIManager.Instance.deactivateAttackButton();
+
+            selectUnit();
         }
     }
 
@@ -354,6 +370,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 { // reached destination
                     state = UnitState.Waiting;
                     GLOBAL.setLock(false); // inputs are no longer locked
+                    UIManager.Instance.setUnitUI(true); // display UI now that inputs are available
                     ObjectManager.Instance.moveUnitToGridPos(gameObject, prev);
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
@@ -452,8 +469,11 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // clear all markers from selection
         TileMarker.Instance.Clear();
 
+        // ***new sequence*** menu select for AoE weapon, purple markers to aim, red markers for confirm
+        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(pos);
+
         // mark AoE attack tiles
-        TileMarker.Instance.markAoETiles(this);
+        //TileMarker.Instance.markAoETiles(this);
     }
 
     public void createOverlay()
