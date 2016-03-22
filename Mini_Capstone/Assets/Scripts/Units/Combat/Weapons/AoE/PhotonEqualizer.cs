@@ -12,6 +12,7 @@ public class PhotonEqualizer : Weapon
     {
         type = WeaponType.Energy;
         AoE = true; // AoE non-directional (false by default; no need to specify)
+        directional = true;
         name = "Frag";
         actionable = false;
         power = 10;
@@ -47,7 +48,6 @@ public class PhotonEqualizer : Weapon
 
     public override void AoESequence(float timer)
     {
-        // frag is a simple explosion animation
         if (timer == 0)
         {
 
