@@ -11,7 +11,7 @@ public class ForestTile : Tile
     public override bool gTrav { get { return true; } }
     public override bool wTrav { get { return false; } }
     public override bool trav { get { return true; } }
-    public override int def { get { return 10; } }
+    public override int def { get { return 1; } }
     public override int eva { get { return 10; } }
 
     //=================
