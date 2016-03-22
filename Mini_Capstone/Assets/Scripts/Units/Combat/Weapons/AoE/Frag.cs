@@ -12,7 +12,6 @@ public class Frag : Weapon
     {
         type = WeaponType.Physical;
         AoE = true; // AoE non-directional (false by default; no need to specify)
-        //directional = false;
         name = "Frag";
         actionable = false;
         power = 10;

@@ -53,7 +53,7 @@ public class CombatSequence : MonoBehaviour
     //====================
     // Real-time Combat:
     //====================
-    Vector3 displacement; // the displacement vector between the units, used for travelling along
+    public Vector3 displacement; // the displacement vector between the units, used for travelling along
 
     // these states control real-time movement.  this is super janky and hopefully we can just get/make animations that contain the movements
     public enum CombatPhase
@@ -95,11 +95,8 @@ public class CombatSequence : MonoBehaviour
 
         distance = attacker.pos.Distance(defender.pos);
 
-        // TODO: Weapon Select Window
         // Attacker selects weapon and presses CONFIRM button, then Defender selects weapon and presses CONFIRM calling InitiateSequence()
         // Note all UI is temporary.  These variables may have to be modified or nuked to accommodate whatever you decide to implement.
-
-        // TODO: GENERATE CONFIRM AND CANCEL BUTTON. CURRENTLY USING TEMP STATES TO HANDLE LOGIC
 
         // crosshair lockon
         lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
@@ -119,7 +116,7 @@ public class CombatSequence : MonoBehaviour
         Display();
     }
 
-    // displays combat information and TODO: generates confirm button that fires InitiateSequence()
+    // displays combat information
     public void Display()
     {
         // display information
@@ -144,7 +141,6 @@ public class CombatSequence : MonoBehaviour
     }
 
     // generates weapon select windows for both units (come up w/ badass chart format)
-    // TODO: case is hardcoded with attacker variable. expand sequence for defender too
     public void WeaponSelect(Unit unit, bool AoE = false)
     {
         // INFO: max of 5 weapons so make the select menu static. if the unit has < 5 weps, the bottom entries of the list will read "---" (see eustrath combat screen)
@@ -179,12 +175,14 @@ public class CombatSequence : MonoBehaviour
             ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].rangeMin + "-" + unit.weapons[i - 1].rangeMax; // RANGE
             ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (unit.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
 
+            // TODO: find simple small icon to represent actionability to save space / more aesthetically pleasing
             if (unit.weapons[i - 1].actionable)
                 ui.transform.GetChild(5).GetComponent<Text>().text = "Yes";
             else
                 ui.transform.GetChild(5).GetComponent<Text>().text = "No";
 
             // BUTTON ENABLING:
+            // TODO: grey out row when setting button inactive
             ui.transform.GetChild(6).gameObject.SetActive(true);
 
             if (!AoE)
@@ -192,7 +190,7 @@ public class CombatSequence : MonoBehaviour
                 //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
                 
                 if ((!unit.weapons[i - 1].actionable && unit.pos != unit.selectPos) ||
-                     (!unit.weapons[i - 1].ContainsRange(distance)))
+                     (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE))
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
                 }
@@ -279,13 +277,13 @@ public class CombatSequence : MonoBehaviour
             int maxStat = 40;
             int minStat = 1;
 
-            float delta = attacker.combatPhysAtk - defender.combatDefense;
+            float delta = unit.combatPhysAtk - other.combatDefense;
 
             // plot X on graph and move along curve depending on attacker physAtk/defender def disparity
-            if (attacker.combatPhysAtk <= maxStat / 2)
+            if (unit.combatPhysAtk <= maxStat / 2)
             {
-                x = defender.combatDefense - (delta); // on left side of grid, low def is closer to higher curve than high atk, so use def as anchor
-                //x = attacker.combatPhysAtk - (delta);  *****use this instead to make lower defense less punishing for infantry*****
+                x = other.combatDefense - (delta); // on left side of grid, low def is closer to higher curve than high atk, so use def as anchor
+                //x = unit.combatPhysAtk - (delta);  *****use this instead to make lower defense less punishing for infantry*****
                 if (x < minStat)
                     x = minStat;
                 else if (x > maxStat / 2)
@@ -293,7 +291,7 @@ public class CombatSequence : MonoBehaviour
             }
             else
             {
-                x = attacker.combatPhysAtk + (delta); // on right side of grid, high atk is closer to the higher curve than low phys def, so use atk as anchor
+                x = unit.combatPhysAtk + (delta); // on right side of grid, high atk is closer to the higher curve than low phys def, so use atk as anchor
 
                 if (x < maxStat / 2)
                     x = maxStat / 2;
@@ -368,7 +366,6 @@ public class CombatSequence : MonoBehaviour
         // disable UI components
         DisableUI();
 
-        // TODO: action sequence, applying health loss and death checks upon end of movement sequence, breaking if the opponent dies
         preCombat = false;
 
         // calculate battle results before depicting (TEMP: needs to be greatly expanded, especially if we implement multiple attacks)
@@ -380,12 +377,11 @@ public class CombatSequence : MonoBehaviour
         if (retaliation && Random.Range(0, 100) <= defenderHitrate)
             defenderHit = true;
 
-        // TEMP movement stuff
-        phase = CombatPhase.attackerLunge;
+        // TEMP movement stuff       
         timer = 0;
         displacement = (GLOBAL.gridToWorld(defender.pos) - GLOBAL.gridToWorld(attacker.pos)).normalized;
 
-        //Finish();
+        phase = CombatPhase.attackerLunge;
     }
 
     // TODO: IMPLEMENT QUICK HEALTH LOSS SEQUENCE (health bar drain)
@@ -393,23 +389,29 @@ public class CombatSequence : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        // this is super temporary, TODO: implement strike animations (single image w/ movement)
+        // TODO: implement strike animations (single image w/ movement)
         switch (phase)
         {
             case CombatPhase.attackerLunge:
                 {
                     if (timer > 0.25f && timer < 0.5f)
                     {
-                        attacker.transform.position += displacement * Time.deltaTime * 96;
+                        attacker.transform.position += displacement * Time.deltaTime * GLOBAL.attackSpeed;
                     }
                     else if (timer >= 0.5f)
                     {
                         if (attackerHit)
                         {
                             defender.Damage(attackerDamage);
+                            Camera.main.GetComponent<AudioSource>().PlayOneShot(attacker.equipped.sfx);
+                        }
+                        else
+                        {
+                            Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxCancel); // TODO: miss SFX here
                         }
 
-                        Camera.main.GetComponent<AudioSource>().PlayOneShot(attacker.equipped.sfx);
+                        displacement = -displacement;
+
                         phase = CombatPhase.attackerRetreat;
                     }
                     break;
@@ -419,7 +421,7 @@ public class CombatSequence : MonoBehaviour
                 {
                     if (timer < 0.75f)
                     {
-                        attacker.transform.position -= displacement * Time.deltaTime * 96;
+                        attacker.transform.position += displacement * Time.deltaTime * GLOBAL.attackSpeed;
                     }
                     else if (timer < 1.25f)
                     {
@@ -427,7 +429,15 @@ public class CombatSequence : MonoBehaviour
                     }
                     else
                     {
-                        phase = CombatPhase.defenderLunge;
+                        if (defender.CheckDead())
+                        {
+                            Finish();
+                        }
+                        else
+                        {
+                            phase = CombatPhase.defenderLunge;
+                        }
+                        
                     }
 
                     break;
@@ -435,27 +445,27 @@ public class CombatSequence : MonoBehaviour
 
             case CombatPhase.defenderLunge:
                 {
-                    if (defender.CheckDead())
+                    if (timer < 1.5f)
                     {
-                        Finish();
+                        defender.transform.position += displacement * Time.deltaTime * GLOBAL.attackSpeed;
                     }
                     else
                     {
-                        if (timer < 1.5f)
+                        if (defenderHit)
                         {
-                            defender.transform.position -= displacement * Time.deltaTime * 96;
+                            attacker.Damage(defenderDamage);
+                            Camera.main.GetComponent<AudioSource>().PlayOneShot(defender.equipped.sfx);
                         }
                         else
                         {
-                            if (defenderHit)
-                            {
-                                attacker.Damage(defenderDamage);
-                            }
-
-                            Camera.main.GetComponent<AudioSource>().PlayOneShot(defender.equipped.sfx);
-                            phase = CombatPhase.defenderRetreat;
+                            Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxCancel); // TODO: miss SFX here
                         }
+
+                        displacement = -displacement;    
+
+                        phase = CombatPhase.defenderRetreat;
                     }
+                    
 
                     break;
                 }
@@ -464,9 +474,9 @@ public class CombatSequence : MonoBehaviour
                 {
                     if (timer < 1.75f)
                     {
-                        defender.transform.position += displacement * Time.deltaTime * 96;
+                        defender.transform.position += displacement * Time.deltaTime * GLOBAL.attackSpeed;
                     }
-                    else
+                    else if (timer > 2.5f) 
                     {
                         defender.snapToGridPos();
 
@@ -506,7 +516,8 @@ public class CombatSequence : MonoBehaviour
     // called by attack button to instigate an AoE damage sequence
     public void AoEAttack()
     {
-        TileMarker.Instance.Clear();
+        //TileMarker.Instance.Clear();
+        TileMarker.Instance.HideMarkers();
 
         // attacking unit has committed to this AoE weapon for the turn so equip it
         PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Equip(AoEWeapon);
@@ -528,6 +539,37 @@ public class CombatSequence : MonoBehaviour
     {
         // use AoEWeapon and AoERoot to search appropriate tiles for units to damage
         // TODO: store previously marked attack tiles for quick processing (remove red markers but maintain coords)
+        attacker.calcCombatStats();
+
+        foreach(KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.attackTiles)
+        {
+            if (ObjectManager.Instance.ObjectGrid[tile.Key.x, tile.Key.y] != null)
+            {
+                if (ObjectManager.Instance.ObjectGrid[tile.Key.x, tile.Key.y].tag == "Unit")
+                {
+                    calcAoEDamage(ObjectManager.Instance.ObjectGrid[tile.Key.x, tile.Key.y].GetComponent<Unit>());
+                }
+            }
+        }
+
+        // END AoE SEQUENCE:
+        FinishAoE();
+    }
+
+    public void calcAoEDamage(Unit other)
+    {
+        // instigating unit was stored in attacker variable at Unit.AoEBegin()
+        other.calcCombatStats();
+        Calculate(attacker, other, ref attackerDamage, ref attackerHitrate);
+
+        // calculate battle results before depicting (TEMP: needs to be greatly expanded, especially if we implement multiple attacks)
+        attackerHit = false;
+        defenderHit = false;
+
+        if (Random.Range(0, 100) <= attackerHitrate)
+        {
+            other.Damage(attackerDamage);
+        }   
     }
 
     //=========================
@@ -537,6 +579,8 @@ public class CombatSequence : MonoBehaviour
     // cleans up when combat sequence has finished
     public void Finish()
     {
+        GLOBAL.setLock(false);
+
         active = false;
         preCombat = true;
         retaliation = false;
@@ -549,6 +593,15 @@ public class CombatSequence : MonoBehaviour
         {
             PlayerManager.Instance.getCurrentPlayer().selectedObject = null;
         }
+    }
+
+    // cleans up when AoE sequence has finished
+    public void FinishAoE()
+    {
+        GLOBAL.setLock(false);
+
+        AoESequence = false;
+        PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Deactivate();
     }
 
     // cleans up when combat sequence was cancelled before intialization

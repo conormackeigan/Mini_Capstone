@@ -16,21 +16,14 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
 
     public void OnMouseClick()
     {
+        if (GameDirector.Instance.locked)
+        {
+            return;
+        }
+
         UIManager.Instance.DeactivateEnemyPanel();
 
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
-
-        // if there is a selected unit in moving state, gtfo dont process stuff
-        if (currentPlayer.selectedObject != null)
-        {
-            if (currentPlayer.selectedObject.tag == "Unit")
-            {
-                if (currentPlayer.selectedObject.GetComponent<Unit>().state == Unit.UnitState.Moving)
-                {
-                    return;
-                }
-            }
-        }
 
         // If an object is currently selected, check if unit and then move to current tile
         if (currentPlayer.selectedObject != null)
@@ -49,10 +42,10 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
                 // if the tile is marked with an AoE tile, begin AoE selection
                 else if (TileMarker.Instance.AoETiles.ContainsKey(tilePos))
                 {
-                    TileMarker.Instance.Clear(); // clear purple tiles
-                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
-                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoERoot = GLOBAL.worldToGrid(transform.position);
-                    UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
+                    //TileMarker.Instance.Clear(); // clear purple tiles
+                    //GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
+                    //GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoERoot = GLOBAL.worldToGrid(transform.position);
+                    //UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
                 }
             }
         }

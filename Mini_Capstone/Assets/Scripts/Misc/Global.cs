@@ -48,6 +48,10 @@ public static class GLOBAL
 
         return false;
     }
+
+    public static int attackSpeed = 128;
+
+    public static float dmgTime = 0.75f; // length of a damage sequence (hp bar drain)
 }
 
 public enum IntConstants : int

@@ -236,5 +236,12 @@ public class TileMarker : Singleton<TileMarker>
         markAttackTiles(u);
     }
 
-
+    // removes all red tiles but does not clear attackTiles list
+    public void HideMarkers()
+    {
+        foreach (KeyValuePair<Vector2i, GameObject> entry in attackTiles)
+        {
+            Destroy(entry.Value);
+        }
+    }
 }
