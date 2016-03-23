@@ -160,6 +160,7 @@
     <Compile Include="Assets\Scripts\Misc\PriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Misc\Singleton.cs" />
     <Compile Include="Assets\Scripts\Misc\UIManager.cs" />
+    <Compile Include="Assets\Scripts\Misc\UnitSelection.cs" />
     <Compile Include="Assets\Scripts\Networking\AddAttackTileRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\DestroyUnitRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\EndGameRPC.cs" />

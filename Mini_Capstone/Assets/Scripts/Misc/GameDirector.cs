@@ -9,6 +9,7 @@ public class GameDirector : Singleton<GameDirector>
     {
         MAINMENU = 0,
         LOBBY,
+        PURCHASE,
         BOARD,
         MENU
     }
@@ -46,14 +47,25 @@ public class GameDirector : Singleton<GameDirector>
         numOfPlayers = selected;
     }
 
-    public void startGame()
+    public void purchaseUnits()
     {
         if (numOfPlayers == 1 || (numOfPlayers == 2 && GameObject.FindGameObjectWithTag("Network").GetComponent<NetworkingMain>().startGame))
         {
             PlayerManager.Instance.setUpNPlayers(numOfPlayers);
+            gameState = GameState.PURCHASE;
+        }
+    }
+
+    public void startGame()
+    {
+        if (numOfPlayers == 1 || (numOfPlayers == 2 && GameObject.FindGameObjectWithTag("Network").GetComponent<NetworkingMain>().startGame))
+        {
+            PlayerManager.Instance.getCurrentPlayer().startBoardWithUnits(UnitSelection.Instance.purchasedUnits);
             gameState = GameState.BOARD;
 
             TerrainLayer.Instance.createMap();
+            UIManager.Instance.animateTurnPanel();
+
         }
 
         //switch audio track

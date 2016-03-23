@@ -15,6 +15,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject waitButton;
     public GameObject AoEButton;
     public GameObject turnPanel;
+    public GameObject purchaseUI;
 
     // Use this for initialization
     void Start () {
@@ -49,14 +50,24 @@ public class UIManager : Singleton<UIManager>
         }
         else if (gameState == GameDirector.GameState.LOBBY)
         {
-
             for (int i = 0; i < lobbyObjects.Length; i++)
             {
                 lobbyObjects[i].SetActive(false);
             }
         }
+        else if (gameState == GameDirector.GameState.PURCHASE)
+        {
+            for (int i = 0; i < lobbyObjects.Length; i++)
+            {
+                lobbyObjects[i].SetActive(false);
+            }
+
+            purchaseUI.SetActive(true);
+        }
         else if (gameState == GameDirector.GameState.BOARD)
         {
+            purchaseUI.SetActive(false);
+
             for (int i = 0; i < lobbyObjects.Length; i++)
             {
                 lobbyObjects[i].SetActive(false);

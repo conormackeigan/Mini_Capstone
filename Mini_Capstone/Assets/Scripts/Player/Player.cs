@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class Player : MonoBehaviour
         selectedObject = null;
 
         //TODO: Set up temp starting units and positions (once units complete)
-        if (id == 1)
+       /* if (id == 1)
         {
             if (network)
             {
@@ -136,6 +137,38 @@ public class Player : MonoBehaviour
                 unitObj.GetComponent<Unit>().playerID = playerID;
                 ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 12));
             }
+        }*/
+    }
+
+    public void startBoardWithUnits(List<GameObject> units)
+    {
+        if(playerID == 1)
+        {
+            if (units.Count < 1) return;
+            units[0].GetComponent<SpriteRenderer>().enabled = true;
+            units[0].GetComponent<Unit>().playerID = playerID;
+            ObjectManager.Instance.addObjectAtPos(units[0], new Vector2i(3, 3));
+
+            if (units.Count < 2) return;
+            units[1].GetComponent<SpriteRenderer>().enabled = true;
+            units[1].GetComponent<Unit>().playerID = playerID;
+            ObjectManager.Instance.addObjectAtPos(units[1], new Vector2i(7, 3));
+
+            if (units.Count < 3) return;
+            units[2].GetComponent<SpriteRenderer>().enabled = true;
+            units[2].GetComponent<Unit>().playerID = playerID;
+            ObjectManager.Instance.addObjectAtPos(units[2], new Vector2i(11, 3));
+
+            if (units.Count < 4) return;
+            units[3].GetComponent<SpriteRenderer>().enabled = true;
+            units[3].GetComponent<Unit>().playerID = playerID;
+            ObjectManager.Instance.addObjectAtPos(units[3], new Vector2i(5, 5));
+
+            if (units.Count < 5) return;
+            units[4].GetComponent<SpriteRenderer>().enabled = true;
+            units[4].GetComponent<Unit>().playerID = playerID;
+            ObjectManager.Instance.addObjectAtPos(units[4], new Vector2i(9, 5));
         }
     }
+
 }

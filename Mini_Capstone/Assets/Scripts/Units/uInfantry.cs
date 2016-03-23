@@ -16,12 +16,13 @@ public class uInfantry : Unit
         //actions.Add("Wait");
         //actions.Add("Attack");
 
-        maxHealth = 10;
+        /*maxHealth = 10;
         health = 10;
         defense = 4;
         physAtk = 5;
         energyAtk = 3;
-        speed = 4;
+        speed = 4;*/
+
         movementRange = 4;
         flying = false;
 
