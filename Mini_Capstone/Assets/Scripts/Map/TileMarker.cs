@@ -200,7 +200,7 @@ public class TileMarker : Singleton<TileMarker>
 
         else // Directional Weapon:
         {
-
+            weapon.markAoEAim(PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().pos);
         }
 
         

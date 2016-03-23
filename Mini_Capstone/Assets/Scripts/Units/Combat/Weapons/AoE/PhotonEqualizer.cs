@@ -6,6 +6,8 @@ using System.Collections.Generic;
 //==================
 // AoE WEAPON:
 //==================
+
+// Infantry AoE Weapon: 1 cell wide, 3 cells long in any direction
 public class PhotonEqualizer : Weapon
 {
     public PhotonEqualizer(Unit u) : base(u)
@@ -13,7 +15,7 @@ public class PhotonEqualizer : Weapon
         type = WeaponType.Energy;
         AoE = true; // AoE non-directional (false by default; no need to specify)
         directional = true;
-        name = "Frag";
+        name = "PhtnEqualzr";
         actionable = false;
         power = 10;
         accuracy = 0.85f;

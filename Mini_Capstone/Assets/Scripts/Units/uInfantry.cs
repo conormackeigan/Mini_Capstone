@@ -20,7 +20,7 @@ public class uInfantry : Unit
         health = 10;
         defense = 4;
         physAtk = 5;
-        energyAtk = 3;
+        energyAtk = 10;
         speed = 4;
         movementRange = 4;
         flying = false;
@@ -40,7 +40,8 @@ public class uInfantry : Unit
         weapons.Add(beamsword);
         Equip(beamsword);      
         Weapon frag = new Frag(this);
-        weapons.Add(frag); 
+        weapons.Add(frag);
+        weapons.Add(new LaserCannon(this));
     }
 
     protected override void Update()

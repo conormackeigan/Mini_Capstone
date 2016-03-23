@@ -36,6 +36,8 @@ public abstract class Weapon
     // AoE Attributes:
     //=======================
     public bool AoE = false; // is this an area of effect weapon?
+
+    // DIRECTIONAL ATTRIBUTES:
     public bool directional = false; // does this AoE have a direction from root node or a radius?
 
     public GameObject AoEanim; // animation for AoE attacks (or regular attacks if implemented)
@@ -67,6 +69,10 @@ public abstract class Weapon
 
     public virtual void markAoEPattern(Vector2i root)
     { // marks attack pattern from a root node        
+    }
+
+    public virtual void markAoEAim(Vector2i root)
+    { // marks all possible attack patterns in purple tiles (ambiguous tiles are red)
     }
 
     public virtual void AoESequence(float timer)

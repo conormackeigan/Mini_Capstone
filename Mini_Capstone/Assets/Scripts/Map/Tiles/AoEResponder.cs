@@ -16,9 +16,14 @@ public class AoEResponder : MonoBehaviour, IPointerClickHandler
 
     public void OnMouseClick()
     {
+        CombatSequence combatSequence = GameObject.Find("CombatSequence").GetComponent<CombatSequence>();
         TileMarker.Instance.Clear(); // clear purple tiles
-        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
-        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoERoot = GLOBAL.worldToGrid(transform.position);
+        
+        combatSequence.AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
+        combatSequence.AoERoot = GLOBAL.worldToGrid(transform.position);
+
+
+
         UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
     }
 

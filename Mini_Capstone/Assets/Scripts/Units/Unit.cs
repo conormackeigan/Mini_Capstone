@@ -214,7 +214,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         //===========================
         else
         {
-            if (TileMarker.Instance.attackTiles.ContainsKey(pos))
+            if (TileMarker.Instance.attackTiles.ContainsKey(pos) && PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().state != UnitState.AoE) 
             {
                 currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
             }
