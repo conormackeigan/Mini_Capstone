@@ -16,13 +16,12 @@ public class uInfantry : Unit
         //actions.Add("Wait");
         //actions.Add("Attack");
 
-        /*maxHealth = 10;
+        maxHealth = 10;
         health = 10;
         defense = 4;
         physAtk = 5;
-        energyAtk = 3;
-        speed = 4;*/
-
+        energyAtk = 10;
+        speed = 4;
         movementRange = 4;
         flying = false;
 
@@ -35,15 +34,14 @@ public class uInfantry : Unit
         weapons = new List<Weapon>();
 
         Weapon rifle = new Rifle(this);
-        //weapons.Add(rifle);
-        //Equip(rifle);
+        weapons.Add(rifle);
+        Equip(rifle);
         Weapon beamsword = new BeamSword(this);
-        //weapons.Add(beamsword);
-        //Equip(beamsword);      
+        weapons.Add(beamsword);
+        Equip(beamsword);      
         Weapon frag = new Frag(this);
         weapons.Add(frag);
-        Equip(frag); 
-
+        weapons.Add(new LaserCannon(this));
     }
 
     protected override void Update()

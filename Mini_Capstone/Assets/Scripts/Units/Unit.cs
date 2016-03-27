@@ -17,6 +17,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         Waiting, // reached new location, waiting for confirmation or cancel
         Combat,
         AoE, // state after pressing AoE button; does not revert until cancel or an AoE attack
+        Damage, // damage state, controls quick flinch movement and drains healthbar in realtime
         Inactive, // greyed out for the turn
         NotTurn // not the unit's turn right now, no actions available
     }
@@ -43,6 +44,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public int health;
     public bool flying;
+
+    private int finalDmg; // amount of damage to administer over course of real-time dmg sequence
+    private float timer; // timer for controlling damage sequence (animations would be p nice)
+    private float prevTimer; // for controlling cycles
+    private float interval; // time between hp-- intervals
+    private UnitState prevState; // stores units previous state for reverting post-damage sequence
 
     // natural stats (unit base)
     public int maxHealth;
@@ -132,7 +139,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             {
                 ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
                 gameObject.SetActive(false);
-		//destroyUnit();
+		        //destroyUnit();
                 GLOBAL.setLock(false); // unlock user input
             }
         }
@@ -143,13 +150,18 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             Move();
         }
 
+        else if (state == UnitState.Damage)
+        {
+            DamageSequence();
+        }
+
         // temp: grey out on inactive
         else if (state == UnitState.Inactive)
         {
-            gameObject.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f);
+        //    gameObject.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f);
         }
 
-        // temp: white on inactive->active (and default)
+        // TODO: move this color change to the frame this unit is reactivated
         else
         {
             gameObject.GetComponent<SpriteRenderer>().color = Color.white;
@@ -181,7 +193,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     Unit selected = currentPlayer.selectedObject.GetComponent<Unit>();
 
                     if (selected.state != UnitState.Selected)
+                    {
                         return;
+                    }
 
                     selected.deselectUnit();
 
@@ -200,13 +214,14 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         //===========================
         else
         {
-            if (TileMarker.Instance.attackTiles.ContainsKey(pos))
+            if (TileMarker.Instance.attackTiles.ContainsKey(pos) && PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().state != UnitState.AoE) 
             {
-                UIManager.Instance.activateAttackButton();
                 currentPlayer.selectedObject.GetComponent<Unit>().Attack(this);
             }
             else
+            {
                 UIManager.Instance.ActivateFriendPanel(this);
+            }
         }
     }
 
@@ -229,6 +244,10 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     // makes the unit travel to its destination
     public void TravelToPos(Vector2i destination)
     {
+        // disable UI until destination reached
+        UIManager.Instance.setUnitUI(false);
+        UIManager.Instance.deactivateAoEButton();
+
         path = new List<Vector2i>(); // tile nodes of the path to be travelled
 
         Tile curr = TerrainLayer.Instance.Tiles[destination.x, destination.y]; // destination node
@@ -286,6 +305,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
         TileMarker.Instance.Clear(); //clean up tilemarker in case tiles were marked
 
+        UIManager.Instance.deactivateAoEButton();
         UIManager.Instance.DeactivateFriendPanel();      
         UIManager.Instance.deactivateAttackButton();
         UIManager.Instance.deactivateAoEButton();
@@ -317,25 +337,38 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 if (state == UnitState.Combat)
                     UIManager.Instance.deactivateAttackButton();
                 
-                state = UnitState.Selected;
+                //state = UnitState.Selected;
                 ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
                 GameDirector.Instance.BoardStateChanged(); // update buffs
-                TileMarker.Instance.markTravTiles(this);
+                //TileMarker.Instance.markTravTiles(this);
+                selectUnit();
             }
             else
             { // UnitState.Combat post-move, revert to waiting
                 UIManager.Instance.deactivateAttackButton();
                 state = UnitState.Waiting;
                 GameDirector.Instance.BoardStateChanged(); // update buffs
+                TileMarker.Instance.markAttackTiles(this);
             }
 
-            TileMarker.Instance.markAttackTiles(this);
+        }
+        //==========================================
+        // AoE Reset Cases:
+        //==========================================
+        else if (state == UnitState.AoE)
+        {
+            // just force unit to selected state regardless of phase if in AoE state
+            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().CancelAoE();
+            UIManager.Instance.deactivateAttackButton();
+
+            selectUnit();
         }
     }
 
     // sets unit to inactive
     public void Deactivate()
     {
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(0.4f, 0.4f, 0.4f);
         state = UnitState.Inactive;
         deselectUnit();
     }
@@ -355,6 +388,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 { // reached destination
                     state = UnitState.Waiting;
                     GLOBAL.setLock(false); // inputs are no longer locked
+                    UIManager.Instance.setUnitUI(true); // display UI now that inputs are available
                     ObjectManager.Instance.moveUnitToGridPos(gameObject, prev);
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
@@ -385,6 +419,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     {
         // PRELIMINARY ATTACK CALCULATIONS (PRE-CONFIRM)
         TileMarker.Instance.Clear();
+        UIManager.Instance.deactivateAoEButton();
 
         state = UnitState.Combat;
 
@@ -421,14 +456,101 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         combatEvasion = effectiveSpeed + TerrainLayer.Instance.Tiles[pos.x, pos.y].eva; // apply terrain bonus/debuff to eva
     }
 
-    // deals damage to this unit and returns whether or not it died
+    // begins damage sequence
     public void Damage(int dmg)
     {
-        health -= dmg;
+        GLOBAL.setLock(true);
 
-        if (health <= 0)
+        timer = 0;
+        prevTimer = 0;
+        // TODO: enable mini healthbar under board unit here (or always enabled if not too obstructive)
+
+        if (health - dmg < 0)
+        { // if there is overkill use it to offset final dmg amount
+            finalDmg = dmg + (health - dmg);
+        }
+        else
         {
-            health = 0;
+            finalDmg = dmg;
+        }
+        Debug.Log(finalDmg);
+        // get interval
+        interval = GLOBAL.dmgTime / finalDmg;
+
+        // DAMAGE TEXT:
+        if (finalDmg < 1)
+        {
+            // instantiate "NO DAMAGE" text
+        }
+        else
+        {
+            // instantiate "-finalDmg" text
+        }
+
+        prevState = state; // store current state to revert after sequence
+        state = UnitState.Damage;
+    }
+
+    
+
+    // real-time damage sequence
+    public void DamageSequence()
+    {
+        if (finalDmg > 0)
+        {
+            if (timer == 0)
+            {
+                health--;
+            }
+
+            if (timer - prevTimer >= interval)
+            {
+                prevTimer = timer;
+                prevTimer -= (timer % interval); // round prevTimer to nearest interval multiple
+                health--;
+            }
+
+            // flinch motion
+            if (timer < 0.06f)
+            {
+                if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+                {
+                    transform.position -= GameObject.Find("CombatSequence").GetComponent<CombatSequence>().displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
+                }
+                else
+                {
+                    transform.position += Vector3.left * Time.deltaTime * GLOBAL.attackSpeed * 0.75f;
+                }
+            }
+            else if (timer < 0.12f)
+            {
+                if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+                {
+                    transform.position += GameObject.Find("CombatSequence").GetComponent<CombatSequence>().displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
+                }
+                else
+                {
+                    transform.position += Vector3.right * Time.deltaTime * GLOBAL.attackSpeed * 0.75f;
+                }
+            }
+            // done flinch
+            else
+            {
+                snapToGridPos();
+            }
+        }
+
+        timer += Time.deltaTime;
+
+        if (timer >= GLOBAL.dmgTime)
+        {
+            state = prevState;
+
+            if (!GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+            { // combat sequences have death checks integrated, only check if not combat (and unlock input)
+                CheckDead();
+                GLOBAL.setLock(false);
+            }
         }
     }
 
@@ -437,6 +559,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         if (health <= 0)
         {
             isDead = true;
+            GLOBAL.setLock(true);
+
             return true;
         }
 
@@ -449,12 +573,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     public void AoEBegin()
     {
         state = UnitState.AoE;
+       
+        TileMarker.Instance.Clear(); // clear all markers from selected state
 
-        // clear all markers from selection
-        TileMarker.Instance.Clear();
-
-        // mark AoE attack tiles
-        TileMarker.Instance.markAoETiles(this);
+        // ***new sequence*** menu select for AoE weapon, purple markers to aim, red markers for confirm
+        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(pos);
+        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().attacker = this;
     }
 
     public void createOverlay()

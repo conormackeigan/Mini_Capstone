@@ -16,21 +16,14 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
 
     public void OnMouseClick()
     {
+        if (GameDirector.Instance.locked)
+        {
+            return;
+        }
+
         UIManager.Instance.DeactivateEnemyPanel();
 
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
-
-        // if there is a selected unit in moving state, gtfo dont process stuff
-        if (currentPlayer.selectedObject != null)
-        {
-            if (currentPlayer.selectedObject.tag == "Unit")
-            {
-                if (currentPlayer.selectedObject.GetComponent<Unit>().state == Unit.UnitState.Moving)
-                {
-                    return;
-                }
-            }
-        }
 
         // If an object is currently selected, check if unit and then move to current tile
         if (currentPlayer.selectedObject != null)
@@ -49,11 +42,10 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
                 // if the tile is marked with an AoE tile, begin AoE selection
                 else if (TileMarker.Instance.AoETiles.ContainsKey(tilePos))
                 {
-                    // STORE ATTACK ROOT LOCATION AND OPEN AoE WEAPON SELECT
-                    // AoE weapon select is an aesthetic duplicate of the regular weapon select, but has behaviours specific to AoE sequence
-                    GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(GLOBAL.worldToGrid(transform.position));
-
-                    TileMarker.Instance.Clear(); // clear purple tiles
+                    //TileMarker.Instance.Clear(); // clear purple tiles
+                    //GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeapon.markAoEPattern(GLOBAL.worldToGrid(transform.position));
+                    //GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoERoot = GLOBAL.worldToGrid(transform.position);
+                    //UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
                 }
             }
         }

@@ -6,13 +6,16 @@ using System.Collections.Generic;
 //==================
 // AoE WEAPON:
 //==================
-public class Frag : Weapon
+
+// Infantry AoE Weapon: 1 cell wide, 3 cells long in any direction
+public class PhotonEqualizer : Weapon
 {
-    public Frag(Unit u) : base(u)
+    public PhotonEqualizer(Unit u) : base(u)
     {
-        type = WeaponType.Physical;
+        type = WeaponType.Energy;
         AoE = true; // AoE non-directional (false by default; no need to specify)
-        name = "Frag";
+        directional = true;
+        name = "PhtnEqualzr";
         actionable = false;
         power = 10;
         accuracy = 0.85f;
@@ -47,7 +50,6 @@ public class Frag : Weapon
 
     public override void AoESequence(float timer)
     {
-        // frag is a simple explosion animation
         if (timer == 0)
         {
 

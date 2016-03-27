@@ -16,7 +16,9 @@ public class AnimationDestroyer : MonoBehaviour
 	void Update ()
     {
         if (timer < animTime)
+        {
             timer += Time.deltaTime;
+        }
 
         else // animation expired, destroy and tell combatsequence to deal damage
         {

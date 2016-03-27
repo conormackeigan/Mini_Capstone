@@ -111,6 +111,13 @@ public class UIManager : Singleton<UIManager>
         AoEButton.SetActive(false);
     }
 
+    // disables both attack and wait button regardless of which is active
+    public void deactivateConfirmButton()
+    {
+        attackButton.SetActive(false);
+        waitButton.SetActive(false);
+    }
+
     public void animateTurnPanel()
     {
         turnPanel.SetActive(true);
@@ -169,9 +176,9 @@ public class UIManager : Singleton<UIManager>
             if (p.selectedObject.GetComponent<Unit>().state == Unit.UnitState.AoE)
             {
                 // unit is confirming an AoE attack; tell CombatSequence to call the realtime AoE sequence
-                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEAttack();
+                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEAttack();                
             }
-
+            // Regular Combat:
             else if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
             { // if a combat sequence is active confirm button will initiate the sequence
                 CombatSequence combat = GameObject.Find("CombatSequence").GetComponent<CombatSequence>();
@@ -181,8 +188,8 @@ public class UIManager : Singleton<UIManager>
                     combat.InitiateSequence();
                 }
             }
-
-            else // end turn
+            // End Turn:
+            else
             {
                 p.selectedObject.GetComponent<Unit>().Deactivate();                
                 GameDirector.Instance.BoardStateChanged();
@@ -200,6 +207,8 @@ public class UIManager : Singleton<UIManager>
         //Debug.Assert(PlayerManager.Instance.getCurrentPlayer().selectedObject == null, "No unit selected to perform an AoE attack");
 
         PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().AoEBegin();
+        deactivateAoEButton();
+        deactivateConfirmButton();
     }
 
     public void CancelAction()
