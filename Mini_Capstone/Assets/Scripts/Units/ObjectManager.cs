@@ -31,8 +31,6 @@ public class ObjectManager : Singleton<ObjectManager>
         objectGrid = new GameObject[map.Width, map.Height];
         clearGrid(); // Initialize unit grid
 
-        
-
         PlayerOneUnits = new List<GameObject>();
         PlayerTwoUnits = new List<GameObject>();
         playerUnits = new List<List<GameObject>>();

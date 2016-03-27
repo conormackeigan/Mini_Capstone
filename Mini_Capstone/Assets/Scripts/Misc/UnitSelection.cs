@@ -11,6 +11,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public int currentTotal;
     public string selectedUnit;
+    public Sprite cancelSprite;
 
     public GameObject purchasedTab;
     public GameObject ticketCount;
@@ -30,8 +31,9 @@ public class UnitSelection : Singleton<UnitSelection>
 	// Use this for initialization
 	void Start () {
         purchasedUnits = new List<GameObject>();
-        currentTotal = int.Parse(ticketCount.GetComponent<Text>().text);
+        currentTotal = 500;
 
+        ticketCount.GetComponent<Text>().text = currentTotal.ToString();
     }
 	
 	// Update is called once per frame
@@ -42,6 +44,18 @@ public class UnitSelection : Singleton<UnitSelection>
     public void Deploy()
     {
         GameDirector.Instance.startGame();
+    }
+
+    public void Reset()
+    {
+        foreach (GameObject g in purchasedUnits)
+        {
+            Destroy(g);
+        }
+
+        purchasedUnits = new List<GameObject>();
+        currentTotal = 500;
+        updatePurchasedTab();
     }
 
     public void Purchase()
@@ -309,15 +323,31 @@ public class UnitSelection : Singleton<UnitSelection>
 
         for(int i = 1; i < sprites.Length; i++)
         {
-            if (i-1 < purchasedUnits.Count)
+            if (i - 1 < purchasedUnits.Count)
             {
                 sprites[i].sprite = purchasedUnits[i-1].GetComponent<Unit>().sprite;
+            }
+            else
+            {
+                sprites[i].sprite = cancelSprite;
             }
         }
     }
 
     public void openPurchasedUnit(int i)
     {
+        if(i > purchasedUnits.Count)
+        {
+            return;
+        }
+
+        Transform t = previewPanel.transform;
+        t.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = purchasedUnits[i - 1].GetComponent<Unit>().sprite;
+        t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().health.ToString();
+        t.FindChild("StatAllocation").FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().physAtk.ToString();
+        t.FindChild("StatAllocation").FindChild("DefenceStat").FindChild("DefenceStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().defense.ToString();
+        t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
+
         previewPanel.SetActive(true);
         purchasePanel.SetActive(false);
         selectionPanel.SetActive(false);

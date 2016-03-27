@@ -56,6 +56,12 @@ public class GameDirector : Singleton<GameDirector>
         }
     }
 
+    public void cancelPurchase()
+    {
+        PlayerManager.Instance.endGame();
+        gameState = GameState.MAINMENU;
+    }
+
     public void startGame()
     {
         if (numOfPlayers == 1 || (numOfPlayers == 2 && GameObject.FindGameObjectWithTag("Network").GetComponent<NetworkingMain>().startGame))
