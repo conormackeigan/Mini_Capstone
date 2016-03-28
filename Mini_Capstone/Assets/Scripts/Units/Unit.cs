@@ -173,6 +173,11 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     }
 
+    public virtual void Init()
+    {
+
+    }
+
     public virtual void OnMouseClick()
     {
         if (GLOBAL.locked() || state == UnitState.Inactive)

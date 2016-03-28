@@ -147,26 +147,31 @@ public class Player : MonoBehaviour
             if (units.Count < 1) return;
             units[0].GetComponent<SpriteRenderer>().enabled = true;
             units[0].GetComponent<Unit>().playerID = playerID;
+            units[0].GetComponent<Unit>().Init();
             ObjectManager.Instance.addObjectAtPos(units[0], new Vector2i(3, 3));
 
             if (units.Count < 2) return;
             units[1].GetComponent<SpriteRenderer>().enabled = true;
             units[1].GetComponent<Unit>().playerID = playerID;
+            units[1].GetComponent<Unit>().Init();
             ObjectManager.Instance.addObjectAtPos(units[1], new Vector2i(7, 3));
 
             if (units.Count < 3) return;
             units[2].GetComponent<SpriteRenderer>().enabled = true;
             units[2].GetComponent<Unit>().playerID = playerID;
+            units[2].GetComponent<Unit>().Init();
             ObjectManager.Instance.addObjectAtPos(units[2], new Vector2i(11, 3));
 
             if (units.Count < 4) return;
             units[3].GetComponent<SpriteRenderer>().enabled = true;
             units[3].GetComponent<Unit>().playerID = playerID;
+            units[3].GetComponent<Unit>().Init();
             ObjectManager.Instance.addObjectAtPos(units[3], new Vector2i(5, 5));
 
             if (units.Count < 5) return;
             units[4].GetComponent<SpriteRenderer>().enabled = true;
             units[4].GetComponent<Unit>().playerID = playerID;
+            units[4].GetComponent<Unit>().Init();
             ObjectManager.Instance.addObjectAtPos(units[4], new Vector2i(9, 5));
         }
     }

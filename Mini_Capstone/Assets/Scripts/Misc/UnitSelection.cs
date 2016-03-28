@@ -10,6 +10,8 @@ public class UnitSelection : Singleton<UnitSelection>
     int EXO_BASE_COST = 250;
 
     public int currentTotal;
+    public int unitTotal;
+    public List<string> weaponsSelected;
     public string selectedUnit;
     public Sprite cancelSprite;
 
@@ -100,6 +102,8 @@ public class UnitSelection : Singleton<UnitSelection>
 
         selectionPanel.SetActive(false);
         purchasePanel.SetActive(true);
+
+        unitTotal = 0;
 
         selectedUnit = "Infantry";
 
@@ -245,6 +249,40 @@ public class UnitSelection : Singleton<UnitSelection>
 
     }
 
+    public void weaponSelected(GameObject attackInfo)
+    {
+        Transform t = attackInfo.transform;
+        GameObject highlight = t.FindChild("SelectedHighLight").gameObject;
+
+        if (weaponsSelected.Count >= 3 && !highlight.activeSelf)
+        {
+            return;
+        }
+
+        highlight.SetActive(!highlight.activeSelf);
+
+        int cost = int.Parse(t.FindChild("Cost").FindChild("Text").GetComponent<Text>().text);
+
+        if (highlight.activeSelf)
+        {
+            unitTotal -= cost;
+        }
+        else
+        {
+            unitTotal += cost;
+        }
+
+        string weapon = t.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text;
+        if (highlight.activeSelf)
+        {
+            weaponsSelected.Add(weapon);
+        }
+        else
+        {
+            weaponsSelected.Remove(weapon);
+        }
+    }
+
     public void purchaseInfantry()
     {
         // TODO: Provide feedback for fail
@@ -266,7 +304,7 @@ public class UnitSelection : Singleton<UnitSelection>
         script.energyAtk = attack;
         script.speed = speed;
 
-        decreaseTicketCount(INFANTRY_BASE_COST);
+        decreaseTicketCount(INFANTRY_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
@@ -287,7 +325,7 @@ public class UnitSelection : Singleton<UnitSelection>
         GameObject tank = Instantiate(Resources.Load("UTankRed")) as GameObject;
         purchasedUnits.Add(tank);
 
-        decreaseTicketCount(TANK_BASE_COST);
+        decreaseTicketCount(TANK_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
@@ -308,7 +346,7 @@ public class UnitSelection : Singleton<UnitSelection>
         GameObject infantry = Instantiate(Resources.Load("UTankBlue")) as GameObject;
         purchasedUnits.Add(infantry);
 
-        decreaseTicketCount(EXO_BASE_COST);
+        decreaseTicketCount(EXO_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
@@ -343,10 +381,15 @@ public class UnitSelection : Singleton<UnitSelection>
 
         Transform t = previewPanel.transform;
         t.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = purchasedUnits[i - 1].GetComponent<Unit>().sprite;
+
+        // Stats
         t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().health.ToString();
         t.FindChild("StatAllocation").FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().physAtk.ToString();
         t.FindChild("StatAllocation").FindChild("DefenceStat").FindChild("DefenceStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().defense.ToString();
         t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
+
+        // Weapons (Modify by selecting weapons from units)
+        t.FindChild("WeaponSelect").FindChild("Attack1").FindChild("WeaponName").GetComponentInChildren<Text>().text = weaponsSelected[0];
 
         previewPanel.SetActive(true);
         purchasePanel.SetActive(false);

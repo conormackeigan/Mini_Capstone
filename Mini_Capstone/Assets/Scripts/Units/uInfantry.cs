@@ -27,21 +27,6 @@ public class uInfantry : Unit
 
         specialBattleAttributes = new List<UnitSpecial>();
         specialBoardAttributes = new List<UnitSpecial>();
-
-        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
-
-        // WEAPON(S):
-        weapons = new List<Weapon>();
-
-        Weapon rifle = new Rifle(this);
-        weapons.Add(rifle);
-        Equip(rifle);
-        Weapon beamsword = new BeamSword(this);
-        weapons.Add(beamsword);
-        Equip(beamsword);      
-        Weapon frag = new Frag(this);
-        weapons.Add(frag);
-        weapons.Add(new LaserCannon(this));
     }
 
     protected override void Update()
@@ -57,6 +42,26 @@ public class uInfantry : Unit
     protected override void OnGUI()
     {
         base.OnGUI();
+    }
+
+    public override void Init()
+    {
+        base.Init();
+
+        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+
+        // WEAPON(S):
+        weapons = new List<Weapon>();
+
+        Weapon rifle = new Rifle(this);
+        weapons.Add(rifle);
+        Equip(rifle);
+        Weapon beamsword = new BeamSword(this);
+        weapons.Add(beamsword);
+        Equip(beamsword);
+        Weapon frag = new Frag(this);
+        weapons.Add(frag);
+        weapons.Add(new LaserCannon(this));
     }
 
     public override void OnMouseClick()
