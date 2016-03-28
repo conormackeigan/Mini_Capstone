@@ -16,17 +16,20 @@ public class uInfantry : Unit
         //actions.Add("Wait");
         //actions.Add("Attack");
 
-        maxHealth = 10;
+       /* maxHealth = 10;
         health = 10;
         defense = 4;
         physAtk = 5;
         energyAtk = 10;
         speed = 4;
-        movementRange = 4;
+        movementRange = 4;*/
         flying = false;
 
         specialBattleAttributes = new List<UnitSpecial>();
         specialBoardAttributes = new List<UnitSpecial>();
+
+        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+
     }
 
     protected override void Update()
@@ -47,8 +50,6 @@ public class uInfantry : Unit
     public override void Init()
     {
         base.Init();
-
-        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
 
         // WEAPON(S):
         weapons = new List<Weapon>();

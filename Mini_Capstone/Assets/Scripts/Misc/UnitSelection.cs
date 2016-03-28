@@ -303,6 +303,7 @@ public class UnitSelection : Singleton<UnitSelection>
         script.physAtk = attack;
         script.energyAtk = attack;
         script.speed = speed;
+        script.movementRange = speed;
 
         decreaseTicketCount(INFANTRY_BASE_COST - unitTotal);
         updatePurchasedTab();

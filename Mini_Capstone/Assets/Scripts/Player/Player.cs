@@ -144,6 +144,37 @@ public class Player : MonoBehaviour
     {
         if(playerID == 1)
         {
+            GameObject unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            uInfantry script = unitObj.GetComponent<uInfantry>();
+            script.playerID = 2;
+            script.Init();
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(3, 10));
+
+            unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            script = unitObj.GetComponent<uInfantry>();
+            script.playerID = 2;
+            script.Init();
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(7, 4)); // originally 7,15
+
+            unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            script = unitObj.GetComponent<uInfantry>();
+            script.playerID = 2;
+            script.Init();
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 10));
+
+            unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            script = unitObj.GetComponent<uInfantry>();
+            script.playerID = 2;
+            script.Init();
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(5, 12));
+
+            unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            script = unitObj.GetComponent<uInfantry>();
+            script.playerID = 2;
+            script.Init();
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 12));
+
+
             if (units.Count < 1) return;
             units[0].GetComponent<SpriteRenderer>().enabled = true;
             units[0].GetComponent<Unit>().playerID = playerID;
