@@ -41,6 +41,11 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.Box("Lobby");
             GUI.color = Color.white;
 
+            if (GUILayout.Button("Return To Menu"))
+            {
+                Disconnect();
+            }
+
             GUILayout.Label("Session Name:");
             roomName = GUILayout.TextField(roomName);
 
@@ -86,6 +91,11 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.Box("Lobby");
             GUI.color = Color.white;
 
+            if (GUILayout.Button("Return To Room Select"))
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+
             GUILayout.Space(20);
             GUI.color = Color.yellow;
             GUILayout.Box("Users Joined: ");
@@ -118,6 +128,7 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.EndArea();
 
         }
+
     }
 
     //==============================
@@ -135,6 +146,16 @@ public class NetworkingMain : Photon.PunBehaviour
         connecting = true;
     }
 
+    public void Disconnect()
+    {
+        PhotonNetwork.Disconnect();
+
+        connecting = false;
+        GameDirector.Instance.gameState = GameDirector.GameState.MAINMENU;
+
+    }
+
+
     public override void OnJoinedLobby()
     {
         Debug.Log("OnJoinedLobby");
@@ -145,6 +166,15 @@ public class NetworkingMain : Photon.PunBehaviour
         Debug.Log("OnJoinedRoom");
 
         connecting = false;
+
+        Debug.Log(PhotonNetwork.player.ID);
+    }
+
+    public override void OnLeftRoom()
+    {
+        Debug.Log("OnLeftRoom");
+
+        connecting = true;
 
         Debug.Log(PhotonNetwork.player.ID);
     }

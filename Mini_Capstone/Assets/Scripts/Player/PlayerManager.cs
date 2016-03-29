@@ -61,7 +61,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
     public void nextTurn()
     {
-        // Deselct current unit upon end turn (if required); Reset all inactive units
+        // Deselect current unit upon end turn (if required); Reset all inactive units
         UIManager.Instance.DeactivateEnemyPanel();
         ObjectManager.Instance.ResetToActive(currentPlayersTurn);
 
