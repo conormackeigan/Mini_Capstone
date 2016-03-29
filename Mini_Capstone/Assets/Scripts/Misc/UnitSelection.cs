@@ -293,7 +293,22 @@ public class UnitSelection : Singleton<UnitSelection>
 
         Debug.Log("Infantry Purchased");
 
-        GameObject infantry = Instantiate(Resources.Load("UInfantryRed")) as GameObject;
+        GameObject infantry = null;
+        if (GameDirector.Instance.isMultiPlayer())
+        {
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+            {
+                infantry = PhotonNetwork.Instantiate("UInfantryRed", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+            else
+            {
+                infantry = PhotonNetwork.Instantiate("UInfantryBlue", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+        }
+        else
+        {
+           infantry = Instantiate(Resources.Load("UInfantryRed")) as GameObject;
+        }
         purchasedUnits.Add(infantry);
         uInfantry script = infantry.GetComponent<uInfantry>();
 

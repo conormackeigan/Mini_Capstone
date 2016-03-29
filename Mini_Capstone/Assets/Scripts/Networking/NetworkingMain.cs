@@ -157,7 +157,7 @@ public class NetworkingMain : Photon.PunBehaviour
     public void StartGameRPC()
     {
         startGame = true;
-        GameDirector.Instance.startGame();
+        GameDirector.Instance.purchaseUnits();
     }
 
     

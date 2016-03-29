@@ -42,6 +42,16 @@ public class GameDirector : Singleton<GameDirector>
 
     }
 
+    public bool isSinglePlayer()
+    {
+        return (numOfPlayers == 1);
+    }
+
+    public bool isMultiPlayer()
+    {
+        return (numOfPlayers == 2);
+    }
+
     public void setNumPlayers(int selected)
     {
         numOfPlayers = selected;
