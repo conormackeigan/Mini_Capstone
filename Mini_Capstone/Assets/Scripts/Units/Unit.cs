@@ -141,6 +141,11 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 gameObject.SetActive(false);
 		        //destroyUnit();
                 GLOBAL.setLock(false); // unlock user input
+
+                if (ObjectManager.Instance.isGameOver())
+                {
+                    GameDirector.Instance.endGame();
+                }
             }
         }
 
