@@ -48,33 +48,38 @@ public class Player : MonoBehaviour
         if (GameDirector.Instance.isSinglePlayer())
         {
             GameObject unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            unitObj.GetComponent<SpriteRenderer>().enabled = true;
             uInfantry script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
-            script.Init();
+            script.Init(true);
             ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(3, 10));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
-            script.Init();
+            script.Init(true);
             ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(7, 4));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
-            script.Init();
+            script.Init(true);
             ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 10));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
-            script.Init();
+            script.Init(true);
             ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(5, 12));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
+            unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
-            script.Init();
+            script.Init(true);
             ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 12));
         }
 

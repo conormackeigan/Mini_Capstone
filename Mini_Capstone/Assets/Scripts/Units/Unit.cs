@@ -173,7 +173,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     }
 
-    public virtual void Init()
+    public virtual void Init(bool defaultStats = false)
     {
 
     }

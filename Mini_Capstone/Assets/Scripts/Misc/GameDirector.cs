@@ -93,6 +93,7 @@ public class GameDirector : Singleton<GameDirector>
     {
         if(numOfPlayers == 1)
         {
+            UnitSelection.Instance.Reset();
             PlayerManager.Instance.endGame();
             TerrainLayer.Instance.endGame();
             ObjectManager.Instance.endGame();
