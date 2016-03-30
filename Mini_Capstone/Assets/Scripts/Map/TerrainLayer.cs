@@ -78,7 +78,7 @@ public class TerrainLayer : Singleton<TerrainLayer>
             }
         }
 
-        sr.Close();
+        //sr.Close();
 
     }
 

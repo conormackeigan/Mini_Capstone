@@ -57,6 +57,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         purchasedUnits = new List<GameObject>();
         currentTotal = 500;
+        ticketCount.GetComponent<Text>().text = currentTotal.ToString();
         updatePurchasedTab();
     }
 
@@ -362,7 +363,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         for(int i = 1; i < sprites.Length; i++)
         {
-            if (i - 1 < purchasedUnits.Count)
+            if (i - 1 < purchasedUnits.Count && purchasedUnits.Count != 0)
             {
                 sprites[i].sprite = purchasedUnits[i-1].GetComponent<Unit>().sprite;
             }
@@ -375,7 +376,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public void openPurchasedUnit(int i)
     {
-        if(i > purchasedUnits.Count)
+        if(i > purchasedUnits.Count || purchasedUnits.Count == 0)
         {
             return;
         }

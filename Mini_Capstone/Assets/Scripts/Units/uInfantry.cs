@@ -47,9 +47,20 @@ public class uInfantry : Unit
         base.OnGUI();
     }
 
-    public override void Init()
+    public override void Init(bool defaultStats = false)
     {
-        base.Init();
+        base.Init(defaultStats);
+
+        if(defaultStats)
+        {
+            maxHealth = 10;
+            health = 10;
+            defense = 4;
+            physAtk = 5;
+            energyAtk = 10;
+            speed = 4;
+            movementRange = 4;
+        }
 
         // WEAPON(S):
         weapons = new List<Weapon>();
@@ -63,6 +74,8 @@ public class uInfantry : Unit
         Weapon frag = new Frag(this);
         weapons.Add(frag);
         weapons.Add(new LaserCannon(this));
+
+        UpdateStats();
     }
 
     public override void OnMouseClick()
