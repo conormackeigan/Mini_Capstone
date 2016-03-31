@@ -78,4 +78,12 @@ public abstract class Weapon
     public virtual void AoESequence(float timer)
     { // real-time AoE sequence controlled in CombatSequence.Update()
     }
+
+    public virtual void StartAoEAnim()
+    { // begins a custom AoE animation sequence
+    }
+
+    public virtual void EndAoEAnim()
+    { // animation complete, calls AoE Damage in CombatSequence
+    }
 }

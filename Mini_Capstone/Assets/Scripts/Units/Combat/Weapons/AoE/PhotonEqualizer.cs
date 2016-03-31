@@ -27,25 +27,56 @@ public class PhotonEqualizer : Weapon
         AoEanim = Resources.Load("explosionFrag") as GameObject;
     }
 
+    public override void markAoEAim(Vector2i root)
+    {
+        for (int i = Mathf.Max(unit.pos.x - 3, 0); i < unit.pos.x; i++)
+        { // left
+            TileMarker.Instance.addAoETile(new Vector2i(i, unit.pos.y));
+        }
+        for (int i = Mathf.Min(unit.pos.x + 3, MapScript.Instance.mapWidth); i > unit.pos.x; i--)
+        { // right
+            TileMarker.Instance.addAoETile(new Vector2i(i, unit.pos.y));
+        }
+        for (int i = Mathf.Max(unit.pos.y + 3, 0); i > unit.pos.y; i--)
+        { // up
+            TileMarker.Instance.addAoETile(new Vector2i(unit.pos.y, i));
+        }
+        for (int i = Mathf.Min(unit.pos.y - 3, MapScript.Instance.mapHeight); i < unit.pos.y; i++)
+        { // down
+            TileMarker.Instance.addAoETile(new Vector2i(unit.pos.y, i));
+        }
+    }
+
     public override void markAoEPattern(Vector2i root)
     {
-        TileMarker tileMarker = TileMarker.Instance;
-
-        //grenade is radius 1, so simply mark the 5 tiles manually rather than iterating
-        if (!tileMarker.attackTiles.ContainsKey(root))
-            tileMarker.addAttackTile(root);
-
-        if (!tileMarker.attackTiles.ContainsKey(new Vector2i(root.x - 1, root.y)))
-            tileMarker.addAttackTile(new Vector2i(root.x - 1, root.y));
-
-        if (!tileMarker.attackTiles.ContainsKey(new Vector2i(root.x + 1, root.y)))
-            tileMarker.addAttackTile(new Vector2i(root.x + 1, root.y));
-
-        if (!tileMarker.attackTiles.ContainsKey(new Vector2i(root.x, root.y - 1)))
-            tileMarker.addAttackTile(new Vector2i(root.x, root.y - 1));
-
-        if (!tileMarker.attackTiles.ContainsKey(new Vector2i(root.x, root.y + 1)))
-            tileMarker.addAttackTile(new Vector2i(root.x, root.y + 1));
+        if (root.x < unit.pos.x)
+        { // left
+            for (int i = Mathf.Max(unit.pos.x - 3, 0); i < unit.pos.x; i++)
+            {
+                TileMarker.Instance.addAttackTile(new Vector2i(i, unit.pos.y));
+            }
+        }
+        else if (root.x > unit.pos.x)
+        { // right
+            for (int i = Mathf.Min(unit.pos.x + 3, MapScript.Instance.mapWidth); i > unit.pos.x; i--)
+            {
+                TileMarker.Instance.addAttackTile(new Vector2i(i, unit.pos.y));
+            }
+        }
+        else if (root.y > unit.pos.y)
+        { // up
+            for (int i = Mathf.Max(unit.pos.y + 3, 0); i > unit.pos.y; i--)
+            {
+                TileMarker.Instance.addAttackTile(new Vector2i(unit.pos.x, i));
+            }
+        }
+        else if (root.y < unit.pos.y)
+        { // down
+            for (int i = Mathf.Min(unit.pos.y - 3, MapScript.Instance.mapHeight); i < unit.pos.y; i++)
+            { 
+                TileMarker.Instance.addAttackTile(new Vector2i(unit.pos.x, i));
+            }
+        }
     }
 
     public override void AoESequence(float timer)

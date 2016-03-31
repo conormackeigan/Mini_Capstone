@@ -74,6 +74,7 @@ public class uInfantry : Unit
         Weapon frag = new Frag(this);
         weapons.Add(frag);
         weapons.Add(new LaserCannon(this));
+        weapons.Add(new PhotonEqualizer(this));
 
         UpdateStats();
     }

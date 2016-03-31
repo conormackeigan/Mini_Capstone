@@ -531,7 +531,14 @@ public class CombatSequence : MonoBehaviour
         UIManager.Instance.deactivateConfirmButton();
 
         // play animation, offset by half of tilesize to accommodate center anchor
-        Instantiate(AoEWeapon.AoEanim, GLOBAL.gridToWorld(AoERoot) + new Vector3((int)(IntConstants.TileSize) / 2, (int)(IntConstants.TileSize) / 2), Quaternion.identity);
+        if (AoEWeapon.AoEanim != null)
+        {
+            Instantiate(AoEWeapon.AoEanim, GLOBAL.gridToWorld(AoERoot) + new Vector3((int)(IntConstants.TileSize) / 2, (int)(IntConstants.TileSize) / 2), Quaternion.identity);
+        }
+        else
+        {
+
+        }
     }
 
     // called by AoE animation's AnimationDestroyer on finish
