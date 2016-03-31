@@ -6,5 +6,6 @@ public class DeactivateTurnPanel : MonoBehaviour {
     public void deactivateTurnPanel()
     {
         this.gameObject.SetActive(false);
+        GLOBAL.setLock(false);
     }
 }

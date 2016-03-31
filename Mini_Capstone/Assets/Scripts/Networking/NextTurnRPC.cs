@@ -12,10 +12,14 @@ public class NextTurnRPC : Photon.MonoBehaviour
         if (t == PhotonNetwork.player.ID)
         {
             PlayerManager.Instance.TurnLabel.GetComponent<Text>().text = "Your Turn";
+            PlayerManager.Instance.EndTurnButton.GetComponent<Button>().enabled = true;
+            GLOBAL.setLock(false);
         }
         else
         {
             PlayerManager.Instance.TurnLabel.GetComponent<Text>().text = "Enemy Turn";
+            PlayerManager.Instance.EndTurnButton.GetComponent<Button>().enabled = false;
+            GLOBAL.setLock(true);
         }
 
         UIManager.Instance.animateTurnPanel();
