@@ -140,7 +140,16 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
                 gameObject.SetActive(false);
 		        //destroyUnit();
+                if(GameDirector.Instance.isMultiPlayer())
+                {
+                    gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered, pos.x, pos.y);
+                }
+
                 GLOBAL.setLock(false); // unlock user input
+                if(ObjectManager.Instance.isGameOver())
+                {
+                    GameDirector.Instance.endGame();
+                }
             }
         }
 

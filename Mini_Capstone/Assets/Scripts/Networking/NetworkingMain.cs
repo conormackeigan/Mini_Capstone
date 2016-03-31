@@ -112,6 +112,11 @@ public class NetworkingMain : Photon.PunBehaviour
             // Only the host may start the game
             if (PhotonNetwork.isMasterClient)
             {
+                if(PhotonNetwork.playerList.Length == 1)
+                {
+                    GUI.enabled = false;
+                }
+                
                 if (GUILayout.Button("Start Game"))
                 {
                     if (PhotonNetwork.playerList.Length == 2)
@@ -119,6 +124,9 @@ public class NetworkingMain : Photon.PunBehaviour
                         gameObject.GetPhotonView().RPC("StartGameRPC", PhotonTargets.AllBuffered);
                     }
                 }
+
+                GUI.enabled = true;
+
             }
             else
             {
@@ -148,10 +156,11 @@ public class NetworkingMain : Photon.PunBehaviour
 
     public void Disconnect()
     {
-        PhotonNetwork.Disconnect();
-
         connecting = false;
+        startGame = false;
         GameDirector.Instance.gameState = GameDirector.GameState.MAINMENU;
+
+        PhotonNetwork.Disconnect();
 
     }
 
@@ -177,6 +186,13 @@ public class NetworkingMain : Photon.PunBehaviour
         connecting = true;
 
         Debug.Log(PhotonNetwork.player.ID);
+    }
+
+    public override void OnPhotonPlayerDisconnected(PhotonPlayer player)
+    {
+        Debug.Log("OnPhotonPlayerDisconnected: " + player);
+
+        GameDirector.Instance.endGame();
     }
 
     //=================================

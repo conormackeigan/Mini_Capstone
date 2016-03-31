@@ -91,7 +91,7 @@ public class GameDirector : Singleton<GameDirector>
 
     public void endGame()
     {
-        if(numOfPlayers == 1)
+        if(isSinglePlayer())
         {
             UnitSelection.Instance.Reset();
             PlayerManager.Instance.endGame();
@@ -102,7 +102,7 @@ public class GameDirector : Singleton<GameDirector>
         }
         else
         {
-            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.All);
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered);
         }
     }
 

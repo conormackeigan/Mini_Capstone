@@ -6,6 +6,9 @@ public class DeactivateTurnPanel : MonoBehaviour {
     public void deactivateTurnPanel()
     {
         this.gameObject.SetActive(false);
-        GLOBAL.setLock(false);
+        if(PhotonNetwork.player.ID == PlayerManager.Instance.getCurrentPlayerTurn())
+        {
+            GLOBAL.setLock(false);
+        }
     }
 }
