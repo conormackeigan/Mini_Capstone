@@ -18,6 +18,7 @@ public class NextTurnRPC : Photon.MonoBehaviour
             PlayerManager.Instance.TurnLabel.GetComponent<Text>().text = "Enemy Turn";
         }
 
-        
+        UIManager.Instance.animateTurnPanel();
+
     }
 }

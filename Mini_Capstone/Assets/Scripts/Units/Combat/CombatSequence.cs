@@ -99,7 +99,15 @@ public class CombatSequence : MonoBehaviour
         // Note all UI is temporary.  These variables may have to be modified or nuked to accommodate whatever you decide to implement.
 
         // crosshair lockon
-        lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
+        if (GameDirector.Instance.isSinglePlayer())
+        {
+            lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
+        }
+        else
+        {
+            lockon = PhotonNetwork.Instantiate(crosshairs.name, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity, 0) as GameObject;
+        }
+
         lockon.GetComponent<CrosshairsController>().target = defender.pos;
 
         // check if units are equipping proper weapons (if available)

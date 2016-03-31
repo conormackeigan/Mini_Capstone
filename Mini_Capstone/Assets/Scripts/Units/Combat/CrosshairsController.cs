@@ -88,10 +88,44 @@ public class CrosshairsController : MonoBehaviour
 
     void Finish()
     { //send signal to display pre-combat information
-        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Begin();
-
+        if (PlayerManager.Instance.getCurrentPlayerTurn() == PlayerManager.Instance.getCurrentPlayer().playerID)
+        {
+            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Begin();
+        }
         // reactivate unit UI
         UIManager.Instance.setUnitUI(true);
         UIManager.Instance.activateAttackButton();
+    }
+
+
+    void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+            // We own this player: send the others our data
+//            stream.SendNext(transform.position);
+            stream.SendNext(moving);
+            stream.SendNext(timer);
+            stream.SendNext(prevTimer);
+
+            stream.SendNext(target.x);
+            stream.SendNext(target.y);
+
+
+
+        }
+        else
+        {
+            // Network player, receive data
+//            this.transform.position = (Vector3)stream.ReceiveNext();
+            moving = (bool)stream.ReceiveNext();
+            timer = (float)stream.ReceiveNext();
+            prevTimer = (float)stream.ReceiveNext();
+
+
+            target.x = (int)stream.ReceiveNext();
+            target.y = (int)stream.ReceiveNext();
+
+        }
     }
 }
