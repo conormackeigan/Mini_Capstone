@@ -227,7 +227,7 @@ public class ObjectManager : Singleton<ObjectManager>
 
         for (int i = 0; i < PlayerOneUnits.Count; i++)
         {
-            if (PlayerOneUnits[i].GetComponent<Unit>().isDead == false)
+            if (PlayerOneUnits[i] == null || PlayerOneUnits[i].GetComponent<Unit>().isDead == false)
             {
                 playerTwoWin = false;
             }
@@ -235,7 +235,7 @@ public class ObjectManager : Singleton<ObjectManager>
 
         for (int i = 0; i < PlayerTwoUnits.Count; i++)
         {
-            if (PlayerTwoUnits[i].GetComponent<Unit>().isDead == false)
+            if (PlayerTwoUnits[i] == null || PlayerTwoUnits[i].GetComponent<Unit>().isDead == false)
             {
                 playerOneWin = false;
             }

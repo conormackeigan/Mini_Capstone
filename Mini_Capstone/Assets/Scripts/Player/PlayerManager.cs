@@ -8,9 +8,10 @@ public class PlayerManager : Singleton<PlayerManager>
     public List<GameObject> players;
     public int currentPlayersTurn;
     public GameObject TurnLabel;
+    public GameObject EndTurnButton;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         currentPlayersTurn = 1;
     }
 
@@ -32,7 +33,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
     public void setUpNPlayers(int n)
     {
-        if (GameDirector.Instance.numOfPlayers == 1)
+        if (GameDirector.Instance.isSinglePlayer())
         {
             for (int i = 0; i < 2; i++)
             {
@@ -56,12 +57,19 @@ public class PlayerManager : Singleton<PlayerManager>
 
             string s = (PhotonNetwork.player.ID) + "Player";
             testPlayer.GetComponent<Player>().initPlayer(s, (PhotonNetwork.player.ID), Color.red, true);
+
+            if(PhotonNetwork.player.ID != 1)
+            {
+                TurnLabel.GetComponent<Text>().text = "Enemy Turn";
+                EndTurnButton.GetComponent<Button>().enabled = false;
+                GLOBAL.setLock(true);
+            }
         }
     }
 
     public void nextTurn()
     {
-        // Deselct current unit upon end turn (if required); Reset all inactive units
+        // Deselect current unit upon end turn (if required); Reset all inactive units
         UIManager.Instance.DeactivateEnemyPanel();
         ObjectManager.Instance.ResetToActive(currentPlayersTurn);
 
@@ -77,7 +85,7 @@ public class PlayerManager : Singleton<PlayerManager>
             currentPlayersTurn = 1;
         }
 
-        if (GameDirector.Instance.numOfPlayers == 1)
+        if (GameDirector.Instance.isSinglePlayer())
         {
             if (currentPlayersTurn == 1)
             {

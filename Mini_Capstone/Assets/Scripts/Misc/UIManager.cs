@@ -121,7 +121,7 @@ public class UIManager : Singleton<UIManager>
     public void animateTurnPanel()
     {
         turnPanel.SetActive(true);
-
+        GLOBAL.setLock(true);
     }
 
     public void ActivateFriendPanel(Unit u)

@@ -90,16 +90,38 @@ public class uInfantry : Unit
         if (stream.isWriting)
         {
             // We own this player: send the others our data
+            // Position
             stream.SendNext(transform.position);
             stream.SendNext(pos.x);
             stream.SendNext(pos.y);
+
+            // Player Stats
+            stream.SendNext(maxHealth);
+            stream.SendNext(health);
+            stream.SendNext(defense);
+            stream.SendNext(physAtk);
+            stream.SendNext(energyAtk);
+            stream.SendNext(speed);
+            stream.SendNext(movementRange);
+
         }
         else
         {
             // Network player, receive data
+            // Position
             this.correctPlayerPos = (Vector3)stream.ReceiveNext();
             pos.x = (int)stream.ReceiveNext();
             pos.y = (int)stream.ReceiveNext();
+
+            // Player Stats
+            maxHealth = (int)stream.ReceiveNext();
+            health = (int)stream.ReceiveNext();
+            defense = (int)stream.ReceiveNext();
+            physAtk = (int)stream.ReceiveNext();
+            energyAtk = (int)stream.ReceiveNext();
+            speed = (int)stream.ReceiveNext();
+            movementRange = (int)stream.ReceiveNext();
+
         }
     }
 

@@ -42,6 +42,16 @@ public class GameDirector : Singleton<GameDirector>
 
     }
 
+    public bool isSinglePlayer()
+    {
+        return (numOfPlayers == 1);
+    }
+
+    public bool isMultiPlayer()
+    {
+        return (numOfPlayers == 2);
+    }
+
     public void setNumPlayers(int selected)
     {
         numOfPlayers = selected;
@@ -81,7 +91,7 @@ public class GameDirector : Singleton<GameDirector>
 
     public void endGame()
     {
-        if(numOfPlayers == 1)
+        if(isSinglePlayer())
         {
             UnitSelection.Instance.Reset();
             PlayerManager.Instance.endGame();
@@ -92,7 +102,7 @@ public class GameDirector : Singleton<GameDirector>
         }
         else
         {
-            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.All);
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered);
         }
     }
 

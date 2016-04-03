@@ -20,6 +20,7 @@ public class UnitSelection : Singleton<UnitSelection>
     public GameObject selectionPanel;
     public GameObject purchasePanel;
     public GameObject previewPanel;
+    public GameObject deployButton;
 
     public List<GameObject> purchasedUnits;
 
@@ -30,8 +31,11 @@ public class UnitSelection : Singleton<UnitSelection>
     int defence;
     int speed;
 
-	// Use this for initialization
-	void Start () {
+    public bool playerOneDeploy = false;
+    public bool playerTwoDeploy = false;
+
+    // Use this for initialization
+    void Start () {
         purchasedUnits = new List<GameObject>();
         currentTotal = 500;
 
@@ -40,12 +44,35 @@ public class UnitSelection : Singleton<UnitSelection>
 	
 	// Update is called once per frame
 	void Update () {
-
+        if(GameDirector.Instance.isMultiPlayer())
+        {
+            if (playerOneDeploy && playerTwoDeploy)
+            {
+                GameDirector.Instance.startGame();
+            }
+            else if ((PhotonNetwork.player.ID == 1 && playerOneDeploy) || (PhotonNetwork.player.ID == 2 && playerTwoDeploy))
+            {
+                deployButton.GetComponent<Button>().enabled = false;
+                deployButton.GetComponentInChildren<Text>().text = "Waiting for Other Player";
+            }
+        }
 	}
 
     public void Deploy()
     {
-        GameDirector.Instance.startGame();
+        if(purchasedUnits.Count <= 0)
+        {
+            return;
+        }
+
+        if (GameDirector.Instance.isMultiPlayer())
+        {
+            gameObject.GetPhotonView().RPC("SelectDeploy", PhotonTargets.AllBuffered, PhotonNetwork.player.ID);
+        }
+        else
+        {
+            GameDirector.Instance.startGame();
+        }
     }
 
     public void Reset()
@@ -54,6 +81,11 @@ public class UnitSelection : Singleton<UnitSelection>
         {
             Destroy(g);
         }
+
+        playerOneDeploy = false;
+        playerTwoDeploy = false;
+        deployButton.GetComponent<Button>().enabled = true;
+        deployButton.GetComponentInChildren<Text>().text = "Deploy";
 
         purchasedUnits = new List<GameObject>();
         currentTotal = 500;
@@ -294,7 +326,22 @@ public class UnitSelection : Singleton<UnitSelection>
 
         Debug.Log("Infantry Purchased");
 
-        GameObject infantry = Instantiate(Resources.Load("UInfantryRed")) as GameObject;
+        GameObject infantry = null;
+        if (GameDirector.Instance.isMultiPlayer())
+        {
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+            {
+                infantry = PhotonNetwork.Instantiate("UInfantryRed", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+            else
+            {
+                infantry = PhotonNetwork.Instantiate("UInfantryBlue", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+        }
+        else
+        {
+           infantry = Instantiate(Resources.Load("UInfantryRed")) as GameObject;
+        }
         purchasedUnits.Add(infantry);
         uInfantry script = infantry.GetComponent<uInfantry>();
 
@@ -398,4 +445,5 @@ public class UnitSelection : Singleton<UnitSelection>
         selectionPanel.SetActive(false);
 
     }
+
 }

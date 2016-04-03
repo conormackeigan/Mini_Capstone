@@ -41,6 +41,11 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.Box("Lobby");
             GUI.color = Color.white;
 
+            if (GUILayout.Button("Return To Menu"))
+            {
+                Disconnect();
+            }
+
             GUILayout.Label("Session Name:");
             roomName = GUILayout.TextField(roomName);
 
@@ -86,6 +91,11 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.Box("Lobby");
             GUI.color = Color.white;
 
+            if (GUILayout.Button("Return To Room Select"))
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+
             GUILayout.Space(20);
             GUI.color = Color.yellow;
             GUILayout.Box("Users Joined: ");
@@ -102,6 +112,11 @@ public class NetworkingMain : Photon.PunBehaviour
             // Only the host may start the game
             if (PhotonNetwork.isMasterClient)
             {
+                if(PhotonNetwork.playerList.Length == 1)
+                {
+                    GUI.enabled = false;
+                }
+                
                 if (GUILayout.Button("Start Game"))
                 {
                     if (PhotonNetwork.playerList.Length == 2)
@@ -109,6 +124,9 @@ public class NetworkingMain : Photon.PunBehaviour
                         gameObject.GetPhotonView().RPC("StartGameRPC", PhotonTargets.AllBuffered);
                     }
                 }
+
+                GUI.enabled = true;
+
             }
             else
             {
@@ -118,6 +136,7 @@ public class NetworkingMain : Photon.PunBehaviour
             GUILayout.EndArea();
 
         }
+
     }
 
     //==============================
@@ -135,6 +154,17 @@ public class NetworkingMain : Photon.PunBehaviour
         connecting = true;
     }
 
+    public void Disconnect()
+    {
+        connecting = false;
+        startGame = false;
+        GameDirector.Instance.gameState = GameDirector.GameState.MAINMENU;
+
+        PhotonNetwork.Disconnect();
+
+    }
+
+
     public override void OnJoinedLobby()
     {
         Debug.Log("OnJoinedLobby");
@@ -149,6 +179,22 @@ public class NetworkingMain : Photon.PunBehaviour
         Debug.Log(PhotonNetwork.player.ID);
     }
 
+    public override void OnLeftRoom()
+    {
+        Debug.Log("OnLeftRoom");
+
+        connecting = true;
+
+        Debug.Log(PhotonNetwork.player.ID);
+    }
+
+    public override void OnPhotonPlayerDisconnected(PhotonPlayer player)
+    {
+        Debug.Log("OnPhotonPlayerDisconnected: " + player);
+
+        GameDirector.Instance.endGame();
+    }
+
     //=================================
     // RPC Calls
     //=================================
@@ -157,7 +203,7 @@ public class NetworkingMain : Photon.PunBehaviour
     public void StartGameRPC()
     {
         startGame = true;
-        GameDirector.Instance.startGame();
+        GameDirector.Instance.purchaseUnits();
     }
 
     
