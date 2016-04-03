@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class UnitSpecialCondition
+public  class UnitSpecialCondition
 {
     public Unit unit; // the unit this special belongs to
 
     public bool rval;
 
-    public abstract bool eval();
+    public virtual bool eval() { return false; }
 
     public UnitSpecialCondition(Unit u)
     {

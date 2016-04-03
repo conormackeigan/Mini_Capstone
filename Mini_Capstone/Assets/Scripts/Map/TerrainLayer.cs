@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using System.Text.RegularExpressions;
 
 public class TerrainLayer : Singleton<TerrainLayer>
 {
@@ -11,6 +12,7 @@ public class TerrainLayer : Singleton<TerrainLayer>
     private int tileSize = (int)IntConstants.TileSize;
     private MapScript map;
 
+    public TextAsset textFile;
 
     void Start()
     {
@@ -44,22 +46,26 @@ public class TerrainLayer : Singleton<TerrainLayer>
         Object forest = Resources.Load("Tiles/ForestTile");
 
         // Read map editor file
-        if (!File.Exists("MapFile.txt"))
+        /*if (!File.Exists("Assets/MapFile"))
         {
-            Debug.Log("MapFile.txt does not exist.");
+            Debug.Log("MapFile does not exist.");
             return;
-        }
-        StreamReader sr = File.OpenText("MapFile.txt");
+        }*/
+        string s = textFile.text;
+        Debug.Log(s);
+        string[] splitChars = { "\n", "\r" };
+        string[] linesFromfile = (s.Split(splitChars, System.StringSplitOptions.RemoveEmptyEntries));
         string input;
 
         //instantiate sample map (meadow(weight 1) + untraversable tiles + forest(weight 2))
+        int k = 0;
         for (int i = 0; i < tiles.GetLength(0); i++)
         {
             for (int j = 0; j < tiles.GetLength(1); j++)
             {
 
-                input = sr.ReadLine();
-
+                input = linesFromfile[k];
+                k+=1;
                 if (input == "Forest")
                 {
                     Instantiate(forest, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);

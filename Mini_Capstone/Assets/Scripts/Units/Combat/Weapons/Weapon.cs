@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Weapon
+public class Weapon
 {
     public enum WeaponType
     {

@@ -18,16 +18,16 @@ public abstract class Tile
     //=================
     // Properties:
     //=================
-    public abstract string tileType { get; } // used for Resource.Load()ing sprite  
-    public abstract int weight { get; } // cost to traverse this tile
+    public virtual string tileType { get; set; } // used for Resource.Load()ing sprite  
+    public virtual int weight { get; set; } // cost to traverse this tile
     //public abstract Dictionary<string, int> weightExceptions { get; } // string = unit type, int = cost to traverse this tile for that type of unit
 
-    public abstract bool gTrav { get; } //whether this tile can be traversed by ground
-    public abstract bool wTrav { get; } //whether this tile can be traversed by water
-    public abstract bool trav { get; } //whether this tile can be traversed at all (for air units)
+    public virtual bool gTrav { get; set; } //whether this tile can be traversed by ground
+    public virtual bool wTrav { get; set; } //whether this tile can be traversed by water
+    public virtual bool trav { get; set; } //whether this tile can be traversed at all (for air units)
 
-    public abstract int def { get; } //defense multiplier this tile provides to the unit that occupies it
-    public abstract int eva { get; } //evasion multiplier this tile provides to the unit that occupies it
+    public virtual int def { get; set; } //defense multiplier this tile provides to the unit that occupies it
+    public virtual int eva { get; set; } //evasion multiplier this tile provides to the unit that occupies it
 
     //=================
     // Initialization:

@@ -2,7 +2,7 @@
 using System.Collections;
 
 [System.Serializable]
-public abstract class Buff
+public  class Buff
 {
     [System.Serializable]
     public enum BuffType
@@ -21,5 +21,5 @@ public abstract class Buff
         unit = u;
     }
 
-    public abstract void Destroy(); // all buffs must cleanup their effects on destruction
+    public virtual void Destroy() { } // all buffs must cleanup their effects on destruction
 }
