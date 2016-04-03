@@ -67,7 +67,6 @@ public class CombatSequence : MonoBehaviour
     CombatPhase phase;
     public float timer; // combat phases are controlled by a timer because we lack animations
 
-
     public void Update()
     {
         // regular real-time combat sequence
@@ -102,13 +101,14 @@ public class CombatSequence : MonoBehaviour
         if (GameDirector.Instance.isSinglePlayer())
         {
             lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
+            lockon.GetComponent<CrosshairsController>().target = defender.pos;
         }
         else
         {
             lockon = PhotonNetwork.Instantiate(crosshairs.name, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity, 0) as GameObject;
+            lockon.GetPhotonView().RPC("SetCrossHair", PhotonTargets.AllBuffered, defender.pos.x, defender.pos.y);
         }
 
-        lockon.GetComponent<CrosshairsController>().target = defender.pos;
 
         // check if units are equipping proper weapons (if available)
         CheckWeapons();

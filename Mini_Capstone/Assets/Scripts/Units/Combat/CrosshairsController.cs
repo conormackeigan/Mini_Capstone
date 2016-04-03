@@ -4,7 +4,7 @@ using System.Collections;
 public class CrosshairsController : MonoBehaviour
 {
     public Vector2i target; // coordinates of unit being attacked
-    private Vector3 displacement; // vector from start to target
+    public Vector3 displacement; // vector from start to target
     private float timer; // keeps track of how much time has passed, after 0.8 seconds snap to destination and blink
     private float prevTimer; // keeping track of intervals
     private bool moving = true;
@@ -110,8 +110,6 @@ public class CrosshairsController : MonoBehaviour
 
             stream.SendNext(target.x);
             stream.SendNext(target.y);
-
-
 
         }
         else

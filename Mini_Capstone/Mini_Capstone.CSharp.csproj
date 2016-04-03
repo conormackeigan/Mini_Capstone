@@ -167,6 +167,7 @@
     <Compile Include="Assets\Scripts\Networking\NetworkingMain.cs" />
     <Compile Include="Assets\Scripts\Networking\NextTurnRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\SelectDeployRPC.cs" />
+    <Compile Include="Assets\Scripts\Networking\SetCrossHairRPC.cs" />
     <Compile Include="Assets\Scripts\Networking\StartUnitRPC.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerManager.cs" />
