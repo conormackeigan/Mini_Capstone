@@ -40,6 +40,8 @@ public class Weapon
     // DIRECTIONAL ATTRIBUTES:
     public bool directional = false; // does this AoE have a direction from root node or a radius?
 
+    public Vector2i direction; // direction this weapon faces if it's directional
+
     public GameObject AoEanim; // animation for AoE attacks (or regular attacks if implemented)
 
     public Weapon(Unit u)

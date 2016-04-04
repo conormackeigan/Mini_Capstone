@@ -86,4 +86,9 @@ public class PhotonEqualizer : Weapon
 
         }
     }
+
+    public override void StartAoEAnim()
+    {
+        
+    }
 }

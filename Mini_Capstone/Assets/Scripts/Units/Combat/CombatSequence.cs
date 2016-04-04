@@ -67,6 +67,7 @@ public class CombatSequence : MonoBehaviour
     CombatPhase phase;
     public float timer; // combat phases are controlled by a timer because we lack animations
 
+
     public void Update()
     {
         // regular real-time combat sequence
@@ -98,17 +99,8 @@ public class CombatSequence : MonoBehaviour
         // Note all UI is temporary.  These variables may have to be modified or nuked to accommodate whatever you decide to implement.
 
         // crosshair lockon
-        if (GameDirector.Instance.isSinglePlayer())
-        {
-            lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
-            lockon.GetComponent<CrosshairsController>().target = defender.pos;
-        }
-        else
-        {
-            lockon = PhotonNetwork.Instantiate(crosshairs.name, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity, 0) as GameObject;
-            lockon.GetPhotonView().RPC("SetCrossHair", PhotonTargets.AllBuffered, defender.pos.x, defender.pos.y);
-        }
-
+        lockon = Instantiate(crosshairs, GLOBAL.gridToWorld(attacker.pos), Quaternion.identity) as GameObject;
+        lockon.GetComponent<CrosshairsController>().target = defender.pos;
 
         // check if units are equipping proper weapons (if available)
         CheckWeapons();
@@ -518,7 +510,18 @@ public class CombatSequence : MonoBehaviour
 
         AoEWeapon = PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().weapons[num - 1];
 
-        TileMarker.Instance.markAoETiles(AoEWeapon);
+        // if it's a non-directional weapon with no range, it's static
+        if (AoEWeapon.rangeMax == 0 && !AoEWeapon.directional)
+        {
+            AoEWeapon.markAoEPattern(AoEWeapon.unit.pos);
+
+            UIManager.Instance.activateAttackButton();  // activate confirm button for AoE attacks
+        }
+        // the weapon must be aimed; mark aimable tiles with purple markers
+        else
+        {
+            TileMarker.Instance.markAoETiles(AoEWeapon);
+        }
     }
 
     // called by attack button to instigate an AoE damage sequence
@@ -545,7 +548,7 @@ public class CombatSequence : MonoBehaviour
         }
         else
         {
-
+            AoEWeapon.StartAoEAnim();
         }
     }
 
