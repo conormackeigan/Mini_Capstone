@@ -33,8 +33,17 @@ public class CombatSequence : MonoBehaviour
     public GameObject UI; // parent UI gameobject
     public GameObject attackerUI;
     public GameObject defenderUI;
+    public Image attackerImage;
+    public Text attackerNameText;
+    public Text attackerHealthText;
+    public Text attackerManaText;
     public Text attackerDamageText;
     public Text attackerAccuracyText;
+
+    public Image defenderImage;
+    public Text defenderNameText;
+    public Text defenderHealthText;
+    public Text defenderManaText;
     public Text defenderDamageText;
     public Text defenderAccuracyText;
 
@@ -120,11 +129,19 @@ public class CombatSequence : MonoBehaviour
     public void Display()
     {
         // display information
+        attackerImage.sprite = attacker.sprite;
+        attackerNameText.text = attacker.unitName;
+        attackerHealthText.text = attacker.health.ToString();
+        attackerManaText.text = "100";
         attackerDamageText.text = attackerDamage.ToString();
         attackerAccuracyText.text = attackerHitrate.ToString();
 
         if (retaliation)
         {
+            defenderImage.sprite = defender.sprite;
+            defenderNameText.text = defender.unitName;
+            defenderHealthText.text = defender.health.ToString();
+            defenderManaText.text = "100";
             defenderDamageText.text = defenderDamage.ToString();
             defenderAccuracyText.text = defenderHitrate.ToString();
         }
@@ -143,10 +160,10 @@ public class CombatSequence : MonoBehaviour
     // generates weapon select windows for both units (come up w/ badass chart format)
     public void WeaponSelect(Unit unit, bool AoE = false)
     {
-        // INFO: max of 5 weapons so make the select menu static. if the unit has < 5 weps, the bottom entries of the list will read "---" (see eustrath combat screen)
+        // INFO: max of 3 weapons so make the select menu static. if the unit has < 3 weps, the bottom entries of the list will read "---" (see eustrath combat screen)
 
         // Start new weapon select screen by disabling all wep slots that aren't used
-        for (int i = 1; i <= 5; i++)
+        for (int i = 1; i <= 3; i++)
         {
             GameObject ui;
             if (!AoE)
@@ -170,16 +187,10 @@ public class CombatSequence : MonoBehaviour
                 ChangeSelection(i, unit);
             }
 
-            ui.transform.GetChild(1).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].name; // NAME
+            ui.transform.FindChild("WeaponName").GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].name; // NAME
             ui.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].power.ToString(); // WEAPON POWER
             ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].rangeMin + "-" + unit.weapons[i - 1].rangeMax; // RANGE
             ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (unit.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
-
-            // TODO: find simple small icon to represent actionability to save space / more aesthetically pleasing
-            if (unit.weapons[i - 1].actionable)
-                ui.transform.GetChild(5).GetComponent<Text>().text = "Yes";
-            else
-                ui.transform.GetChild(5).GetComponent<Text>().text = "No";
 
             // BUTTON ENABLING:
             // TODO: grey out row when setting button inactive
@@ -187,12 +198,15 @@ public class CombatSequence : MonoBehaviour
 
             if (!AoE)
             {
+                ui.transform.GetChild(8).gameObject.SetActive(false);
+
                 //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
-                
+
                 if ((!unit.weapons[i - 1].actionable && unit.pos != unit.selectPos) ||
                      (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE))
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                    ui.transform.GetChild(8).gameObject.SetActive(true); // disable button (4th child)
                 }
             }
             else // only add buttons to AoE weapons
@@ -200,6 +214,7 @@ public class CombatSequence : MonoBehaviour
                 if (!unit.weapons[i - 1].AoE)
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                    ui.transform.GetChild(8).gameObject.SetActive(true); // disable button (4th child)
                 }
             }
 
@@ -217,11 +232,11 @@ public class CombatSequence : MonoBehaviour
 
             if (i + 1 == selection)
             {
-                ui.transform.GetChild(ui.transform.childCount - 1).gameObject.SetActive(true);
+                ui.transform.GetChild(ui.transform.childCount - 2).gameObject.SetActive(true);
             }
             else
             {
-                ui.transform.GetChild(ui.transform.childCount - 1).gameObject.SetActive(false);
+                ui.transform.GetChild(ui.transform.childCount - 2).gameObject.SetActive(false);
             }
         }
     }
