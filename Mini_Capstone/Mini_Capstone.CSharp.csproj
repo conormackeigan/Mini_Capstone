@@ -158,6 +158,7 @@
     <Compile Include="Assets\Scripts\Misc\GameDirector.cs" />
     <Compile Include="Assets\Scripts\Misc\Global.cs" />
     <Compile Include="Assets\Scripts\Misc\PriorityQueue.cs" />
+    <Compile Include="Assets\Scripts\Misc\SelectedInfo.cs" />
     <Compile Include="Assets\Scripts\Misc\Singleton.cs" />
     <Compile Include="Assets\Scripts\Misc\UIManager.cs" />
     <Compile Include="Assets\Scripts\Misc\UnitSelection.cs" />

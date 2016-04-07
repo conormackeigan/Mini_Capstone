@@ -7,6 +7,7 @@ public class PlayerManager : Singleton<PlayerManager>
 {
     public List<GameObject> players;
     public int currentPlayersTurn;
+    public GameObject TurnLabelTop;
     public GameObject TurnLabel;
     public GameObject EndTurnButton;
 
@@ -60,6 +61,7 @@ public class PlayerManager : Singleton<PlayerManager>
 
             if(PhotonNetwork.player.ID != 1)
             {
+                TurnLabelTop.GetComponent<Text>().text = "Enemy Turn";
                 TurnLabel.GetComponent<Text>().text = "Enemy Turn";
                 EndTurnButton.GetComponent<Button>().enabled = false;
                 GLOBAL.setLock(true);
@@ -89,10 +91,12 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             if (currentPlayersTurn == 1)
             {
+                TurnLabelTop.GetComponent<Text>().text = "Your Turn";
                 TurnLabel.GetComponent<Text>().text = "Your Turn";
             }
             else
             {
+                TurnLabelTop.GetComponent<Text>().text = "Enemy Turn";
                 TurnLabel.GetComponent<Text>().text = "Enemy Turn";
             }
 

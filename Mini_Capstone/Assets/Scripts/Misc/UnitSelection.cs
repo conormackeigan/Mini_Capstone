@@ -347,7 +347,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         script.maxHealth = health;
         script.health = health;
-        script.defense = health;
+        script.defense = defence;
         script.physAtk = attack;
         script.energyAtk = attack;
         script.speed = speed;
@@ -438,7 +438,7 @@ public class UnitSelection : Singleton<UnitSelection>
         t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
 
         // Weapons (Modify by selecting weapons from units)
-        t.FindChild("WeaponSelect").FindChild("Attack1").FindChild("WeaponName").GetComponentInChildren<Text>().text = weaponsSelected[0];
+        //t.FindChild("WeaponSelect").FindChild("Attack1").FindChild("WeaponName").GetComponentInChildren<Text>().text = weaponsSelected[0];
 
         previewPanel.SetActive(true);
         purchasePanel.SetActive(false);
