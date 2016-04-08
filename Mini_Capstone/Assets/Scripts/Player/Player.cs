@@ -45,6 +45,7 @@ public class Player : MonoBehaviour
     public void startBoardWithUnits(List<GameObject> units)
     {
         // AI controlled units
+        // TODO: create a custom selection of different unit types that are within the ticket maximum (static for current scope)
         if (GameDirector.Instance.isSinglePlayer())
         {
             GameObject unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;

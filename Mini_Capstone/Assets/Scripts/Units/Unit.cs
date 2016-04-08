@@ -189,9 +189,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public virtual void OnMouseClick()
     {
-        if (GLOBAL.locked() || state == UnitState.Inactive)
-            return; // locked out of inputs
-
+        if (state == UnitState.Inactive)
+        {
+            //TODO: display unit's information before returning???
+            return;
+        }
+        
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
 
         //===========================
@@ -628,6 +631,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnMouseClick();
+        if (GLOBAL.locked() == false)
+        {
+            OnMouseClick();
+        }
     }
 }
