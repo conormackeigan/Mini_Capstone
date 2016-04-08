@@ -16,9 +16,9 @@ public class SelectedInfo : MonoBehaviour {
 	
 	}
 
-    public void init()
+    public void init(Unit u)
     {
-        Unit currentUnit = PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>();
+        Unit currentUnit = u;
         infoPanel.transform.FindChild("UnitName").GetComponent<Text>().text = currentUnit.unitName;
         infoPanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = currentUnit.sprite;
 

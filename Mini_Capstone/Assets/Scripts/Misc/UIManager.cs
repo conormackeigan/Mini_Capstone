@@ -135,7 +135,7 @@ public class UIManager : Singleton<UIManager>
         friendlyPanel.transform.Find("HealthSlider").GetComponent<Slider>().maxValue = u.maxHealth;
         friendlyPanel.transform.Find("HealthSlider").GetComponent<Slider>().value = u.health;
 
-        friendlyPanel.GetComponent<SelectedInfo>().init();
+        friendlyPanel.GetComponent<SelectedInfo>().init(u);
 
     }
 
