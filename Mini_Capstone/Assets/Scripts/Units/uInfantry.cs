@@ -12,9 +12,14 @@ public class uInfantry : Unit
 
         unitName = "Infantry";
 
-        //actions.Add("Move");
-        //actions.Add("Wait");
-        //actions.Add("Attack");
+        if (playerID == 2)
+        {
+            AI = new aiInfantry(this);
+        }
+        else
+        {
+            AI = null;
+        }
 
        /* maxHealth = 10;
         health = 10;

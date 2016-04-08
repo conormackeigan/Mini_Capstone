@@ -90,7 +90,7 @@ public class CrosshairsController : MonoBehaviour
     { //send signal to display pre-combat information
         if (PlayerManager.Instance.getCurrentPlayerTurn() == PlayerManager.Instance.getCurrentPlayer().playerID)
         {
-            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Begin();
+            CombatSequence.Instance.Begin();
         }
         // reactivate unit UI
         UIManager.Instance.setUnitUI(true);

@@ -25,6 +25,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     //----------------------------------------------------------------------------------------------------------------------
     // Attributes
     //----------------------------------------------------------------------------------------------------------------------
+    public aiBase AI; // null for player units
 
     public string unitName; // Name of unit
     public string unitPrefabName; // Name of prefab used by unit
@@ -343,9 +344,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // If unit was waiting for confirmation, revert that action
         else if (state == UnitState.Waiting || state == UnitState.Combat)
         {
-            if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+            if (CombatSequence.Instance.active)
             { // cancels combat. button should only be available if combat hasn't been initiated yet (no safeguard checks in place right now)
-                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().Cancel();
+                CombatSequence.Instance.Cancel();
             }
 
             TileMarker.Instance.Clear(); // remarking trav and/or attack tiles so clear current cache
@@ -375,7 +376,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         else if (state == UnitState.AoE)
         {
             // just force unit to selected state regardless of phase if in AoE state
-            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().CancelAoE();
+            CombatSequence.Instance.CancelAoE();
             UIManager.Instance.deactivateAttackButton();
 
             selectUnit();
@@ -530,9 +531,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             // flinch motion
             if (timer < 0.06f)
             {
-                if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+                if (CombatSequence.Instance.active)
                 {
-                    transform.position -= GameObject.Find("CombatSequence").GetComponent<CombatSequence>().displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
+                    transform.position -= CombatSequence.Instance.displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
                 }
                 else
                 {
@@ -541,9 +542,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else if (timer < 0.12f)
             {
-                if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+                if (CombatSequence.Instance.active)
                 {
-                    transform.position += GameObject.Find("CombatSequence").GetComponent<CombatSequence>().displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
+                    transform.position += CombatSequence.Instance.displacement * Time.deltaTime * GLOBAL.attackSpeed * 0.5f;
                 }
                 else
                 {
@@ -563,7 +564,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             state = prevState;
 
-            if (!GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+            if (!CombatSequence.Instance.active)
             { // combat sequences have death checks integrated, only check if not combat (and unlock input)
                 CheckDead();
                 GLOBAL.setLock(false);
@@ -594,8 +595,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         TileMarker.Instance.Clear(); // clear all markers from selected state
 
         // ***new sequence*** menu select for AoE weapon, purple markers to aim, red markers for confirm
-        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEWeaponSelect(pos);
-        GameObject.Find("CombatSequence").GetComponent<CombatSequence>().attacker = this;
+        CombatSequence.Instance.AoEWeaponSelect(pos);
+        CombatSequence.Instance.attacker = this;
     }
 
     public void createOverlay()

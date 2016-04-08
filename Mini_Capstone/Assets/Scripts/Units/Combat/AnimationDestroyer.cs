@@ -22,7 +22,7 @@ public class AnimationDestroyer : MonoBehaviour
 
         else // animation expired, destroy and tell combatsequence to deal damage
         {
-            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEDamage();
+            CombatSequence.Instance.AoEDamage();
             Destroy(gameObject);
         }
 	}

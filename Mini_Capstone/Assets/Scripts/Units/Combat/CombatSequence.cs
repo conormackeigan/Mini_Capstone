@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 // handles combat sequences after units' combat stats have been calculated
-public class CombatSequence : MonoBehaviour
+public class CombatSequence : Singleton<CombatSequence>
 {
     public bool active = false; // can't call Find on inactive game objects so handle activity manually
     public bool preCombat = true; // precombat phase, set to false once combat is initiated

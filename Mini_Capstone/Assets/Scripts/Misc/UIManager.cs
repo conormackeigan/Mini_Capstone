@@ -178,12 +178,12 @@ public class UIManager : Singleton<UIManager>
             if (p.selectedObject.GetComponent<Unit>().state == Unit.UnitState.AoE)
             {
                 // unit is confirming an AoE attack; tell CombatSequence to call the realtime AoE sequence
-                GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEAttack();                
+                CombatSequence.Instance.AoEAttack();                
             }
             // Regular Combat:
-            else if (GameObject.Find("CombatSequence").GetComponent<CombatSequence>().active)
+            else if (CombatSequence.Instance.active)
             { // if a combat sequence is active confirm button will initiate the sequence
-                CombatSequence combat = GameObject.Find("CombatSequence").GetComponent<CombatSequence>();
+                CombatSequence combat = CombatSequence.Instance;
                 if (combat.preCombat)
                 {
                     combat.preCombat = false;

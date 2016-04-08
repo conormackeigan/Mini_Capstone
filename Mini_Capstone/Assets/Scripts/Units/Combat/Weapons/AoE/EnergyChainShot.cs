@@ -36,7 +36,7 @@ public class EnergyChainShot : MonoBehaviour
         if (pos.Distance(unit.pos) == max)
         {
             // last shot, administer damage (TODO: only administer once regardless of how many max distance tiles there are)
-            GameObject.Find("CombatSequence").GetComponent<CombatSequence>().AoEDamage();           
+            CombatSequence.Instance.AoEDamage();           
         }
 
         Destroy(gameObject);
