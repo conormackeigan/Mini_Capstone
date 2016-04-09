@@ -14,6 +14,9 @@ public class UnitSelection : Singleton<UnitSelection>
     public List<string> weaponsSelected;
     public string selectedUnit;
     public Sprite cancelSprite;
+    public Sprite energy;
+    public Sprite bullet;
+    public Text unitCostText;
 
     public GameObject purchasedTab;
     public GameObject ticketCount;
@@ -21,6 +24,7 @@ public class UnitSelection : Singleton<UnitSelection>
     public GameObject purchasePanel;
     public GameObject previewPanel;
     public GameObject deployButton;
+    public GameObject weaponSelect;
 
     public List<GameObject> purchasedUnits;
 
@@ -58,6 +62,9 @@ public class UnitSelection : Singleton<UnitSelection>
         }
 	}
 
+    //==============================
+    // Menu Functions
+    //==============================
     public void Deploy()
     {
         if(purchasedUnits.Count <= 0)
@@ -151,7 +158,19 @@ public class UnitSelection : Singleton<UnitSelection>
         updateDefence(0);
         updateSpeed(0);
 
+        if (!weaponsSelected.Contains("Rifle"))
+        {
+            weaponsSelected.Add("Rifle");
+        }
+
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
+        unitCostText.text = (INFANTRY_BASE_COST - unitTotal).ToString();
+
     }
+
+    //==================================
+    // Stat Allocation
+    //==================================
 
     public void increaseStat(string stat)
     {
@@ -282,6 +301,65 @@ public class UnitSelection : Singleton<UnitSelection>
 
     }
 
+    //====================================
+    // Weapon Selection
+    //====================================
+
+    public void updateWeaponMenu(Text name)
+    {
+        string unitName = name.text;
+
+        switch (unitName)
+        {
+            case "Infantry":
+                {
+                    setInfantryWeapons();
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("Unit not found");
+                    break;
+                }
+        }
+
+    }
+
+    void setInfantryWeapons()
+    {
+        // BeamSword
+        Transform Attack1 = weaponSelect.transform.FindChild("Attack1");
+        Attack1.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack1.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Sword";
+        Attack1.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "15";
+        Attack1.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1";
+        Attack1.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "100";
+        Attack1.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "20";
+        Attack1.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Sword"));
+
+        // Rifle (Default)
+        Transform Attack2 = weaponSelect.transform.FindChild("Attack2");
+        Attack2.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = bullet;
+        Attack2.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Rifle";
+        Attack2.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "8";
+        Attack2.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1-3";
+        Attack2.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "100";
+        Attack2.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "0";
+        Attack2.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Rifle"));
+
+
+        // Frag
+        Transform Attack3 = weaponSelect.transform.FindChild("Attack3");
+        Attack3.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = bullet;
+        Attack3.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Frag";
+        Attack3.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "10";
+        Attack3.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0-3";
+        Attack3.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "85";
+        Attack3.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "30";
+        Attack3.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Frag"));
+
+    }
+
     public void weaponSelected(GameObject attackInfo)
     {
         Transform t = attackInfo.transform;
@@ -299,14 +377,16 @@ public class UnitSelection : Singleton<UnitSelection>
         if (highlight.activeSelf)
         {
             unitTotal -= cost;
+            unitCostText.text = (INFANTRY_BASE_COST - unitTotal).ToString();
         }
         else
         {
             unitTotal += cost;
+            unitCostText.text = (INFANTRY_BASE_COST - unitTotal).ToString();
         }
 
         string weapon = t.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text;
-        if (highlight.activeSelf)
+        if (highlight.activeSelf && !weaponsSelected.Contains(weapon))
         {
             weaponsSelected.Add(weapon);
         }
@@ -316,14 +396,57 @@ public class UnitSelection : Singleton<UnitSelection>
         }
     }
 
+    void initWeapon(string s, Unit script)
+    {
+        if(script.weapons == null)
+        {
+            script.weapons = new List<Weapon>();
+        }
+        switch (s)
+        {
+            case "Sword":
+                {
+                    Weapon sword = new BeamSword(script);
+                    script.weapons.Add(sword);
+                    script.Equip(sword);
+                    break;
+                }
+            case "Rifle":
+                {
+                    Weapon rifle = new Rifle(script);
+                    script.weapons.Add(rifle);
+                    script.Equip(rifle);
+                    break;
+                }
+            case "Frag":
+                {
+                    Weapon frag = new Frag(script);
+                    script.weapons.Add(frag);
+                    script.Equip(frag);
+                    break;
+                }
+            default:
+                {
+                    Debug.Log("Unit not found");
+                    break;
+                }
+        }
+    }
+
+    //=====================================
+    // Purchasing
+    //=====================================
+
     public void purchaseInfantry()
     {
         // TODO: Provide feedback for fail
-        if (purchasedUnits.Count >= 5 || currentTotal - INFANTRY_BASE_COST < 0)
+        if (purchasedUnits.Count >= 5 || currentTotal - INFANTRY_BASE_COST - unitTotal < 0)
         {
+            unitCostText.color = Color.red;
             return;
         }
 
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
         Debug.Log("Infantry Purchased");
 
         GameObject infantry = null;
@@ -353,11 +476,19 @@ public class UnitSelection : Singleton<UnitSelection>
         script.speed = speed;
         script.movementRange = speed;
 
+        for(int i = 0; i < weaponsSelected.Count; i++)
+        {
+            initWeapon(weaponsSelected[i], script);
+        }
+        weaponsSelected.Clear();
+
         decreaseTicketCount(INFANTRY_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
         purchasePanel.SetActive(false);
+        purchasePanel.transform.FindChild("StatAllocation").gameObject.SetActive(true);
+        purchasePanel.transform.FindChild("WeaponSelect").gameObject.SetActive(false);
         previewPanel.SetActive(false);
     }
 
@@ -438,7 +569,31 @@ public class UnitSelection : Singleton<UnitSelection>
         t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
 
         // Weapons (Modify by selecting weapons from units)
-        //t.FindChild("WeaponSelect").FindChild("Attack1").FindChild("WeaponName").GetComponentInChildren<Text>().text = weaponsSelected[0];
+        Transform weaponMenu = t.FindChild("WeaponSelect");
+
+        weaponMenu.FindChild("Attack1").gameObject.SetActive(false);
+        weaponMenu.FindChild("Attack2").gameObject.SetActive(false);
+        weaponMenu.FindChild("Attack3").gameObject.SetActive(false);
+
+        List<Weapon> unitWeapons = purchasedUnits[i - 1].GetComponent<Unit>().weapons;
+        for(int j = 0; j < unitWeapons.Count; j++)
+        {
+            string weaponIndex = "Attack" + (j+1);
+            weaponMenu.FindChild(weaponIndex).gameObject.SetActive(true);
+            if (unitWeapons[j].type == Weapon.WeaponType.Physical)
+            {
+                weaponMenu.FindChild(weaponIndex).FindChild("WeaponType").FindChild("Image").GetComponentInChildren<Image>().sprite = bullet;
+            }
+            else
+            {
+                weaponMenu.FindChild(weaponIndex).FindChild("WeaponType").FindChild("Image").GetComponentInChildren<Image>().sprite = energy;
+            }
+            weaponMenu.FindChild(weaponIndex).FindChild("WeaponName").GetComponentInChildren<Text>().text = unitWeapons[j].name;
+            weaponMenu.FindChild(weaponIndex).FindChild("WeaponAttack").GetComponentInChildren<Text>().text = unitWeapons[j].power.ToString();
+            weaponMenu.FindChild(weaponIndex).FindChild("WeaponRange").GetComponentInChildren<Text>().text = unitWeapons[j].rangeMin.ToString() + "-" + unitWeapons[j].rangeMax.ToString();
+            weaponMenu.FindChild(weaponIndex).FindChild("WeaponAccuracy").GetComponentInChildren<Text>().text = unitWeapons[j].accuracy.ToString();
+
+        }
 
         previewPanel.SetActive(true);
         purchasePanel.SetActive(false);

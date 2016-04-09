@@ -12,7 +12,7 @@ public class uInfantry : Unit
 
         unitName = "Infantry";
 
-        if (playerID == 2)
+        if (GameDirector.Instance.isSinglePlayer() && playerID == 2)
         {
             AI = new aiInfantry(this);
         }
@@ -21,20 +21,12 @@ public class uInfantry : Unit
             AI = null;
         }
 
-       /* maxHealth = 10;
-        health = 10;
-        defense = 4;
-        physAtk = 5;
-        energyAtk = 10;
-        speed = 4;
-        movementRange = 4;*/
         flying = false;
 
         specialBattleAttributes = new List<UnitSpecial>();
         specialBoardAttributes = new List<UnitSpecial>();
 
         specialBoardAttributes.Add(new CharismaUnitSpecial(this));
-
     }
 
     protected override void Update()
@@ -56,7 +48,7 @@ public class uInfantry : Unit
     {
         base.Init(defaultStats);
 
-        if(defaultStats)
+        if (defaultStats)
         {
             maxHealth = 10;
             health = 10;
@@ -65,22 +57,23 @@ public class uInfantry : Unit
             energyAtk = 10;
             speed = 4;
             movementRange = 4;
+
+
+            // WEAPON(S):
+            weapons = new List<Weapon>();
+
+            Weapon rifle = new Rifle(this);
+            weapons.Add(rifle);
+            Equip(rifle);
+            Weapon beamsword = new BeamSword(this);
+            weapons.Add(beamsword);
+            Equip(beamsword);
+            Weapon frag = new Frag(this);
+            weapons.Add(frag);
+            //weapons.Add(new LaserCannon(this));
+            //weapons.Add(new PhotonEqualizer(this));
+            //weapons.Add(new EnergyChain(this));
         }
-
-        // WEAPON(S):
-        weapons = new List<Weapon>();
-
-        Weapon rifle = new Rifle(this);
-        weapons.Add(rifle);
-        Equip(rifle);
-        Weapon beamsword = new BeamSword(this);
-        weapons.Add(beamsword);
-        Equip(beamsword);
-        Weapon frag = new Frag(this);
-        weapons.Add(frag);
-        //weapons.Add(new LaserCannon(this));
-        //weapons.Add(new PhotonEqualizer(this));
-        //weapons.Add(new EnergyChain(this));
 
         UpdateStats();
     }
