@@ -26,8 +26,8 @@ public class SelectedInfo : MonoBehaviour {
         infoPanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = currentUnit.sprite;
 
         Transform stats = infoPanel.transform.FindChild("StatAllocation");
-        stats.FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = currentUnit.health.ToString();
-        stats.FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = currentUnit.energyAtk.ToString();
+        stats.FindChild("EnergyStat").FindChild("EnergyStatCount").GetComponent<Text>().text = currentUnit.health.ToString();
+        stats.FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = currentUnit.physAtk.ToString();
         stats.FindChild("DefenceStat").FindChild("DefenceStatCount").GetComponent<Text>().text = currentUnit.defense.ToString();
         stats.FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = currentUnit.speed.ToString();
 

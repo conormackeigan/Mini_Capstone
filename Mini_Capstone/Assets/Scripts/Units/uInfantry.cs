@@ -27,6 +27,9 @@ public class uInfantry : Unit
         specialBoardAttributes = new List<UnitSpecial>();
 
         specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+
+        maxHealth = 10;
+        health = 10;
     }
 
     protected override void Update()
