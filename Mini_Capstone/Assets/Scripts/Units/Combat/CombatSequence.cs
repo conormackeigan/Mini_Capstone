@@ -47,6 +47,9 @@ public class CombatSequence : Singleton<CombatSequence>
     public Text defenderDamageText;
     public Text defenderAccuracyText;
 
+    public Sprite bulletSprite;
+    public Sprite energySprite;
+
     //====================
     // Area of Effect:
     //====================
@@ -187,13 +190,22 @@ public class CombatSequence : Singleton<CombatSequence>
                 ChangeSelection(i, unit);
             }
 
+            if (unit.weapons[i - 1].type == Weapon.WeaponType.Physical)
+            {
+                ui.transform.FindChild("WeaponType").GetChild(0).GetComponent<Image>().sprite = bulletSprite; // TYPE
+            }
+            else
+            {
+                ui.transform.FindChild("WeaponType").GetChild(0).GetComponent<Image>().sprite = energySprite; // TYPE
+            }
+
             ui.transform.FindChild("WeaponName").GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].name; // NAME
             ui.transform.GetChild(2).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].power.ToString(); // WEAPON POWER
             ui.transform.GetChild(3).GetChild(0).GetComponent<Text>().text = unit.weapons[i - 1].rangeMin + "-" + unit.weapons[i - 1].rangeMax; // RANGE
             ui.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = (unit.weapons[i - 1].accuracy * 100).ToString(); // ACCURACY
+            ui.transform.GetChild(5).GetChild(0).GetComponent<Text>().text = (unit.weapons[i - 1].energy).ToString() + " Energy"; // ACCURACY
 
             // BUTTON ENABLING:
-            // TODO: grey out row when setting button inactive
             ui.transform.GetChild(6).gameObject.SetActive(true);
 
             if (!AoE)
@@ -203,7 +215,8 @@ public class CombatSequence : Singleton<CombatSequence>
                 //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
 
                 if ((!unit.weapons[i - 1].actionable && unit.pos != unit.selectPos) ||
-                     (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE))
+                     (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE) ||
+                     (unit.weapons[i - 1].energy < unit.energy))
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
                     ui.transform.GetChild(8).gameObject.SetActive(true); // disable button (4th child)

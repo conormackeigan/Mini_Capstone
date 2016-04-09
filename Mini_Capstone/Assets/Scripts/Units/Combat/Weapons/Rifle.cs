@@ -12,6 +12,7 @@ public class Rifle : Weapon
         name = "Rifle";
         actionable = false; // for testing; real rifle is actionable + range 1-2
         power = 8;
+        energy = 0;
         accuracy = 0.99f;
         rangeMin = 1;
         rangeMax = 3;

@@ -21,6 +21,7 @@ public class EnergyChain : Weapon
         name = "EnrgyChn";
         actionable = false;
         power = 14;
+        energy = 5;
         accuracy = 0.9f;
         rangeMin = 0;
         rangeMax = 0;

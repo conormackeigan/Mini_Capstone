@@ -15,6 +15,7 @@ public class Frag : Weapon
         name = "Frag";
         actionable = false;
         power = 10;
+        energy = 0;
         accuracy = 0.85f;
         rangeMin = 0;
         rangeMax = 3;

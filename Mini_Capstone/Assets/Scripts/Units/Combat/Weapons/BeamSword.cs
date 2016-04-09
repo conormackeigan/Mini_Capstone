@@ -12,6 +12,7 @@ public class BeamSword : Weapon
         name = "Beamsword";
         actionable = true;
         power = 15;
+        energy = 3;
         accuracy = 0.99f;
         rangeMin = 1;
         rangeMax = 1;

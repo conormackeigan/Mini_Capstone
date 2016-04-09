@@ -18,6 +18,7 @@ public class LaserCannon : Weapon
         name = "LsrCannon";
         actionable = false;
         power = 20;
+        energy = 10;
         accuracy = 0.9f;
         rangeMin = 0;
         rangeMax = 0;

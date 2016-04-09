@@ -22,6 +22,7 @@ public class Weapon
     public bool actionable; // can this weapon be used after moving or only at beginning of turn?
 
     public int power; // base damage dealt by this attack
+    public int energy; // base energy required by this attack
     public float accuracy; // base accuracy of this attack (% multiplier)
 
     public int rangeMin; // minimum range of this attack

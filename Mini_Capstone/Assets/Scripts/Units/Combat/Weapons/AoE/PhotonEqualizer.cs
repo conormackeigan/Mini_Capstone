@@ -18,6 +18,7 @@ public class PhotonEqualizer : Weapon
         name = "PhtnEqualzr";
         actionable = false;
         power = 10;
+        energy = 5;
         accuracy = 0.85f;
         rangeMin = 0;
         rangeMax = 3;
