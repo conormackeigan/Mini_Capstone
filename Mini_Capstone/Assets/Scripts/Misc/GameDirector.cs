@@ -11,6 +11,7 @@ public class GameDirector : Singleton<GameDirector>
         LOBBY,
         PURCHASE,
         BOARD,
+        GAMEOVER,
         MENU
     }
 
@@ -98,13 +99,19 @@ public class GameDirector : Singleton<GameDirector>
             TerrainLayer.Instance.endGame();
             ObjectManager.Instance.endGame();
 
-            gameState = GameState.MAINMENU;
+            gameState = GameState.GAMEOVER;
         }
         else
         {
             gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered);
         }
     }
+
+    public void returnToMenu()
+    {
+        gameState = GameState.MAINMENU;
+    }
+
 
     // NOTE : CONFIRM/CANCEL BUTTON LOGIC MOVED TO UIMANAGER (Cleanup Reasons)
     // called when there is a change in the contents of the object grid

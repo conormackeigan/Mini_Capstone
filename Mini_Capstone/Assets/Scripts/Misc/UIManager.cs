@@ -8,6 +8,7 @@ public class UIManager : Singleton<UIManager>
     GameObject[] boardObjets;
     GameObject[] lobbyObjects;
     GameObject[] unitObjects;
+    GameObject[] gameOverObjects;
 
     public GameObject friendlyPanel;
     public GameObject attackButton;
@@ -22,6 +23,8 @@ public class UIManager : Singleton<UIManager>
         boardObjets = GameObject.FindGameObjectsWithTag("BoardUI");
         lobbyObjects = GameObject.FindGameObjectsWithTag("LobbyUI");
         unitObjects = GameObject.FindGameObjectsWithTag("UnitUI");
+        gameOverObjects = GameObject.FindGameObjectsWithTag("GameOverUI");
+
     }
 
     // Update is called once per frame
@@ -46,6 +49,11 @@ public class UIManager : Singleton<UIManager>
                 unitObjects[i].SetActive(false);
             }
 
+            for (int i = 0; i < gameOverObjects.Length; i++)
+            {
+                gameOverObjects[i].SetActive(false);
+            }
+
         }
         else if (gameState == GameDirector.GameState.LOBBY)
         {
@@ -53,12 +61,22 @@ public class UIManager : Singleton<UIManager>
             {
                 lobbyObjects[i].SetActive(false);
             }
+
+            for (int i = 0; i < gameOverObjects.Length; i++)
+            {
+                gameOverObjects[i].SetActive(false);
+            }
         }
         else if (gameState == GameDirector.GameState.PURCHASE)
         {
             for (int i = 0; i < lobbyObjects.Length; i++)
             {
                 lobbyObjects[i].SetActive(false);
+            }
+
+            for (int i = 0; i < gameOverObjects.Length; i++)
+            {
+                gameOverObjects[i].SetActive(false);
             }
 
             purchaseUI.SetActive(true);
@@ -75,6 +93,23 @@ public class UIManager : Singleton<UIManager>
             for (int i = 0; i < boardObjets.Length; i++)
             {
                 boardObjets[i].SetActive(true);
+            }
+        }
+        else if (gameState == GameDirector.GameState.GAMEOVER)
+        {
+            for (int i = 0; i < gameOverObjects.Length; i++)
+            {
+                gameOverObjects[i].SetActive(true);
+            }
+
+            for (int i = 0; i < boardObjets.Length; i++)
+            {
+                boardObjets[i].SetActive(false);
+            }
+
+            for (int i = 0; i < unitObjects.Length; i++)
+            {
+                unitObjects[i].SetActive(false);
             }
         }
 
