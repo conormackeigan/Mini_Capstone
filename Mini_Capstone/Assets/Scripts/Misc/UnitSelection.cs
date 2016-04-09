@@ -14,7 +14,7 @@ public class UnitSelection : Singleton<UnitSelection>
     public List<string> weaponsSelected;
     public string selectedUnit;
     public Sprite cancelSprite;
-    public Sprite energySprite;
+    public Sprite energy;
     public Sprite bullet;
     public Text unitCostText;
 
@@ -30,7 +30,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
     // Stats Panel
     int statPoints;
-    int energy;
+    int health;
     int attack;
     int defence;
     int speed;
@@ -148,12 +148,12 @@ public class UnitSelection : Singleton<UnitSelection>
         selectedUnit = "Infantry";
 
         statPoints = 5;
-        energy = 5;
+        health = 5;
         attack = 5;
         defence = 5;
         speed = 5;
 
-        updateEnergy(0);
+        updateHealth(0);
         updateAttack(0);
         updateDefence(0);
         updateSpeed(0);
@@ -183,7 +183,7 @@ public class UnitSelection : Singleton<UnitSelection>
         {
             case "Health":
                 {
-                    updateEnergy(1);
+                    updateHealth(1);
                     break;
                 }
             case "Attack":
@@ -213,7 +213,7 @@ public class UnitSelection : Singleton<UnitSelection>
         {
             case "Health":
                 {
-                    updateEnergy(-1);
+                    updateHealth(-1);
                     break;
                 }
             case "Attack":
@@ -237,18 +237,18 @@ public class UnitSelection : Singleton<UnitSelection>
 
     }
 
-    void updateEnergy(int i)
+    void updateHealth(int i)
     {
-        if ((i == 1 && energy == 10) || (i == -1 && energy == 1))
+        if ((i == 1 && health == 10) || (i == -1 && health == 1))
         {
             return;
         }
 
-        energy += i;
+        health += i;
         statPoints -= i;
 
-        GameObject.Find("HealthSlider").GetComponent<Slider>().value = (float) energy;
-        GameObject.Find("HealthStatCount").GetComponent<Text>().text = energy.ToString();
+        GameObject.Find("HealthSlider").GetComponent<Slider>().value = (float) health;
+        GameObject.Find("HealthStatCount").GetComponent<Text>().text = health.ToString();
         GameObject.Find("StatPoints").GetComponent<Text>().text = statPoints.ToString();
 
     }
@@ -329,7 +329,7 @@ public class UnitSelection : Singleton<UnitSelection>
     {
         // BeamSword
         Transform Attack1 = weaponSelect.transform.FindChild("Attack1");
-        Attack1.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energySprite;
+        Attack1.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
         Attack1.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Sword";
         Attack1.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "15";
         Attack1.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1";
@@ -468,8 +468,8 @@ public class UnitSelection : Singleton<UnitSelection>
         purchasedUnits.Add(infantry);
         uInfantry script = infantry.GetComponent<uInfantry>();
 
-        script.maxEnergy = energy;
-        script.energy = energy;
+        script.maxHealth = health;
+        script.health = health;
         script.defense = defence;
         script.physAtk = attack;
         script.energyAtk = attack;
@@ -563,7 +563,7 @@ public class UnitSelection : Singleton<UnitSelection>
         t.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = purchasedUnits[i - 1].GetComponent<Unit>().sprite;
 
         // Stats
-        t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().energy.ToString();
+        t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().health.ToString();
         t.FindChild("StatAllocation").FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().physAtk.ToString();
         t.FindChild("StatAllocation").FindChild("DefenceStat").FindChild("DefenceStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().defense.ToString();
         t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
@@ -586,7 +586,7 @@ public class UnitSelection : Singleton<UnitSelection>
             }
             else
             {
-                weaponMenu.FindChild(weaponIndex).FindChild("WeaponType").FindChild("Image").GetComponentInChildren<Image>().sprite = energySprite;
+                weaponMenu.FindChild(weaponIndex).FindChild("WeaponType").FindChild("Image").GetComponentInChildren<Image>().sprite = energy;
             }
             weaponMenu.FindChild(weaponIndex).FindChild("WeaponName").GetComponentInChildren<Text>().text = unitWeapons[j].name;
             weaponMenu.FindChild(weaponIndex).FindChild("WeaponAttack").GetComponentInChildren<Text>().text = unitWeapons[j].power.ToString();

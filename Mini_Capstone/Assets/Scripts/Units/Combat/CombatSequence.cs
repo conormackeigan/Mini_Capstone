@@ -132,7 +132,7 @@ public class CombatSequence : Singleton<CombatSequence>
         attackerImage.sprite = attacker.sprite;
         attackerNameText.text = attacker.unitName;
         attackerHealthText.text = attacker.health.ToString();
-        attackerManaText.text = attacker.energy.ToString();
+        attackerManaText.text = "100";
         attackerDamageText.text = attackerDamage.ToString();
         attackerAccuracyText.text = attackerHitrate.ToString();
 
@@ -141,7 +141,7 @@ public class CombatSequence : Singleton<CombatSequence>
             defenderImage.sprite = defender.sprite;
             defenderNameText.text = defender.unitName;
             defenderHealthText.text = defender.health.ToString();
-            defenderManaText.text = defender.energy.ToString();
+            defenderManaText.text = "100";
             defenderDamageText.text = defenderDamage.ToString();
             defenderAccuracyText.text = defenderHitrate.ToString();
         }

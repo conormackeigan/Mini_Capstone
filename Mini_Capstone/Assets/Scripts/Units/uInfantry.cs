@@ -27,9 +27,6 @@ public class uInfantry : Unit
         specialBoardAttributes = new List<UnitSpecial>();
 
         specialBoardAttributes.Add(new CharismaUnitSpecial(this));
-
-        maxHealth = 10;
-        health = 10;
     }
 
     protected override void Update()
@@ -100,8 +97,6 @@ public class uInfantry : Unit
             // Player Stats
             stream.SendNext(maxHealth);
             stream.SendNext(health);
-            stream.SendNext(maxEnergy);
-            stream.SendNext(energy);
             stream.SendNext(defense);
             stream.SendNext(physAtk);
             stream.SendNext(energyAtk);
@@ -120,8 +115,6 @@ public class uInfantry : Unit
             // Player Stats
             maxHealth = (int)stream.ReceiveNext();
             health = (int)stream.ReceiveNext();
-            maxEnergy = (int)stream.ReceiveNext();
-            energy = (int)stream.ReceiveNext();
             defense = (int)stream.ReceiveNext();
             physAtk = (int)stream.ReceiveNext();
             energyAtk = (int)stream.ReceiveNext();
