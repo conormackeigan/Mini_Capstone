@@ -16,6 +16,9 @@ public class UnitSelection : Singleton<UnitSelection>
     public Sprite cancelSprite;
     public Sprite energy;
     public Sprite bullet;
+    public Sprite infantrySprite;
+    public Sprite tankSprite;
+    public Sprite exoSprite;
     public Text unitCostText;
 
     public GameObject purchasedTab;
@@ -146,6 +149,42 @@ public class UnitSelection : Singleton<UnitSelection>
         unitTotal = 0;
 
         selectedUnit = "Infantry";
+        purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = infantrySprite;
+        statPoints = 5;
+        health = 5;
+        attack = 5;
+        defence = 5;
+        speed = 5;
+
+        updateHealth(0);
+        updateAttack(0);
+        updateDefence(0);
+        updateSpeed(0);
+
+        weaponsSelected.Clear();
+        if (!weaponsSelected.Contains("Rifle"))
+        {
+            weaponsSelected.Add("Rifle");
+        }
+
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
+        unitCostText.text = (INFANTRY_BASE_COST - unitTotal).ToString();
+
+    }
+
+    public void selectTank()
+    {
+        Debug.Log("tank Selected");
+
+        selectionPanel.SetActive(false);
+        purchasePanel.SetActive(true);
+
+        unitTotal = 0;
+
+        selectedUnit = "Tank";
+        purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = tankSprite;
 
         statPoints = 5;
         health = 5;
@@ -158,13 +197,49 @@ public class UnitSelection : Singleton<UnitSelection>
         updateDefence(0);
         updateSpeed(0);
 
-        if (!weaponsSelected.Contains("Rifle"))
+        weaponsSelected.Clear();
+        if (!weaponsSelected.Contains("Laser"))
         {
-            weaponsSelected.Add("Rifle");
+            weaponsSelected.Add("Laser");
         }
 
         unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
-        unitCostText.text = (INFANTRY_BASE_COST - unitTotal).ToString();
+        unitCostText.text = (TANK_BASE_COST - unitTotal).ToString();
+
+    }
+
+    public void selectExo()
+    {
+        Debug.Log("Exo Selected");
+
+        selectionPanel.SetActive(false);
+        purchasePanel.SetActive(true);
+
+        unitTotal = 0;
+
+        selectedUnit = "Exo";
+        purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = exoSprite;
+
+        statPoints = 5;
+        health = 5;
+        attack = 5;
+        defence = 5;
+        speed = 5;
+
+        updateHealth(0);
+        updateAttack(0);
+        updateDefence(0);
+        updateSpeed(0);
+
+        weaponsSelected.Clear();
+        if (!weaponsSelected.Contains("Chain"))
+        {
+            weaponsSelected.Add("Chain");
+        }
+
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
+        unitCostText.text = (EXO_BASE_COST - unitTotal).ToString();
 
     }
 
@@ -316,6 +391,16 @@ public class UnitSelection : Singleton<UnitSelection>
                     setInfantryWeapons();
                     break;
                 }
+            case "Tank":
+                {
+                    setTankWeapons();
+                    break;
+                }
+            case "Exo":
+                {
+                    setExoWeapons();
+                    break;
+                }
             default:
                 {
                     Debug.Log("Unit not found");
@@ -357,6 +442,113 @@ public class UnitSelection : Singleton<UnitSelection>
         Attack3.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "85";
         Attack3.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "30";
         Attack3.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Frag"));
+
+        weaponSelect.transform.FindChild("Attack4").gameObject.SetActive(false);
+        weaponSelect.transform.FindChild("Attack5").gameObject.SetActive(false);
+
+
+    }
+
+    void setTankWeapons()
+    {
+        // Laser Cannon (Default)
+        Transform Attack1 = weaponSelect.transform.FindChild("Attack1");
+        Attack1.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack1.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Laser";
+        Attack1.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "20";
+        Attack1.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0";
+        Attack1.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "90";
+        Attack1.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "0";
+        Attack1.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Laser"));
+
+        // Rifle
+        Transform Attack2 = weaponSelect.transform.FindChild("Attack2");
+        Attack2.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = bullet;
+        Attack2.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Rifle";
+        Attack2.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "8";
+        Attack2.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1-3";
+        Attack2.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "100";
+        Attack2.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "10";
+        Attack2.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Rifle"));
+
+        // Frag
+        Transform Attack3 = weaponSelect.transform.FindChild("Attack3");
+        Attack3.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = bullet;
+        Attack3.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Frag";
+        Attack3.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "10";
+        Attack3.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0-3";
+        Attack3.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "85";
+        Attack3.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "30";
+        Attack3.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Frag"));
+
+        // Energy Chain
+        Transform Attack4 = weaponSelect.transform.FindChild("Attack4");
+        Attack4.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack4.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Chain";
+        Attack4.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "14";
+        Attack4.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0";
+        Attack4.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "90";
+        Attack4.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "50";
+        Attack4.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Chain"));
+
+        weaponSelect.transform.FindChild("Attack4").gameObject.SetActive(true);
+        weaponSelect.transform.FindChild("Attack5").gameObject.SetActive(false);
+    }
+
+    void setExoWeapons()
+    {
+        // Energy Chain (default)
+        Transform Attack1 = weaponSelect.transform.FindChild("Attack1");
+        Attack1.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack1.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Chain";
+        Attack1.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "14";
+        Attack1.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0";
+        Attack1.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "90";
+        Attack1.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "0";
+        Attack1.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Chain"));
+
+        // Rifle
+        Transform Attack2 = weaponSelect.transform.FindChild("Attack2");
+        Attack2.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = bullet;
+        Attack2.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Rifle";
+        Attack2.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "8";
+        Attack2.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1-3";
+        Attack2.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "100";
+        Attack2.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "10";
+        Attack2.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Rifle"));
+
+        // BeamSword
+        Transform Attack3 = weaponSelect.transform.FindChild("Attack3");
+        Attack3.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack3.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Sword";
+        Attack3.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "15";
+        Attack3.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "1";
+        Attack3.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "100";
+        Attack3.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "20";
+        Attack3.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Sword"));
+
+        // Laser Cannon
+        Transform Attack4 = weaponSelect.transform.FindChild("Attack4");
+        Attack4.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack4.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Laser";
+        Attack4.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "20";
+        Attack4.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0";
+        Attack4.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "90";
+        Attack4.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "30";
+        Attack4.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Laser"));
+
+        // Photon Cannon
+        Transform Attack5 = weaponSelect.transform.FindChild("Attack5");
+        Attack5.FindChild("WeaponType").FindChild("Image").GetComponent<Image>().sprite = energy;
+        Attack5.FindChild("WeaponName").FindChild("Name").GetComponent<Text>().text = "Photon";
+        Attack5.FindChild("WeaponAttack").FindChild("Power").GetComponent<Text>().text = "10";
+        Attack5.FindChild("WeaponRange").FindChild("Range").GetComponent<Text>().text = "0-3";
+        Attack5.FindChild("WeaponAccuracy").FindChild("Accuracy").GetComponent<Text>().text = "85";
+        Attack5.FindChild("Cost").FindChild("Text").GetComponent<Text>().text = "30";
+        Attack5.FindChild("SelectedHighLight").gameObject.SetActive(weaponsSelected.Contains("Photon"));
+
+        weaponSelect.transform.FindChild("Attack4").gameObject.SetActive(true);
+        weaponSelect.transform.FindChild("Attack5").gameObject.SetActive(true);
 
     }
 
@@ -423,6 +615,27 @@ public class UnitSelection : Singleton<UnitSelection>
                     Weapon frag = new Frag(script);
                     script.weapons.Add(frag);
                     script.Equip(frag);
+                    break;
+                }
+            case "Laser":
+                {
+                    Weapon laser = new LaserCannon(script);
+                    script.weapons.Add(laser);
+                    script.Equip(laser);
+                    break;
+                }
+            case "Chain":
+                {
+                    Weapon chain = new EnergyChain(script);
+                    script.weapons.Add(chain);
+                    script.Equip(chain);
+                    break;
+                }
+            case "Photon":
+                {
+                    Weapon photon = new PhotonEqualizer(script);
+                    script.weapons.Add(photon);
+                    script.Equip(photon);
                     break;
                 }
             default:
@@ -495,42 +708,110 @@ public class UnitSelection : Singleton<UnitSelection>
     public void purchaseTank()
     {
         // TODO: Provide feedback for fail
-        if (purchasedUnits.Count >= 5 || currentTotal - TANK_BASE_COST < 0)
+        if (purchasedUnits.Count >= 5 || currentTotal - TANK_BASE_COST - unitTotal < 0)
         {
+            unitCostText.color = Color.red;
             return;
         }
 
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
         Debug.Log("Tank Purchased");
 
-        GameObject tank = Instantiate(Resources.Load("UTankRed")) as GameObject;
+        GameObject tank = null;
+        if (GameDirector.Instance.isMultiPlayer())
+        {
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+            {
+                tank = PhotonNetwork.Instantiate("UTankRed", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+            else
+            {
+                tank = PhotonNetwork.Instantiate("UTankBlue", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+        }
+        else
+        {
+            tank = Instantiate(Resources.Load("UTankRed")) as GameObject;
+        }
         purchasedUnits.Add(tank);
+        uTank script = tank.GetComponent<uTank>();
+
+        script.maxHealth = health + 5;
+        script.health = health + 5;
+        script.defense = defence + 10;
+        script.physAtk = attack + 5;
+        script.energyAtk = attack - 5;
+        script.speed = speed - 3;
+        script.movementRange = speed - 3;
+
+        for (int i = 0; i < weaponsSelected.Count; i++)
+        {
+            initWeapon(weaponsSelected[i], script);
+        }
+        weaponsSelected.Clear();
 
         decreaseTicketCount(TANK_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
         purchasePanel.SetActive(false);
+        purchasePanel.transform.FindChild("StatAllocation").gameObject.SetActive(true);
+        purchasePanel.transform.FindChild("WeaponSelect").gameObject.SetActive(false);
         previewPanel.SetActive(false);
     }
 
     public void purchaseExo()
     {
         // TODO: Provide feedback for fail
-        if (purchasedUnits.Count >= 5 || currentTotal - EXO_BASE_COST < 0)
+        if (purchasedUnits.Count >= 5 || currentTotal - EXO_BASE_COST - unitTotal < 0)
         {
+            unitCostText.color = Color.red;
             return;
         }
 
-        Debug.Log("Tank Purchased");
+        unitCostText.color = new Color(0.19f, 0.19f, 0.19f);
+        Debug.Log("Exo Purchased");
 
-        GameObject infantry = Instantiate(Resources.Load("UTankBlue")) as GameObject;
-        purchasedUnits.Add(infantry);
+        GameObject exo = null;
+        if (GameDirector.Instance.isMultiPlayer())
+        {
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+            {
+                exo = PhotonNetwork.Instantiate("UExoRed", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+            else
+            {
+                exo = PhotonNetwork.Instantiate("UExoBlue", Vector3.zero, Quaternion.identity, 0) as GameObject;
+            }
+        }
+        else
+        {
+            exo = Instantiate(Resources.Load("UExoRed")) as GameObject;
+        }
+        purchasedUnits.Add(exo);
+        uExo script = exo.GetComponent<uExo>();
+
+        script.maxHealth = health + 5;
+        script.health = health + 5;
+        script.defense = defence;
+        script.physAtk = attack;
+        script.energyAtk = attack + 10;
+        script.speed = speed + 3;
+        script.movementRange = speed + 3;
+
+        for (int i = 0; i < weaponsSelected.Count; i++)
+        {
+            initWeapon(weaponsSelected[i], script);
+        }
+        weaponsSelected.Clear();
 
         decreaseTicketCount(EXO_BASE_COST - unitTotal);
         updatePurchasedTab();
 
         selectionPanel.SetActive(true);
         purchasePanel.SetActive(false);
+        purchasePanel.transform.FindChild("StatAllocation").gameObject.SetActive(true);
+        purchasePanel.transform.FindChild("WeaponSelect").gameObject.SetActive(false);
         previewPanel.SetActive(false);
 
     }

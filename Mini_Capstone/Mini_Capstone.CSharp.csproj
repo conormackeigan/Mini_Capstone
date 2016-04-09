@@ -205,6 +205,7 @@
     <Compile Include="Assets\Scripts\Units\UnitSpecials\UnitSpecial.cs" />
     <Compile Include="Assets\Scripts\Units\UnitSpecials\UnitSpecialCondition.cs" />
     <Compile Include="Assets\Scripts\Units\uEnemy.cs" />
+    <Compile Include="Assets\Scripts\Units\uExo.cs" />
     <Compile Include="Assets\Scripts\Units\uInfantry.cs" />
     <Compile Include="Assets\Scripts\Units\uPlayer.cs" />
     <Compile Include="Assets\Scripts\Units\uTank.cs" />

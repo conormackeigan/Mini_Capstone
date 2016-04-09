@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class uTank : Unit
+public class uExo : Unit
 {
     private Vector3 correctPlayerPos; // Networking Purposes
 
@@ -10,7 +10,7 @@ public class uTank : Unit
     {
         base.Start();
 
-        unitName = "Tank";
+        unitName = "Exo";
 
         AI = null;
 
