@@ -44,6 +44,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     public Weapon equipped = null; // which of this unit's weapons is currently equipped
 
     public int health;
+    public int energy;
     public bool flying;
 
     private int finalDmg; // amount of damage to administer over course of real-time dmg sequence
@@ -54,6 +55,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     // natural stats (unit base)
     public int maxHealth;
+    public int maxEnergy;
     public int defense;
     public int physAtk;
     public int energyAtk;

@@ -468,7 +468,8 @@ public class UnitSelection : Singleton<UnitSelection>
         purchasedUnits.Add(infantry);
         uInfantry script = infantry.GetComponent<uInfantry>();
 
-        script.energyAtk = energy;
+        script.maxEnergy = energy;
+        script.energy = energy;
         script.defense = defence;
         script.physAtk = attack;
         script.energyAtk = attack;
@@ -562,7 +563,7 @@ public class UnitSelection : Singleton<UnitSelection>
         t.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = purchasedUnits[i - 1].GetComponent<Unit>().sprite;
 
         // Stats
-        t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().health.ToString();
+        t.FindChild("StatAllocation").FindChild("HealthStat").FindChild("HealthStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().energy.ToString();
         t.FindChild("StatAllocation").FindChild("AttackStat").FindChild("AttackStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().physAtk.ToString();
         t.FindChild("StatAllocation").FindChild("DefenceStat").FindChild("DefenceStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().defense.ToString();
         t.FindChild("StatAllocation").FindChild("SpeedStat").FindChild("SpeedStatCount").GetComponent<Text>().text = purchasedUnits[i - 1].GetComponent<Unit>().speed.ToString();
