@@ -10,7 +10,6 @@ public class UIManager : Singleton<UIManager>
     GameObject[] unitObjects;
 
     public GameObject friendlyPanel;
-    public GameObject enemyPanel;
     public GameObject attackButton;
     public GameObject waitButton;
     public GameObject AoEButton;
@@ -143,30 +142,6 @@ public class UIManager : Singleton<UIManager>
     {
         friendlyPanel.GetComponent<SelectedInfo>().close();
         friendlyPanel.SetActive(false);
-    }
-
-    public void ActivateEnemyPanel(Unit u)
-    {
-        enemyPanel.SetActive(true);
-
-        enemyPanel.transform.Find("UnitName").GetComponent<Text>().text = u.unitName;
-        enemyPanel.transform.Find("UnitImage").GetComponent<Image>().sprite = u.sprite;
-        enemyPanel.transform.Find("UnitHealthValue").GetComponent<Text>().text = u.health.ToString();
-        enemyPanel.transform.Find("UnitAttackValue").GetComponent<Text>().text = u.physAtk.ToString();
-        enemyPanel.transform.Find("UnitDefenceValue").GetComponent<Text>().text = u.defense.ToString();
-
-        TileMarker.Instance.Clear();
-        TileMarker.Instance.markTravTiles(u);
-        TileMarker.Instance.markAttackTiles(u);
-    }
-
-    public void DeactivateEnemyPanel()
-    {
-        if(enemyPanel.activeSelf)
-        {
-            enemyPanel.SetActive(false);
-            TileMarker.Instance.Clear();
-        }
     }
 
     public void ConfirmAction()

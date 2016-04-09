@@ -62,8 +62,6 @@ public class ObjectManager : Singleton<ObjectManager>
         playerUnits = new List<List<GameObject>>();
 
         UIManager.Instance.DeactivateFriendPanel();
-        UIManager.Instance.DeactivateEnemyPanel();
-
     }
 
     //initializes grid

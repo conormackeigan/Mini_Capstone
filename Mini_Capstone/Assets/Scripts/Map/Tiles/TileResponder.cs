@@ -21,8 +21,6 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        UIManager.Instance.DeactivateEnemyPanel();
-
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
 
         // If an object is currently selected, check if unit and then move to current tile
