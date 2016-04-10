@@ -256,7 +256,7 @@ public class CombatSequence : Singleton<CombatSequence>
         Calculate(defender, attacker, ref defenderDamage, ref defenderHitrate);
     }
 
-    void Calculate(Unit unit, Unit other, ref int dmg, ref float acc)
+    public void Calculate(Unit unit, Unit other, ref int dmg, ref float acc)
     {
         if (unit == defender && !retaliation)
             return;

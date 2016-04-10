@@ -4,8 +4,8 @@ using System.Collections;
 
 public class Pair<T1, T2>
 {
-    T1 first;
-    T2 second;
+    public T1 first;
+    public T2 second;
 
     public Pair(T1 f, T2 s)
     {

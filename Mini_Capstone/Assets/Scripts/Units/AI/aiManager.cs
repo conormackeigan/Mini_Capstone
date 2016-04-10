@@ -2,19 +2,21 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class aiManager : Singleton<aiManager>
+public class AIManager : Singleton<AIManager>
 {
     public List<Unit> units;
+    private Unit currUnit;
 
-	// Use this for initialization
-	void Start ()
+    // sets AI Manager active (beginning of computer turn)
+    public void startEnemyTurn()
     {
-        units = new List<Unit>();
-	}
-	
+        getUnits();
+        getNext().AI.StartTurn();
+    }
+
     public void getUnits()
     {
-        units.Clear();
+        units = new List<Unit>();
 
         foreach (GameObject go in ObjectManager.Instance.PlayerTwoUnits)
         {
@@ -35,6 +37,34 @@ public class aiManager : Singleton<aiManager>
         else // enemy turn is done
         {
             return null;
+        }
+    }
+
+    public void callAction(Unit u)
+    {
+        currUnit = u;
+
+        Invoke("receiveActionCall", 0.75f);
+    }
+
+    public void receiveActionCall()
+    {
+        currUnit.AI.SelectAction();
+    }
+
+
+    public void callNextUnit()
+    {
+        Invoke("receiveNextUnitCall", 0.75f);
+    }
+
+    public void receiveNextUnitCall()
+    {
+        Unit unit = getNext();
+
+        if (unit != null)
+        {
+            unit.AI.StartTurn();
         }
     }
 }

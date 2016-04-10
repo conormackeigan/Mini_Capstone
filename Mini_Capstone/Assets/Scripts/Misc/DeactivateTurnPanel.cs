@@ -12,8 +12,14 @@ public class DeactivateTurnPanel : MonoBehaviour {
         }
         else if (GameDirector.Instance.isSinglePlayer())
         {
-            GLOBAL.setLock(false);
-
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+            {
+                GLOBAL.setLock(false);
+            }
+            else
+            {
+                AIManager.Instance.startEnemyTurn();
+            }
         }
     }
 }

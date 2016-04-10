@@ -295,7 +295,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         TileMarker.Instance.markAttackTiles(this);
 
         UIManager.Instance.ActivateFriendPanel(this);
-        UIManager.Instance.setUnitUI(true);
+
+        if (playerID == 1)
+        {
+            UIManager.Instance.setUnitUI(true);
+        }
+
         createOverlay();
 
         //if unit has at least one AoE weapon, make the AoE button available
@@ -305,7 +310,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             if (w.AoE)
                 AoE = true;            
         }
-        if (AoE)
+        if (AoE && playerID == 1) 
         {
             UIManager.Instance.activateAoEButton();
         }
@@ -353,7 +358,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             if (state == UnitState.Waiting || pos == selectPos)
             { // revert to selected if cancelling a move or unmoved combat
                 if (state == UnitState.Combat)
+                {
                     UIManager.Instance.deactivateAttackButton();
+                }
                 
                 //state = UnitState.Selected;
                 ObjectManager.Instance.moveUnitToGridPos(PlayerManager.Instance.getCurrentPlayer().selectedObject, selectPos);
@@ -406,7 +413,12 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 { // reached destination
                     state = UnitState.Waiting;
                     GLOBAL.setLock(false); // inputs are no longer locked
-                    UIManager.Instance.setUnitUI(true); // display UI now that inputs are available
+
+                    if (playerID == 1)
+                    {
+                        UIManager.Instance.setUnitUI(true); // display UI now that inputs are 
+                    }
+
                     ObjectManager.Instance.moveUnitToGridPos(gameObject, prev);
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
@@ -491,18 +503,18 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             finalDmg = dmg;
         }
-        Debug.Log(finalDmg);
+
         // get interval
         interval = GLOBAL.dmgTime / finalDmg;
 
         // DAMAGE TEXT:
         if (finalDmg < 1)
         {
-            // instantiate "NO DAMAGE" text
+            // TODO: instantiate "NO DAMAGE" text
         }
         else
         {
-            // instantiate "-finalDmg" text
+            // TODO: instantiate "-finalDmg" text
         }
 
         prevState = state; // store current state to revert after sequence

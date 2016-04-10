@@ -152,6 +152,13 @@ public class UIManager : Singleton<UIManager>
         waitButton.SetActive(false);
     }
 
+    public void deactivateAll()
+    {
+        attackButton.SetActive(false);
+        waitButton.SetActive(false);
+        AoEButton.SetActive(false);
+    }
+
     public void animateTurnPanel()
     {
         turnPanel.SetActive(true);

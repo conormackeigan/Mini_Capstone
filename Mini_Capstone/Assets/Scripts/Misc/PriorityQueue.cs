@@ -19,18 +19,7 @@ public class PriorityQueue<T>
         data.Add(entry);
 
         // resort list on add 
-        // TODO: optimize sorting algorithm
-
-        for (int i = data.Count - 1; i > 0; i--)
-        {
-            if (i < 1)
-            {
-                return;
-            }
-
-            KeyValuePair<int, T> curr = data[i];
-            Sort();
-        }
+        Sort();   
     }
 
     public T delete_min()
@@ -49,12 +38,12 @@ public class PriorityQueue<T>
 
     public void Sort()
     { // demi-bubble sort
-        for (int i = 0; i < data.Count - 1; i++)
+        for (int i = data.Count - 1; i > 0; i--)
         { // only do one passthru because for our needs items are only ever added one at a time,
           // and this sort is called upon every entry. update if needed 
-            if (data[i].Key > data[i + 1].Key)
+            if (data[i].Key < data[i - 1].Key)
             {
-                Swap(data[i], data[i + 1]);
+                Swap(data[i], data[i - 1]);
             }
         }
     }
@@ -114,5 +103,46 @@ public class PriorityQueue<T>
         item2 = tmp;
 
         return item2;
+    }
+
+    public T front()
+    {
+        if (data.Count > 0)
+        {
+            return data[0].Value;
+        }
+        else
+        {
+            return default(T); // empty list cannot return an item
+        }
+    }
+
+    public T back()
+    {
+        if (data.Count > 0)
+        {
+            return data[data.Count - 1].Value;
+        }
+        else
+        {
+            return default(T);
+        }
+    }
+
+    public int frontPriority()
+    {
+        if (data.Count > 0)
+        {
+            return data[0].Key;
+        }
+        else
+        {
+            return (int)IntConstants.INVALID;
+        }
+    }
+
+    public void Clear()
+    {
+        data.Clear();
     }
 }

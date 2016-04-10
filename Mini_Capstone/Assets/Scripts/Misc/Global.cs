@@ -57,7 +57,8 @@ public static class GLOBAL
 public enum IntConstants : int
 {
     TileSize = 64, //pixels per tile edge (must be square)
-    MoveSpeed = 50
+    MoveSpeed = 50,
+    INVALID = -99999 // magic number for invalid integers (essentially null)
 }
 
 //we never work with floating point with the grid so use an int wrapper instead of Vector2

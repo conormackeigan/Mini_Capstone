@@ -152,9 +152,9 @@ public class TileMarker : Singleton<TileMarker>
         }
 
         // mark all tiles x range from unit as long as x is contained in ranges
-        for (int i = Mathf.Max(unit.Pos.y - max, 0); i <= Mathf.Min(unit.Pos.y + max, MapScript.Instance.Height); i++)
+        for (int i = Mathf.Max(unit.Pos.y - max, 0); i <= Mathf.Min(unit.Pos.y + max, MapScript.Instance.Height - 1); i++)
         {
-            for (int j = Mathf.Max(unit.Pos.x - max, 0); j <= Mathf.Min(unit.Pos.x + max, MapScript.Instance.Width); j++)
+            for (int j = Mathf.Max(unit.Pos.x - max, 0); j <= Mathf.Min(unit.Pos.x + max, MapScript.Instance.Width - 1); j++)
             {
                 // if distance from processing tile to unit is in ranges, mark it
                 if (ranges.Contains(unit.Pos.Distance(j, i)))
@@ -186,9 +186,9 @@ public class TileMarker : Singleton<TileMarker>
         if (!weapon.directional)
         {
             // y first (bottom-left to top-right)
-            for (int i = Mathf.Max(weapon.unit.pos.y - weapon.rangeMax, 0); i <= Mathf.Min(weapon.unit.pos.y + weapon.rangeMax, MapScript.Instance.Height); i++)
+            for (int i = Mathf.Max(weapon.unit.pos.y - weapon.rangeMax, 0); i <= Mathf.Min(weapon.unit.pos.y + weapon.rangeMax, MapScript.Instance.Height - 1); i++)
             {
-                for (int j = Mathf.Max(weapon.unit.pos.x - weapon.rangeMax, 0); j <= Mathf.Min(weapon.unit.pos.x + weapon.rangeMax, MapScript.Instance.Width); j++)
+                for (int j = Mathf.Max(weapon.unit.pos.x - weapon.rangeMax, 0); j <= Mathf.Min(weapon.unit.pos.x + weapon.rangeMax, MapScript.Instance.Width - 1); j++)
                 {
                     if (weapon.unit.pos.Distance(j, i) >= weapon.rangeMin && weapon.unit.pos.Distance(j, i) <= weapon.rangeMax)
                     {
