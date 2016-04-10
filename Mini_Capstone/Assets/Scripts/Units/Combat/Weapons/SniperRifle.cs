@@ -8,10 +8,10 @@ public class SniperRifle : Weapon
     public SniperRifle(Unit u) : base(u)
     {
         type = WeaponType.Physical;
-        name = "SnipeRfl";
+        name = "SniperRifle";
         actionable = false; // for testing; real rifle is actionable + range 1-2
-        power = 8;
-        accuracy = 0.99f;
+        power = 13;
+        accuracy = 0.95f;
         rangeMin = 2;
         rangeMax = 6;
         specials = new List<Special>();

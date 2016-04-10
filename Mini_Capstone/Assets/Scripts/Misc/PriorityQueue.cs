@@ -11,7 +11,7 @@ public class PriorityQueue<T>
     }
 
     // struct data
-    private List<KeyValuePair<int, T>> data; // int = priority
+    public List<KeyValuePair<int, T>> data; // int = priority
 
     public void Add(T item, int priority)
     {
@@ -19,7 +19,7 @@ public class PriorityQueue<T>
         data.Add(entry);
 
         // resort list on add 
-        Sort();   
+        Sort();
     }
 
     public T delete_min()
@@ -38,12 +38,23 @@ public class PriorityQueue<T>
 
     public void Sort()
     { // demi-bubble sort
-        for (int i = data.Count - 1; i > 0; i--)
+        for (int i = data.Count - 1; i >= 0; i--)
         { // only do one passthru because for our needs items are only ever added one at a time,
           // and this sort is called upon every entry. update if needed 
-            if (data[i].Key < data[i - 1].Key)
+
+            if (i != 0)
             {
-                Swap(data[i], data[i - 1]);
+                if (data[i].Key < data[i - 1].Key)
+                {
+                    Swap(i, i - 1);
+                }
+            }
+            else if (data.Count > 1)
+            {
+                if (data[i].Key > data[i + 1].Key)
+                {
+                    Swap(i, i + 1);
+                }
             }
         }
     }
@@ -126,13 +137,11 @@ public class PriorityQueue<T>
         }
     }
 
-    public KeyValuePair<int, T> Swap(KeyValuePair<int, T> item1, KeyValuePair<int, T> item2)
+    public void Swap(int index1, int index2)
     {
-        KeyValuePair<int, T> tmp = item1;
-        item1 = item2;
-        item2 = tmp;
-
-        return item2;
+        KeyValuePair<int, T> tmp = new KeyValuePair<int, T>(data[index1].Key, data[index1].Value);
+        data[index1] = new KeyValuePair<int, T>(data[index2].Key, data[index2].Value);
+        data[index2] = tmp;
     }
 
     public T front()

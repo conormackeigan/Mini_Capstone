@@ -7,7 +7,7 @@ public class Rifle : Weapon
 {
     public Rifle(Unit u) : base(u)
     {
-        type = WeaponType.Energy;
+        type = WeaponType.Physical;
         //AoE = false;
         name = "Rifle";
         actionable = false; // for testing; real rifle is actionable + range 1-2

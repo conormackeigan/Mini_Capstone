@@ -262,6 +262,7 @@ public class CombatSequence : Singleton<CombatSequence>
             return;
 
         unit.calcCombatStats(); // in case something changed recalculate combat stats
+        other.calcCombatStats();
         //=================
         // Accuracy:
         //=================
@@ -455,7 +456,7 @@ public class CombatSequence : Singleton<CombatSequence>
                         {
                             phase = CombatPhase.defenderLunge;
                         }
-                        
+
                     }
 
                     break;
@@ -479,11 +480,11 @@ public class CombatSequence : Singleton<CombatSequence>
                             Camera.main.GetComponent<AudioSource>().PlayOneShot(GameDirector.Instance.sfxCancel); // TODO: miss SFX here
                         }
 
-                        displacement = -displacement;    
+                        displacement = -displacement;
 
                         phase = CombatPhase.defenderRetreat;
                     }
-                    
+
 
                     break;
                 }
@@ -494,7 +495,7 @@ public class CombatSequence : Singleton<CombatSequence>
                     {
                         defender.transform.position += displacement * Time.deltaTime * GLOBAL.attackSpeed;
                     }
-                    else if (timer > 2.5f) 
+                    else if (timer > 2.5f)
                     {
                         defender.snapToGridPos();
 
@@ -577,7 +578,7 @@ public class CombatSequence : Singleton<CombatSequence>
         // TODO: store previously marked attack tiles for quick processing (remove red markers but maintain coords)
         attacker.calcCombatStats();
 
-        foreach(KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.attackTiles)
+        foreach (KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.attackTiles)
         {
             if (ObjectManager.Instance.ObjectGrid[tile.Key.x, tile.Key.y] != null)
             {
@@ -605,7 +606,7 @@ public class CombatSequence : Singleton<CombatSequence>
         if (Random.Range(0, 100) <= attackerHitrate)
         {
             other.Damage(attackerDamage);
-        }   
+        }
     }
 
     //=========================

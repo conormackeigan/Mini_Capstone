@@ -61,14 +61,15 @@ public class uInfantry : Unit
             // WEAPON(S):
             weapons = new List<Weapon>();
 
-            Weapon rifle = new Rifle(this);
-            weapons.Add(rifle);
-            Equip(rifle);
+            
             Weapon beamsword = new BeamSword(this);
             weapons.Add(beamsword);
             Equip(beamsword);
-            Weapon frag = new Frag(this);
-            weapons.Add(frag);
+            Weapon rifle = new Rifle(this);
+            weapons.Add(rifle);
+            Equip(rifle);
+            Weapon sniper = new SniperRifle(this);
+            weapons.Add(sniper);
             //weapons.Add(new LaserCannon(this));
             //weapons.Add(new PhotonEqualizer(this));
             //weapons.Add(new EnergyChain(this));
