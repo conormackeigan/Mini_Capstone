@@ -11,7 +11,7 @@ public class CombatCondition : SpecialCondition
 
     public override bool eval()
     {
-        if (unit.state != Unit.UnitState.Combat)
+        if (unit.state == Unit.UnitState.Combat)
         {
             return true;
         }

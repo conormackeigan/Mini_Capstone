@@ -118,7 +118,7 @@ public class GameDirector : Singleton<GameDirector>
     // TODO: figure out why the buff system is completely bonkers (only first instantiated object receives buffs)
     public void BoardStateChanged()
     {
-        // remove all units' board buffs then apply all units' board specials
+        // remove all units' board/passive buffs then reapply all units' board/passive specials
         foreach (GameObject unit in ObjectManager.Instance.PlayerOneUnits)
         {
             if (unit.GetComponent<Unit>().buffs == null)
@@ -127,10 +127,7 @@ public class GameDirector : Singleton<GameDirector>
             }
             for (int i = unit.GetComponent<Unit>().buffs.Count - 1; i >= 0; i--)
             {
-                if (unit.GetComponent<Unit>().buffs[i].type == Buff.BuffType.Board)
-                {
-                    unit.GetComponent<Unit>().buffs[i].Destroy();
-                }
+                unit.GetComponent<Unit>().buffs[i].Destroy();       
             }
         }
         foreach (GameObject unit in ObjectManager.Instance.PlayerTwoUnits)
@@ -141,20 +138,17 @@ public class GameDirector : Singleton<GameDirector>
             }
             for (int i = unit.GetComponent<Unit>().buffs.Count - 1; i >= 0; i--)
             {
-                if (unit.GetComponent<Unit>().buffs[i].type == Buff.BuffType.Board)
-                {
-                    unit.GetComponent<Unit>().buffs[i].Destroy();
-                }
+                unit.GetComponent<Unit>().buffs[i].Destroy();
             }
         }
 
         foreach (List<GameObject> units in ObjectManager.Instance.playerUnits)
         {
-            ApplyBoardSpecials(units);
+            ApplySpecials(units);
         }
     }
 
-    void ApplyBoardSpecials(List<GameObject> units)
+    void ApplySpecials(List<GameObject> units)
     {
         // apply board specials
         foreach (GameObject unit in units)
@@ -162,12 +156,12 @@ public class GameDirector : Singleton<GameDirector>
             Unit u = unit.GetComponent<Unit>();
 
             // Unit Specials:
-            if (u.specialBoardAttributes == null)
+            if (u.specials == null)
             {
                 continue;
             }
 
-            foreach (UnitSpecial s in u.specialBoardAttributes)
+            foreach (UnitSpecial s in u.specials)
             {
                 if (s.condition != null)
                 {
@@ -188,9 +182,9 @@ public class GameDirector : Singleton<GameDirector>
                 continue;
             }
 
-            if (u.equipped.boardSpecials != null)
+            if (u.equipped.specials != null)
             {
-                foreach (Special s in u.equipped.boardSpecials)
+                foreach (Special s in u.equipped.specials)
                 {
                     if (s.condition != null)
                     {

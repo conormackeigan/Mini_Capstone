@@ -14,8 +14,8 @@ public class SniperRifle : Weapon
         accuracy = 0.99f;
         rangeMin = 2;
         rangeMax = 6;
-        boardSpecials = new List<Special>();
-        boardSpecials.Add(new TrooperSpecial(u));
+        specials = new List<Special>();
+        specials.Add(new HawkeyeSpecial(u));
         sfx = Resources.Load("Sound/SFX/sfxSingleShot") as AudioClip;
     }
 }

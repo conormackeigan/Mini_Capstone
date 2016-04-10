@@ -15,8 +15,8 @@ public class BeamSword : Weapon
         accuracy = 0.99f;
         rangeMin = 1;
         rangeMax = 1;
-        boardSpecials = new List<Special>();
-        boardSpecials.Add(new LightweightSpecial(u));
+        specials = new List<Special>();
+        specials.Add(new LightweightSpecial(u));
         sfx = Resources.Load("Sound/SFX/sfxShock") as AudioClip;
     }
 }

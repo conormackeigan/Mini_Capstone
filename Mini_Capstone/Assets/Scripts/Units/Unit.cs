@@ -85,10 +85,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
     public int combatAccuracy; // function of speed and other factors
     public int combatEvasion; // function of speed and other factors
 
-    public List<UnitSpecial> specialBoardAttributes; // special attributes that affect interactions with other units on the board
-    public List<UnitSpecial> specialBattleAttributes; // special attributes that affect interactions with other units in battle sequences
-    public List<Buff> buffs; // all buffs this unit is currently receiving
-    public List<Buff> debuffs; // all debuffs this unit is currently receiving
+    public List<UnitSpecial> specials; // special attributes that affect interactions with other units on the board
+    public List<Buff> buffs; // all buffs this unit is currently receiving (including debuffs)
 
     public Vector2i pos; //this unit's current position in grid coords
     public Vector2i Pos { get { return pos; } set { pos = value; } }
@@ -113,7 +111,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // Initialization:
         //===================
         buffs = new List<Buff>();
-        debuffs = new List<Buff>();
+        // specials<UnitSpecial> is initialized in the subtype Start() method
 
         state = UnitState.Neutral;
         overlay = null;
@@ -444,6 +442,62 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         GameDirector.Instance.BoardStateChanged();
     }
 
+    // same as GameDirector.BoardStateChanged() but for this unit only
+    public void ApplySpecials()
+    {
+        // remove buffs as they will all be readded if they're still applicable
+        if (buffs != null)
+        {
+            for (int i = buffs.Count - 1; i >= 0; i--)
+            {
+                buffs[i].Destroy();       
+            }
+        }
+        
+        // Unit Specials:
+        if (specials != null)
+        {
+            foreach (UnitSpecial s in specials)
+            {
+                if (s.condition != null)
+                {
+                    if (s.condition.eval())
+                    {
+                        s.effect();
+                    }
+                }
+                else
+                {
+                    s.effect();
+                }
+            }
+        }
+       
+        // Weapon Specials:
+        if (equipped != null)
+        {
+            if (equipped.specials != null)
+            {
+                foreach (Special s in equipped.specials)
+                {
+                    if (s.condition != null)
+                    {
+                        if (s.condition.eval())
+                        {
+                            s.effect();
+                        }
+                    }
+                    else
+                    {
+                        s.effect();
+                    }
+                }
+            }
+        }
+
+    }
+
+
     // this method is called when a marked enemy tile is clicked
     public void Attack(Unit other)
     {
@@ -477,6 +531,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public void calcCombatStats()
     {
+        GameDirector.Instance.BoardStateChanged();
+
         combatHealth = effectiveHealth;
         combatPhysAtk = effectivePhysAtk;
         combatEnergyAtk = effectiveEnergyAtk;

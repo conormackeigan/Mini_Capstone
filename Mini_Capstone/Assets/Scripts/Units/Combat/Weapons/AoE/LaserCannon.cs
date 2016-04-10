@@ -21,8 +21,8 @@ public class LaserCannon : Weapon
         accuracy = 0.9f;
         rangeMin = 0;
         rangeMax = 0;
-        boardSpecials = new List<Special>();
-        //boardSpecials.Add();
+        specials = new List<Special>();
+        //specials.Add();
         sfx = Resources.Load("Sound/SFX/sfxFrag") as AudioClip;
         AoEanim = null;
     }

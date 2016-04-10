@@ -329,6 +329,9 @@ public class CombatSequence : Singleton<CombatSequence>
             //debug: public multiplier 
             multiplier = x;
         }
+
+        // REFRESH BUFFS to apply combat effects (in case they offset final calculated values)
+        unit.ApplySpecials();
     }
 
     void CheckWeapons()
@@ -626,6 +629,9 @@ public class CombatSequence : Singleton<CombatSequence>
         {
             PlayerManager.Instance.getCurrentPlayer().selectedObject = null;
         }
+
+        // refresh board status for combat buffs etc
+        GameDirector.Instance.BoardStateChanged();
     }
 
     // cleans up when AoE sequence has finished
@@ -635,6 +641,9 @@ public class CombatSequence : Singleton<CombatSequence>
 
         AoESequence = false;
         PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Deactivate();
+
+        // refresh board status for combat buffs etc
+        GameDirector.Instance.BoardStateChanged();
     }
 
     // cleans up when combat sequence was cancelled before intialization

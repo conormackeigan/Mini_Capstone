@@ -23,10 +23,9 @@ public class uInfantry : Unit
 
         flying = false;
 
-        specialBattleAttributes = new List<UnitSpecial>();
-        specialBoardAttributes = new List<UnitSpecial>();
+        specials = new List<UnitSpecial>();
 
-        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+        specials.Add(new CharismaUnitSpecial(this));
     }
 
     protected override void Update()

@@ -8,7 +8,7 @@ public class TrooperSpecial : Special
 {
     public TrooperSpecial(Unit u) : base(u)
     {
-        condition = null;//new TrooperCondition(u);
+        condition = null;
     }
 
     //the effect this special grants

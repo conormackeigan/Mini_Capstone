@@ -21,8 +21,8 @@ public class PhotonEqualizer : Weapon
         accuracy = 0.85f;
         rangeMin = 0;
         rangeMax = 3;
-        boardSpecials = new List<Special>();
-        //boardSpecials.Add();
+        specials = new List<Special>();
+        //specials.Add();
         sfx = Resources.Load("Sound/SFX/sfxFrag") as AudioClip;
         AoEanim = Resources.Load("explosionFrag") as GameObject;
     }

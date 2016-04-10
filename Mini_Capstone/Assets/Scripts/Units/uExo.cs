@@ -16,10 +16,9 @@ public class uExo : Unit
 
         flying = false;
 
-        specialBattleAttributes = new List<UnitSpecial>();
-        specialBoardAttributes = new List<UnitSpecial>();
+        specials = new List<UnitSpecial>();
 
-        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+        specials.Add(new IntimidateUnitSpecial(this));
 
     }
 

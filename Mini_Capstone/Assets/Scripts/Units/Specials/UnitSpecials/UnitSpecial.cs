@@ -4,7 +4,7 @@ using System.Collections;
 public  class UnitSpecial
 {
     public Unit unit; // the unit this special belongs to
-    public UnitSpecialCondition condition;
+    public SpecialCondition condition;
 
     public virtual void effect() { }
 

@@ -27,8 +27,7 @@ public class Weapon
     public int rangeMin; // minimum range of this attack
     public int rangeMax; // maximum range of this attack
    
-    public List<Special> boardSpecials; // special attributes this weapon grants the player on the board
-    public List<Special> combatSpecials; // special effects this weapon grants in combat
+    public List<Special> specials; // special attributes this weapon grants the player on the board
 
     public AudioClip sfx; // the sfx attached to this weapon
 
@@ -49,8 +48,7 @@ public class Weapon
         //===================
         // Initialization:
         //===================
-        boardSpecials = new List<Special>();
-        combatSpecials = new List<Special>();
+        specials = new List<Special>();
 
         unit = u;
     }

@@ -15,8 +15,8 @@ public class Rifle : Weapon
         accuracy = 0.99f;
         rangeMin = 1;
         rangeMax = 3;
-        boardSpecials = new List<Special>();
-        boardSpecials.Add(new TrooperSpecial(u));
+        specials = new List<Special>();
+        specials.Add(new TrooperSpecial(u));
         sfx = Resources.Load("Sound/SFX/sfxSingleShot") as AudioClip;
     }
 }

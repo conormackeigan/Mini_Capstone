@@ -16,10 +16,8 @@ public class uTank : Unit
 
         flying = false;
 
-        specialBattleAttributes = new List<UnitSpecial>();
-        specialBoardAttributes = new List<UnitSpecial>();
-
-        specialBoardAttributes.Add(new CharismaUnitSpecial(this));
+        specials = new List<UnitSpecial>();
+        specials.Add(new IntimidateUnitSpecial(this));
 
     }
 
