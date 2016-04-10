@@ -138,15 +138,18 @@ public class aiInfantry : aiBase
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
+            unit.Equip(attack.second);
+
             Unit defender = attack.first;
             int priority = 100;
 
-            int dmgOut = new int();
-            int dmgIn = new int();
-            float accOut = new float();
-            float accIn = new float();
+            int dmgOut = 0;
+            int dmgIn = 0;
+            float accOut = 0;
+            float accIn = 0;
 
             CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
+            Debug.Log(dmgOut + " " + attack.second.name);
             CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
 
             //==========================================================
@@ -158,7 +161,7 @@ public class aiInfantry : aiBase
             {
                 priority += 50; // large priority boost for kill attacks
             }
-            if (unit.effectiveHealth - dmgIn <= 0)
+            else if (unit.effectiveHealth - dmgIn <= 0 )
             {
                 priority -= 20; // medium priority loss for being killed in retaliation
             }
@@ -184,13 +187,20 @@ public class aiInfantry : aiBase
 
             // ACCURACY OFFSET:
             // 75% acc = no offset
-            priority -= (int)(75 - accOut);
-            priority += (int)((75 - accIn) * 0.5f);
+            //priority -= (int)(75 - accOut);
+            //priority += (int)((75 - accIn) * 0.5f);
 
             attackPriority.Add(attack, priority);
         }
 
+        unit.Equip(origWep);
+
         // priority queue populated, check if we can attack or if we have to move first
+        //DEBUG:::::::::::::::::::::::::::::
+        for (int i = 0; i < attackPriority.Count(); i++)
+        {
+            Debug.Log(attackPriority.At(i).second.name + " " + attackPriority.priorityAt(i));
+        }
 
         // if highest priority attack is <= 0, do not attack
         if (attackPriority.frontPriority() <= 0)

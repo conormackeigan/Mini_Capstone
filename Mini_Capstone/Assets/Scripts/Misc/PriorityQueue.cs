@@ -57,6 +57,36 @@ public class PriorityQueue<T>
         return false;
     }
 
+
+    public int Count()
+    {
+        return data.Count;
+    }
+
+    public T At(int index)
+    {
+        if (data.Count - index < 0)
+        {
+            return default(T);
+        }
+        else
+        {
+            return data[index].Value;
+        }
+    }
+
+    public int priorityAt(int index)
+    {
+        if (data.Count - index < 0)
+        {
+            return (int)IntConstants.INVALID;
+        }
+        else
+        {
+            return data[index].Key;
+        }
+    }
+
     public void AddOrUpdate(T value, int priority)
     {
         if (!contains(value))
