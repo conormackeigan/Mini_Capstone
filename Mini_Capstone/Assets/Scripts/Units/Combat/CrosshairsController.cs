@@ -93,7 +93,7 @@ public class CrosshairsController : MonoBehaviour
             CombatSequence.Instance.Begin();
         }
         // reactivate unit UI
-        if (PlayerManager.Instance.getCurrentPlayer().playerID == 1)
+        if (PlayerManager.Instance.getCurrentPlayer().playerID == 1 || GameDirector.Instance.isMultiPlayer())
         {
             UIManager.Instance.setUnitUI(true);
             UIManager.Instance.activateAttackButton();

@@ -294,7 +294,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
         UIManager.Instance.ActivateFriendPanel(this);
 
-        if (playerID == 1)
+        if (playerID == 1 || GameDirector.Instance.isMultiPlayer())
         {
             UIManager.Instance.setUnitUI(true);
         }
@@ -308,7 +308,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             if (w.AoE)
                 AoE = true;            
         }
-        if (AoE && playerID == 1) 
+        if (AoE && (playerID == 1 || GameDirector.Instance.isMultiPlayer())) 
         {
             UIManager.Instance.activateAoEButton();
         }
@@ -412,7 +412,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     state = UnitState.Waiting;
                     GLOBAL.setLock(false); // inputs are no longer locked
 
-                    if (playerID == 1)
+                    if (playerID == 1 || GameDirector.Instance.isMultiPlayer())
                     {
                         UIManager.Instance.setUnitUI(true); // display UI now that inputs are 
                     }
