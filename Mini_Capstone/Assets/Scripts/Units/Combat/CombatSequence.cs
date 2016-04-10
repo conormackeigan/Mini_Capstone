@@ -93,7 +93,7 @@ public class CombatSequence : Singleton<CombatSequence>
         }
     }
 
-    // called manually on enable by Unit.Attack()
+    // called manually on enable by Unit.Attack(), shoots crosshairs at target
     public void Enable(Unit a, Unit d)
     {
         attacker = a;
@@ -115,10 +115,11 @@ public class CombatSequence : Singleton<CombatSequence>
         CheckWeapons();
 
         // calculate damage and hit rate for each unit
-        CalculateStats();
+        //CalculateStats();
     }
 
 
+    // called by crosshairs on completion of lockon
     public void Begin()
     {
         CalculateStats();
@@ -263,6 +264,7 @@ public class CombatSequence : Singleton<CombatSequence>
 
         unit.calcCombatStats(); // in case something changed recalculate combat stats
         other.calcCombatStats();
+
         //=================
         // Accuracy:
         //=================
@@ -332,7 +334,12 @@ public class CombatSequence : Singleton<CombatSequence>
         }
 
         // REFRESH BUFFS to apply combat effects (in case they offset final calculated values)
+        Debug.Log("attackerdmg: " + attackerDamage);
         unit.ApplySpecials();
+        Debug.Log("post-attackerdmg: " + attackerDamage);
+
+        // Weird hack: if dmg is an externally passed variable, it needs to have combat offsets applied
+
     }
 
     void CheckWeapons()

@@ -135,12 +135,20 @@ public class aiInfantry : aiBase
     // NOTE: only takes into account unit's currently equipped weapon; not smart enough to process all potential equips yet
     public void PrioritizeAttacks()
     {
+        // put unit in combat phase temporarily for calculations (will persist if attacks commence)
+        unit.state = Unit.UnitState.Combat;
+        CombatSequence.Instance.attacker = unit;
+        int counter = 0;
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
+            // put target in combat phase during calculation for combat skills
+            attack.first.state = Unit.UnitState.Combat;
+
             unit.Equip(attack.second);
 
             Unit defender = attack.first;
+
             int priority = 100;
 
             int dmgOut = 0;
@@ -148,9 +156,14 @@ public class aiInfantry : aiBase
             float accOut = 0;
             float accIn = 0;
 
+            
             CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
-            CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
 
+            CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
+            Debug.Log("DMG OUT: " + dmgOut + " DMG IN: " + dmgIn);
+
+            counter++;
+            Debug.Log(counter);
             //==========================================================
             // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
             //==========================================================
@@ -186,15 +199,23 @@ public class aiInfantry : aiBase
 
             // ACCURACY OFFSET:
             // 75% acc = no offset
-            priority -= (int)(75 - accOut);
-            priority += (int)((75 - accIn) * 0.5f);
+            //priority -= (int)(75 - accOut);
+            //priority += (int)((75 - accIn) * 0.5f);
 
             attackPriority.Add(attack, priority);
+
+            // revert target to inactive state in case we don't attack it
+            attack.first.state = Unit.UnitState.NotTurn;
         }
 
         unit.Equip(origWep);
 
         // priority queue populated, check if we can attack or if we have to move first
+        // DEBUG: print priority queue in order
+        for (int i = 0; i < attackPriority.data.Count; i++)
+        {
+            Debug.Log(attackPriority.data[i].Value.second.name + " " + attackPriority.data[i].Key);
+        }
 
         // if highest priority attack is <= 0, do not attack
         if (attackPriority.frontPriority() <= 0)

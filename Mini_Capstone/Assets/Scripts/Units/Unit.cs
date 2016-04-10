@@ -439,7 +439,8 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         }
 
         equipped = w;
-        GameDirector.Instance.BoardStateChanged();
+        //GameDirector.Instance.BoardStateChanged();
+        ApplySpecials();
     }
 
     // same as GameDirector.BoardStateChanged() but for this unit only
@@ -531,8 +532,6 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
     public void calcCombatStats()
     {
-        GameDirector.Instance.BoardStateChanged();
-
         combatHealth = effectiveHealth;
         combatPhysAtk = effectivePhysAtk;
         combatEnergyAtk = effectiveEnergyAtk;
