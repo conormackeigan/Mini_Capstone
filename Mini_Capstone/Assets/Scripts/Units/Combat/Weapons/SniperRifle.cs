@@ -10,7 +10,7 @@ public class SniperRifle : Weapon
         type = WeaponType.Physical;
         name = "SniperRifle";
         actionable = false; // for testing; real rifle is actionable + range 1-2
-        power = 8;
+        power = 9;
         accuracy = 0.95f;
         rangeMin = 2;
         rangeMax = 6;

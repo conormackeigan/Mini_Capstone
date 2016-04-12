@@ -10,13 +10,14 @@ public class Rifle : Weapon
         type = WeaponType.Physical;
         //AoE = false;
         name = "Rifle";
-        actionable = false; // for testing; real rifle is actionable + range 1-2
-        power = 8;
-        accuracy = 0.99f;
+        actionable = true; // for testing; real rifle is actionable + range 1-2
+        power = 9;
+        accuracy = 0.95f;
         rangeMin = 1;
         rangeMax = 3;
         specials = new List<Special>();
-        specials.Add(new TrooperSpecial(u));
+        //specials.Add(new TrooperSpecial(u));
+        specials.Add(new HawkeyeSpecial(u)); // debug: for defender combat skill offsets in AI-instigated attacks
         sfx = Resources.Load("Sound/SFX/sfxSingleShot") as AudioClip;
     }
 }

@@ -110,6 +110,32 @@ public class PriorityQueue<T>
         }
     }
 
+    // same as above function but only updates if the new value has a higher priority value
+    public void AddOrUpdateIfHigher(T value, int priority)
+    {
+        if (!contains(value))
+        {
+            Add(value, priority);
+        }
+        else if (data[indexOf(value)].Key < priority)
+        {
+            changePriority(value, priority);
+        }
+    }
+
+    // same as above but updates if priority value is lower, not higher
+    public void AddOrUpdateIfLower(T value, int priority)
+    {
+        if (!contains(value))
+        {
+            Add(value, priority);
+        }
+        else if (data[indexOf(value)].Key > priority)
+        {
+            changePriority(value, priority);
+        }
+    }
+
     public bool contains(T item)
     {
         foreach (KeyValuePair<int, T> d in data)
@@ -120,6 +146,24 @@ public class PriorityQueue<T>
             }
         }
         return false;
+    }
+
+    // gets index of a specified item
+    public int indexOf(T item)
+    {
+        int counter = 0;
+
+        foreach(KeyValuePair<int, T> d in data)
+        {
+            if (d.Value.Equals(item))
+            {
+                return counter;
+            }
+
+            counter++;
+        }
+
+        return (int)IntConstants.INVALID;
     }
 
     public void changePriority(T value, int priority)
@@ -173,6 +217,18 @@ public class PriorityQueue<T>
         if (data.Count > 0)
         {
             return data[0].Key;
+        }
+        else
+        {
+            return (int)IntConstants.INVALID;
+        }
+    }
+
+    public int backPriority()
+    {
+        if (data.Count > 0)
+        {
+            return data[data.Count - 1].Key;
         }
         else
         {

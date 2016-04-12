@@ -449,7 +449,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // remove buffs as they will all be readded if they're still applicable
         if (buffs != null)
         {
-            for (int i = buffs.Count - 1; i >= 0; i--)
+            for (int i = 0; i < buffs.Count; i++)
             {
                 buffs[i].Destroy();       
             }

@@ -79,7 +79,17 @@ public class aiInfantry : aiBase
                                 if (objectGrid[i, j].GetComponent<Unit>().playerID == 1)
                                 {
                                     Pair<Unit, Weapon> pair = new Pair<Unit, Weapon>(objectGrid[i, j].GetComponent<Unit>(), w);
-                                    if (!possibleAttacks.Contains(pair))
+
+                                    bool dupe = false; // not a duplicate until we prove it is
+                                    // didn't set up a comparer for the Pair type so here's a jerry-rig
+                                    foreach(Pair<Unit, Weapon> p in possibleAttacks)
+                                    {
+                                        if (pair.first == p.first && pair.second == p.second)
+                                        {
+                                            dupe = true;
+                                        }
+                                    }
+                                    if (!dupe)
                                     {
                                         possibleAttacks.Add(pair);
                                     }
@@ -132,7 +142,6 @@ public class aiInfantry : aiBase
     }
 
 
-    // NOTE: only takes into account unit's currently equipped weapon; not smart enough to process all potential equips yet
     public void PrioritizeAttacks()
     {
         // put unit in combat phase temporarily for calculations (will persist if attacks commence)
@@ -142,6 +151,8 @@ public class aiInfantry : aiBase
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
+            Debug.Log(++counter);
+            Debug.Log(attack.second.name + "**************************************************************");
             // put target in combat phase during calculation for combat skills
             attack.first.state = Unit.UnitState.Combat;
 
@@ -149,60 +160,87 @@ public class aiInfantry : aiBase
 
             Unit defender = attack.first;
 
-            int priority = 100;
-
-            int dmgOut = 0;
-            int dmgIn = 0;
-            float accOut = 0;
-            float accIn = 0;
-
-            
-            CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
-
-            CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
-            Debug.Log("DMG OUT: " + dmgOut + " DMG IN: " + dmgIn);
-
-            counter++;
-            Debug.Log(counter);
-            //==========================================================
-            // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
-            //==========================================================
-
-            // KILL OFFSET:
-            if (defender.effectiveHealth - dmgOut <= 0)
+            // process all of target unit's weapons in range and overwrite with worst case for us
+            foreach (Weapon w in defender.weapons)
             {
-                priority += 50; // large priority boost for kill attacks
-            }
-            else if (unit.effectiveHealth - dmgIn <= 0)
-            {
-                priority -= 20; // medium priority loss for being killed in retaliation
-            }
+                if (!w.ContainsRange(defender.pos.Distance(unit.pos)))
+                {
+                    continue;
+                }
+                Debug.Log(w.name + "==================================================================");
 
-            // DAMAGE OFFSET:
-            if (dmgOut <= 0)
-            {
-                priority -= 1000; // not dealing any damage guarantees neg priority (do not attack)
-            }
-            else
-            {
-                priority += dmgOut * 2;
-            }
+                defender.Equip(w);
 
-            if (dmgIn <= 0)
-            {
-                priority += 50; // large priority boost for not taking damage in retaliation
-            }
-            else
-            {
-                priority -= dmgIn; // slight priority loss for more dmg taken (half magnitude of damage given)
-            }
+                int priority = 100;
 
-            // ACCURACY OFFSET:
-            // 75% acc = no offset
-            //priority -= (int)(75 - accOut);
-            //priority += (int)((75 - accIn) * 0.5f);
+                int dmgOut = 0;
+                int dmgIn = 0;
+                float accOut = 0;
+                float accIn = 0;
 
-            attackPriority.Add(attack, priority);
+                // reset combatsequence variables for offset additions
+                CombatSequence.Instance.attackerDamage = 0;
+                CombatSequence.Instance.defenderDamage = 0;
+                CombatSequence.Instance.attackerHitrate = 0;
+                CombatSequence.Instance.defenderHitrate = 0;
+
+                //CombatSequence.Instance.defender = unit; // defender for this iteration
+
+                CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
+
+                CombatSequence.Instance.defender = defender;
+                CombatSequence.Instance.retaliation = true; // weapon is in range so retaliation guaranteed (TODO: cost checks)
+                CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
+
+                // apply combat skill offsets
+                dmgOut += CombatSequence.Instance.attackerDamage;
+                accOut += CombatSequence.Instance.attackerHitrate;
+                dmgIn += CombatSequence.Instance.defenderDamage;
+                accIn += CombatSequence.Instance.defenderHitrate;
+
+                Debug.Log("atkdmg: " + CombatSequence.Instance.attackerDamage + " defdmg: " + CombatSequence.Instance.defenderDamage);
+                Debug.Log("dmgOut: " + dmgOut + " dmgIn: " + dmgIn);
+
+                //==========================================================
+                // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
+                //==========================================================
+
+                // KILL OFFSET:
+                if (defender.effectiveHealth - dmgOut <= 0)
+                {
+                    priority += 50; // large priority boost for kill attacks
+                }
+                else if (unit.effectiveHealth - dmgIn <= 0)
+                {
+                    priority -= 20; // medium priority loss for being killed in retaliation
+                }
+
+                // DAMAGE OFFSET:
+                if (dmgOut <= 0)
+                {
+                    priority -= 1000; // not dealing any damage guarantees neg priority (do not attack)
+                }
+                else
+                {
+                    priority += dmgOut * 2;
+                }
+
+                if (dmgIn <= 0)
+                {
+                    priority += 50; // large priority boost for not taking damage in retaliation
+                }
+                else
+                {
+                    priority -= dmgIn; // slight priority loss for more dmg taken (half magnitude of damage given)
+                }
+
+                // ACCURACY OFFSET:
+                // 75% acc = no offset
+                priority -= (int)(75 - accOut);
+                priority += (int)((75 - accIn) * 0.5f);
+
+                attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)          
+            }
 
             // revert target to inactive state in case we don't attack it
             attack.first.state = Unit.UnitState.NotTurn;
@@ -218,7 +256,7 @@ public class aiInfantry : aiBase
         }
 
         // if highest priority attack is <= 0, do not attack
-        if (attackPriority.frontPriority() <= 0)
+        if (attackPriority.backPriority() <= 0)
         {
             // TODO: implement flee behaviour (not in conventional FE games and could be frustrating to player but what a "smart" player would do)
             // for now just wait
@@ -234,6 +272,10 @@ public class aiInfantry : aiBase
         if (!weapon.actionable)
         {
             Attack(target, weapon);
+        }
+        else
+        {
+            Attack(target, weapon); //tmp
         }
     }
 

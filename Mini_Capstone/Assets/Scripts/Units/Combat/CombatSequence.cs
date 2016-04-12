@@ -122,6 +122,7 @@ public class CombatSequence : Singleton<CombatSequence>
     // called by crosshairs on completion of lockon
     public void Begin()
     {
+        defender.state = Unit.UnitState.Combat;
         CalculateStats();
         Display();
     }
@@ -260,7 +261,9 @@ public class CombatSequence : Singleton<CombatSequence>
     public void Calculate(Unit unit, Unit other, ref int dmg, ref float acc)
     {
         if (unit == defender && !retaliation)
+        {
             return;
+        }
 
         unit.calcCombatStats(); // in case something changed recalculate combat stats
         other.calcCombatStats();
@@ -271,9 +274,13 @@ public class CombatSequence : Singleton<CombatSequence>
         // temp accuracy equation, will require balancing/overhauling. currently 100% @ +1 spd, 95% acc @ even, 45% @ -10, 0% @ -19 before weapon acc
         acc = ((19 + (unit.combatSpeed - other.combatSpeed)) * 5) * unit.equipped.accuracy;
         if (acc < 0)
+        {
             acc = 0;
+        }
         else if (acc > 100)
+        {
             acc = 100;
+        }
 
         //=================
         // Damage:
@@ -334,11 +341,7 @@ public class CombatSequence : Singleton<CombatSequence>
         }
 
         // REFRESH BUFFS to apply combat effects (in case they offset final calculated values)
-        Debug.Log("attackerdmg: " + attackerDamage);
         unit.ApplySpecials();
-        Debug.Log("post-attackerdmg: " + attackerDamage);
-
-        // Weird hack: if dmg is an externally passed variable, it needs to have combat offsets applied
 
     }
 
