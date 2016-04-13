@@ -13,10 +13,10 @@ public class AreaMasteryUnitSpecial : UnitSpecial
     //the effect this special grants
     public override void effect()
     {
-        // increases damage of AoE attacks by 10%
+        // increases damage of AoE attacks by 10%, rounds up instead of down
         if (CombatSequence.Instance.attacker == unit && CombatSequence.Instance.attacker.equipped.AoE)
         {
-            CombatSequence.Instance.attackerHitrate += 10;
+            CombatSequence.Instance.attackerDamage = (int)(Mathf.Ceil(CombatSequence.Instance.attackerDamage * 1.1f));
         }
     }
 }

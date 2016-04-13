@@ -14,12 +14,11 @@ public class LongrangeExpertUnitSpecial : UnitSpecial
     public override void effect()
     {
         // increases accuracy by 10% and final damage by 1
-        if (CombatSequence.Instance.attacker == unit)
+        if (CombatSequence.Instance.attacker == unit && unit.state == Unit.UnitState.Combat)
         {
-            CombatSequence.Instance.attacker.buffs.Add(new LongRangeExpertBuff(CombatSequence.Instance.attacker));
-            
+            CombatSequence.Instance.attacker.buffs.Add(new LongRangeExpertBuff(CombatSequence.Instance.attacker));          
         }
-        else if (CombatSequence.Instance.defender == unit)
+        else if (CombatSequence.Instance.defender == unit && unit.state == Unit.UnitState.Combat)
         {
             CombatSequence.Instance.defender.buffs.Add(new LongRangeExpertBuff(CombatSequence.Instance.defender));
         }

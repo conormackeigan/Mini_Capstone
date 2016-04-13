@@ -10,6 +10,8 @@ public class aiInfantry : aiBase
 
     private List<Pair<Unit, Weapon>> possibleAttacks; // units that can be reached with an attack this turn
     private PriorityQueue<Pair<Unit, Weapon>> attackPriority; // sorts attacks by priority (can attack kill? chance of hitting/dodging? how much damage taken in retaliation? all factors)
+    private Pair<Unit, Weapon> storedAttack; // storing attack for post-move call
+
     private PriorityQueue<Vector2i> movePriority; // sorts all potential movements (pre-combat or not)
 
     private Weapon origWep; // store original weapon since we need to equip all weapons when processing their attack priorities
@@ -31,6 +33,8 @@ public class aiInfantry : aiBase
         possibleAttacks.Clear();
         attackPriority.Clear();
         movePriority.Clear();
+
+        storedAttack = null;
 
         // store currently equipped weapon for later in case of reset
         origWep = unit.equipped;
@@ -124,9 +128,22 @@ public class aiInfantry : aiBase
         {
             // iterate through all player units and decide which unit to pursue
             //Chase();
-            Wait();
+            Wait(); //tmp
 
             return;
+        }
+
+        // if there are possible attacks but no trav tiles, simply attack if it's not a horrible attack
+        else if (possibleAttacks.Count > 0 && TileMarker.Instance.travTiles.Count == 0)
+        {
+            if (attackPriority.backPriority() > 0)
+            {
+                Attack(attackPriority.back().first, attackPriority.back().second);
+            }
+            else
+            {
+                Wait();
+            }
         }
 
         // next case is to process possible attacks and either attack or chase (if attacks are all unfavourable)
@@ -137,8 +154,104 @@ public class aiInfantry : aiBase
 
         else
         {
+            Debug.Log("You wandered into the wrong neighbourhood");
             Wait();
         }
+    }
+
+    // adds worst case attack (enemy's best weapon) to possibleAttacks
+    public void CalculateAttackPriority(Pair<Unit, Weapon> attack)
+    {
+        Unit defender = attack.first;
+        defender.state = Unit.UnitState.Combat;
+
+        // process all of target unit's weapons in range and overwrite with worst case for us
+        foreach (Weapon w in defender.weapons)
+        {
+            int priority = 100;
+
+            bool retaliation = true; // set to false if this attack won't be counterattacked
+
+            if (!w.ContainsRange(defender.pos.Distance(unit.pos)))
+            {
+                priority += 35;
+
+                retaliation = false;
+            }
+
+            defender.Equip(w);
+          
+            int dmgOut = 0;
+            int dmgIn = 0;
+            float accOut = 0;
+            float accIn = 0;
+
+            // reset combatsequence variables for offset additions
+            CombatSequence.Instance.attackerDamage = 0;
+            CombatSequence.Instance.defenderDamage = 0;
+            CombatSequence.Instance.attackerHitrate = 0;
+            CombatSequence.Instance.defenderHitrate = 0;
+
+            CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
+
+            if (retaliation)
+            {
+                CombatSequence.Instance.defender = defender;
+                CombatSequence.Instance.retaliation = true; // weapon is in range so retaliation guaranteed (TODO: cost checks)
+                CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
+
+                dmgIn += CombatSequence.Instance.defenderDamage;
+                accIn += CombatSequence.Instance.defenderHitrate;
+            }
+
+            // apply combat skill offsets
+            dmgOut += CombatSequence.Instance.attackerDamage;
+            accOut += CombatSequence.Instance.attackerHitrate;
+            
+
+            //==========================================================
+            // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
+            //==========================================================
+
+            // KILL OFFSET:
+            if (defender.effectiveHealth - dmgOut <= 0)
+            {
+                priority += 50; // large priority boost for kill attacks
+            }
+            else if (unit.effectiveHealth - dmgIn <= 0)
+            {
+                priority -= 20; // medium priority loss for being killed in retaliation
+            }
+
+            // DAMAGE OFFSET:
+            if (dmgOut <= 0)
+            {
+                priority -= 1000; // not dealing any damage guarantees neg priority (do not attack)
+            }
+            else
+            {
+                priority += dmgOut * 2;
+            }
+
+            if (dmgIn <= 0)
+            {
+                priority += 50; // large priority boost for not taking damage in retaliation
+            }
+            else
+            {
+                priority -= dmgIn; // slight priority loss for more dmg taken (half magnitude of damage given)
+            }
+
+            // ACCURACY OFFSET:
+            // 75% acc = no offset
+            priority -= (int)(75 - accOut);
+            priority += (int)((75 - accIn) * 0.5f);
+
+            attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)          
+        }
+
+        // revert target to inactive state in case we don't attack it
+        defender.state = Unit.UnitState.NotTurn;
     }
 
 
@@ -147,103 +260,13 @@ public class aiInfantry : aiBase
         // put unit in combat phase temporarily for calculations (will persist if attacks commence)
         unit.state = Unit.UnitState.Combat;
         CombatSequence.Instance.attacker = unit;
-        int counter = 0;
+
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
-            Debug.Log(++counter);
-            Debug.Log(attack.second.name + "**************************************************************");
-            // put target in combat phase during calculation for combat skills
-            attack.first.state = Unit.UnitState.Combat;
+            unit.Equip(attack.second);          
 
-            unit.Equip(attack.second);
-
-            Unit defender = attack.first;
-
-            // process all of target unit's weapons in range and overwrite with worst case for us
-            foreach (Weapon w in defender.weapons)
-            {
-                if (!w.ContainsRange(defender.pos.Distance(unit.pos)))
-                {
-                    continue;
-                }
-                Debug.Log(w.name + "==================================================================");
-
-                defender.Equip(w);
-
-                int priority = 100;
-
-                int dmgOut = 0;
-                int dmgIn = 0;
-                float accOut = 0;
-                float accIn = 0;
-
-                // reset combatsequence variables for offset additions
-                CombatSequence.Instance.attackerDamage = 0;
-                CombatSequence.Instance.defenderDamage = 0;
-                CombatSequence.Instance.attackerHitrate = 0;
-                CombatSequence.Instance.defenderHitrate = 0;
-
-                //CombatSequence.Instance.defender = unit; // defender for this iteration
-
-                CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
-
-                CombatSequence.Instance.defender = defender;
-                CombatSequence.Instance.retaliation = true; // weapon is in range so retaliation guaranteed (TODO: cost checks)
-                CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
-
-                // apply combat skill offsets
-                dmgOut += CombatSequence.Instance.attackerDamage;
-                accOut += CombatSequence.Instance.attackerHitrate;
-                dmgIn += CombatSequence.Instance.defenderDamage;
-                accIn += CombatSequence.Instance.defenderHitrate;
-
-                Debug.Log("atkdmg: " + CombatSequence.Instance.attackerDamage + " defdmg: " + CombatSequence.Instance.defenderDamage);
-                Debug.Log("dmgOut: " + dmgOut + " dmgIn: " + dmgIn);
-
-                //==========================================================
-                // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
-                //==========================================================
-
-                // KILL OFFSET:
-                if (defender.effectiveHealth - dmgOut <= 0)
-                {
-                    priority += 50; // large priority boost for kill attacks
-                }
-                else if (unit.effectiveHealth - dmgIn <= 0)
-                {
-                    priority -= 20; // medium priority loss for being killed in retaliation
-                }
-
-                // DAMAGE OFFSET:
-                if (dmgOut <= 0)
-                {
-                    priority -= 1000; // not dealing any damage guarantees neg priority (do not attack)
-                }
-                else
-                {
-                    priority += dmgOut * 2;
-                }
-
-                if (dmgIn <= 0)
-                {
-                    priority += 50; // large priority boost for not taking damage in retaliation
-                }
-                else
-                {
-                    priority -= dmgIn; // slight priority loss for more dmg taken (half magnitude of damage given)
-                }
-
-                // ACCURACY OFFSET:
-                // 75% acc = no offset
-                priority -= (int)(75 - accOut);
-                priority += (int)((75 - accIn) * 0.5f);
-
-                attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)          
-            }
-
-            // revert target to inactive state in case we don't attack it
-            attack.first.state = Unit.UnitState.NotTurn;
+            CalculateAttackPriority(attack);
         }
 
         unit.Equip(origWep);
@@ -261,7 +284,8 @@ public class aiInfantry : aiBase
             // TODO: implement flee behaviour (not in conventional FE games and could be frustrating to player but what a "smart" player would do)
             // for now just wait
             Wait();
-
+            Debug.Log(attackPriority.backPriority() + "=========================================================");
+            Debug.Log(attackPriority.Count());
             return;
         }
 
@@ -275,7 +299,71 @@ public class aiInfantry : aiBase
         }
         else
         {
-            Attack(target, weapon); //tmp
+            // find best spot to attack from
+            FindAttackPoint(attackPriority.back());
+            //Attack(target, weapon); //tmp
+        }
+    }
+
+
+    // committed to weapon/target; find best position to attack from
+    public void FindAttackPoint(Pair<Unit, Weapon> attack)
+    {
+        storedAttack = attack; // attack call is external so store in class-scope variable
+
+        // set up units for combat calculations
+        Unit target = attack.first;
+
+        unit.state = Unit.UnitState.Combat;
+        CombatSequence.Instance.attacker = unit;
+
+        unit.Equip(attack.second); // committed to this weapon so equip before iterating
+
+        Vector2i originalPos = unit.pos; // need to move unit around to test different attack points
+
+        // process not-moving case since initial tile is not marked in tilemarker
+        if (unit.equipped.ContainsRange(unit.pos.Distance(target.pos)))
+        {
+            // process all possible weapon exchanges with committed weapon vs all of enemy's and store worst case as tile priority
+            attackPriority.Clear();
+            CalculateAttackPriority(attack);
+            movePriority.Add(unit.pos, attackPriority.backPriority());
+        }
+
+        foreach (KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.travTiles)
+        {
+            if (!unit.equipped.ContainsRange(tile.Key.Distance(target.pos)))
+            {
+                continue; // don't process tiles the chosen weapon can't reach
+            }
+
+            unit.pos = tile.Key;
+
+            // process all possible weapon exchanges with committed weapon vs all of enemy's and store worst case as tile priority
+            attackPriority.Clear();
+            CalculateAttackPriority(attack);
+            movePriority.Add(unit.pos, attackPriority.backPriority());
+        }
+
+        // sorted all tiles by how effective the attack is from their vantage, pick the highest priority
+        Vector2i targetPos = movePriority.back();
+        unit.pos = originalPos;
+
+        TerrainLayer.Instance.tileObjects[targetPos.x, targetPos.y].GetComponent<TileResponder>().OnMouseClick();
+    }
+
+
+    // called by unit when finished traversing path
+    public override void ReachedDestination()
+    {
+        Debug.Log("reached destination");
+        if (storedAttack != null)
+        {
+            Attack(storedAttack.first, storedAttack.second);
+        }
+        else
+        {
+            Wait();
         }
     }
 
@@ -295,7 +383,7 @@ public class aiInfantry : aiBase
     // computes which unit to chase (in the case of no attacks)
     public void Chase()
     {
-
+        //
     }
 
 

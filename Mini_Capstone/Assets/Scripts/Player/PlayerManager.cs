@@ -45,7 +45,15 @@ public class PlayerManager : Singleton<PlayerManager>
                 testPlayer.transform.parent = gameObject.transform;
 
                 string s = (i + 1) + "Player";
-                testPlayer.GetComponent<Player>().initPlayer(s, (i + 1), Color.red, false);
+                if (i == 0)
+                {
+                    testPlayer.GetComponent<Player>().initPlayer(s, (i + 1), Color.red, false, Player.PLAYER_TYPE.Human);
+                }
+                else
+                {
+                    Debug.Log("initing computer");
+                    testPlayer.GetComponent<Player>().initPlayer(s, (i + 1), Color.red, false, Player.PLAYER_TYPE.Computer);
+                }
             }
         }
         else
@@ -57,7 +65,7 @@ public class PlayerManager : Singleton<PlayerManager>
             testPlayer.transform.parent = gameObject.transform;
 
             string s = (PhotonNetwork.player.ID) + "Player";
-            testPlayer.GetComponent<Player>().initPlayer(s, (PhotonNetwork.player.ID), Color.red, true);
+            testPlayer.GetComponent<Player>().initPlayer(s, (PhotonNetwork.player.ID), Color.red, true, Player.PLAYER_TYPE.Human);
 
             if(PhotonNetwork.player.ID != 1)
             {

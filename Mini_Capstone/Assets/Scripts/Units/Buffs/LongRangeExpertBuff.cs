@@ -7,9 +7,9 @@ public class LongRangeExpertBuff : Buff
     {
         type = BuffType.Combat;
 
-        unit.physAtkBuff += CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
-        unit.energyAtkBuff += CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
-        unit.speedBuff += CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
+        unit.physAtkBuff += Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) - 3, 0);
+        unit.energyAtkBuff += Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) - 3, 0);
+        unit.speedBuff += Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) - 3, 0);
     }
 
 
@@ -19,8 +19,8 @@ public class LongRangeExpertBuff : Buff
         unit.buffs.Remove(this);
 
         // remove longrange buff
-        unit.physAtkBuff -= CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
-        unit.energyAtkBuff -= CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
-        unit.speedBuff -= CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos);
+        unit.physAtkBuff -= Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) -3, 0);
+        unit.energyAtkBuff -= Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) - 3, 0);
+        unit.speedBuff -= Mathf.Max(CombatSequence.Instance.attacker.pos.Distance(CombatSequence.Instance.defender.pos) - 3, 0);
     }
 }

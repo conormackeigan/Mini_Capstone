@@ -69,7 +69,8 @@ public class uInfantry : Unit
             weapons.Add(rifle);
             Equip(rifle);
             Weapon sniper = new SniperRifle(this);
-            weapons.Add(sniper);
+            //weapons.Add(sniper);
+            //Equip(sniper);
             //weapons.Add(new LaserCannon(this));
             //weapons.Add(new PhotonEqualizer(this));
             //weapons.Add(new EnergyChain(this));

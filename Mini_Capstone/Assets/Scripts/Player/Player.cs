@@ -20,9 +20,9 @@ public class Player : MonoBehaviour
     public GameObject selectedObject;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 
-        playerType = PLAYER_TYPE.Human;
 
         selectedObject = null;
 	}
@@ -32,9 +32,9 @@ public class Player : MonoBehaviour
 	
 	}
 
-    public void initPlayer(string name, int id, Color c, bool network)
-    {
-        playerType = PLAYER_TYPE.Human;
+    public void initPlayer(string name, int id, Color c, bool network, PLAYER_TYPE type)
+    {      
+        playerType = type;
         playerName = name;
         playerID = id;
         playerColor = c;

@@ -7,5 +7,7 @@ public class aiBase
 
     public virtual void SelectAction() { }
 
+    public virtual void ReachedDestination() { }
+
     public virtual void EndTurn() { }
 }

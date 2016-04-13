@@ -409,10 +409,9 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 
                 if (path.Count == 0)
                 { // reached destination
-                    state = UnitState.Waiting;
-                    GLOBAL.setLock(false); // inputs are no longer locked
+                    state = UnitState.Waiting;               
 
-                    if (playerID == 1 || GameDirector.Instance.isMultiPlayer())
+                    if (isHuman() || GameDirector.Instance.isMultiPlayer())
                     {
                         UIManager.Instance.setUnitUI(true); // display UI now that inputs are 
                     }
@@ -420,6 +419,15 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     ObjectManager.Instance.moveUnitToGridPos(gameObject, prev);
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
+
+                    if (!isHuman())
+                    {
+                        AI.ReachedDestination();
+                    }
+                    else
+                    {
+                        GLOBAL.setLock(false); // inputs are no longer locked
+                    }
                 }
             }
             else
@@ -439,9 +447,22 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         }
 
         equipped = w;
-        //GameDirector.Instance.BoardStateChanged();
-        ApplySpecials();
+        GameDirector.Instance.BoardStateChanged();
+        //ApplySpecials();
     }
+
+
+    // returns true if this is a human-controlled unit
+    public bool isHuman()
+    {
+        if (PlayerManager.Instance.players[playerID - 1].GetComponent<Player>().playerType == Player.PLAYER_TYPE.Human)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 
     // same as GameDirector.BoardStateChanged() but for this unit only
     public void ApplySpecials()
@@ -449,7 +470,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // remove buffs as they will all be readded if they're still applicable
         if (buffs != null)
         {
-            for (int i = 0; i < buffs.Count; i++)
+            for (int i = 0; i < buffs.Count; i--)
             {
                 buffs[i].Destroy();       
             }

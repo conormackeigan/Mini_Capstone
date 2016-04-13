@@ -16,10 +16,7 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
 
     public void OnMouseClick()
     {
-        if (GameDirector.Instance.locked)
-        {
-            return;
-        }
+        
 
         Player currentPlayer = PlayerManager.Instance.getCurrentPlayer();
 
@@ -51,6 +48,9 @@ public class TileResponder : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnMouseClick();
+        if (!GameDirector.Instance.locked)
+        {
+            OnMouseClick();
+        }      
     }
 }

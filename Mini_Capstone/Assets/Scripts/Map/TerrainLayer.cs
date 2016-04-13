@@ -9,27 +9,12 @@ public class TerrainLayer : Singleton<TerrainLayer>
     private Tile[,] tiles;
     public Tile[,] Tiles { get { return tiles; } }
 
+    public GameObject[,] tileObjects; // corresponding GOs to tiles[,]
+
     private int tileSize = (int)IntConstants.TileSize;
     private MapScript map;
 
     public TextAsset textFile;
-
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-        //on mouse click print the world coordinates
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    int posx = (int)(Camera.main.ScreenToWorldPoint(Input.mousePosition).x / tileSize);
-        //    int posy = (int)(Camera.main.ScreenToWorldPoint(Input.mousePosition).y / tileSize);
-
-        //    Debug.Log("x: " + posx + " y: " + posy);
-        //}
-    }
 
     public Vector2i convertMousePosToGrid(Vector3 mousePos)
     {
@@ -41,6 +26,8 @@ public class TerrainLayer : Singleton<TerrainLayer>
     {
         map = transform.parent.GetComponent<MapScript>(); //get reference to map parent
         tiles = new Tile[map.Width, map.Height]; //THE GRID
+        tileObjects = new GameObject[map.Width, map.Height];
+
         Object meadow = Resources.Load("Tiles/MeadowTile"); //for testing
         Object untraversable = Resources.Load("Tiles/Untraversable");
         Object forest = Resources.Load("Tiles/ForestTile");
@@ -68,17 +55,17 @@ public class TerrainLayer : Singleton<TerrainLayer>
                 k+=1;
                 if (input == "Forest")
                 {
-                    Instantiate(forest, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
+                    tileObjects[i, j] = Instantiate(forest, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity) as GameObject;
                     tiles[i, j] = new ForestTile(new Vector2i(i, j));
                 }
                 if (input == "Mountain")
                 {
-                    Instantiate(untraversable, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
+                    tileObjects[i, j] = Instantiate(untraversable, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity) as GameObject;
                     tiles[i, j] = new UntraversableTile(new Vector2i(i, j));
                 }
                 if (input == "Grass")
                 {
-                    Instantiate(meadow, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity);
+                    tileObjects[i, j] = Instantiate(meadow, new Vector3(i * tileSize, j * tileSize, 0), Quaternion.identity) as GameObject;
                     tiles[i, j] = new MeadowTile(new Vector2i(i, j));
                 }
             }
