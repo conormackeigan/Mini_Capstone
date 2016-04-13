@@ -10,7 +10,7 @@ public class BeamSword : Weapon
         type = WeaponType.Energy;
         //AoE = false;
         name = "Beamsword";
-        actionable = false;
+        actionable = true;
         power = 15;
         accuracy = 0.99f;
         rangeMin = 1;

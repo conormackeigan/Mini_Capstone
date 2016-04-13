@@ -472,6 +472,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             for (int i = 0; i < buffs.Count; i--)
             {
+                Debug.Log(buffs[i].GetType() + " i: " + i);
                 buffs[i].Destroy();       
             }
         }

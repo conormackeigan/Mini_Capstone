@@ -168,6 +168,11 @@ public class aiInfantry : aiBase
         // process all of target unit's weapons in range and overwrite with worst case for us
         foreach (Weapon w in defender.weapons)
         {
+            if (!attack.second.ContainsRange(defender.pos.Distance(unit.pos)))
+            {
+                continue; // can't reach them with this weapon from this pos
+            }
+
             int priority = 100;
 
             bool retaliation = true; // set to false if this attack won't be counterattacked
@@ -247,7 +252,16 @@ public class aiInfantry : aiBase
             priority -= (int)(75 - accOut);
             priority += (int)((75 - accIn) * 0.5f);
 
-            attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)          
+            //attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)
+            if (!retaliation)
+            {
+                attackPriority.AddOrUpdateIfHigher(attack, priority);
+            }
+            // non-retaliation attacks take precedence. retaliated attacks need to account for the player equipping the best possible weapon
+            else
+            {
+                attackPriority.AddOrUpdateIfLower(attack, priority);
+            }
         }
 
         // revert target to inactive state in case we don't attack it
@@ -261,12 +275,20 @@ public class aiInfantry : aiBase
         unit.state = Unit.UnitState.Combat;
         CombatSequence.Instance.attacker = unit;
 
+        Vector2i originalPos = unit.pos; // need to move unit around to process attacks so store original pos
+
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
-            unit.Equip(attack.second);          
+            unit.Equip(attack.second);         
+            
+            foreach(KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.travTiles)
+            {
+                unit.pos = tile.Key;
+                CalculateAttackPriority(attack);
+            }
 
-            CalculateAttackPriority(attack);
+            unit.pos = originalPos;
         }
 
         unit.Equip(origWep);
