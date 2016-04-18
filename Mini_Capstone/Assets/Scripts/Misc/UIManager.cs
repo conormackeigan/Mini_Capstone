@@ -16,6 +16,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject AoEButton;
     public GameObject turnPanel;
     public GameObject purchaseUI;
+    public GameObject disconnectUI;
 
     // Use this for initialization
     void Start () {
@@ -53,6 +54,7 @@ public class UIManager : Singleton<UIManager>
             {
                 gameOverObjects[i].SetActive(false);
             }
+            purchaseUI.SetActive(false);
 
         }
         else if (gameState == GameDirector.GameState.LOBBY)
@@ -66,6 +68,8 @@ public class UIManager : Singleton<UIManager>
             {
                 gameOverObjects[i].SetActive(false);
             }
+            purchaseUI.SetActive(false);
+
         }
         else if (gameState == GameDirector.GameState.PURCHASE)
         {
@@ -184,6 +188,11 @@ public class UIManager : Singleton<UIManager>
     {
         friendlyPanel.GetComponent<SelectedInfo>().close();
         friendlyPanel.SetActive(false);
+    }
+
+    public void displayDisconnect()
+    {
+        disconnectUI.SetActive(true);
     }
 
     public void ConfirmAction()

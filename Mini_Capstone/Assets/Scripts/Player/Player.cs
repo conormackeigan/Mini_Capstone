@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
         {
             posX = (playerID == 1) ? 7 : 7;
             posY = (playerID == 1) ? 3 : 4;
-            units[1].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, 7, 3);
+            units[1].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
         {
@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
         {
             posX = (playerID == 1) ? 11 : 11;
             posY = (playerID == 1) ? 3 : 10;
-            units[2].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, 11, 3);
+            units[2].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
         {
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour
         {
             posX = (playerID == 1) ? 5 : 5;
             posY = (playerID == 1) ? 5 : 12;
-            units[3].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, 5, 5);
+            units[3].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
         {
@@ -156,7 +156,7 @@ public class Player : MonoBehaviour
         {
             posX = (playerID == 1) ? 9 : 9;
             posY = (playerID == 1) ? 5 : 12;
-            units[4].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, 9, 5);
+            units[4].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
         {

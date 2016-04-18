@@ -46,7 +46,10 @@ public class UnitSelection : Singleton<UnitSelection>
         purchasedUnits = new List<GameObject>();
         currentTotal = 500;
 
-        ticketCount.GetComponent<Text>().text = currentTotal.ToString();
+        if(ticketCount != null)
+        {
+            ticketCount.GetComponent<Text>().text = currentTotal.ToString();
+        }
     }
 	
 	// Update is called once per frame
@@ -87,19 +90,28 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public void Reset()
     {
-        foreach (GameObject g in purchasedUnits)
+        if(purchasedUnits.Count != 0)
         {
-            Destroy(g);
+            foreach (GameObject g in purchasedUnits)
+            {
+                Destroy(g);
+            }
         }
-
+        
         playerOneDeploy = false;
         playerTwoDeploy = false;
-        deployButton.GetComponent<Button>().enabled = true;
-        deployButton.GetComponentInChildren<Text>().text = "Deploy";
+        if (deployButton != null)
+        {
+            deployButton.GetComponent<Button>().enabled = true;
+            deployButton.GetComponentInChildren<Text>().text = "Deploy";
+        }
 
         purchasedUnits = new List<GameObject>();
         currentTotal = 500;
-        ticketCount.GetComponent<Text>().text = currentTotal.ToString();
+        if(ticketCount != null)
+        {
+            ticketCount.GetComponent<Text>().text = currentTotal.ToString();
+        }
         updatePurchasedTab();
     }
 

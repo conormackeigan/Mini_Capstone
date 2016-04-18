@@ -79,15 +79,20 @@ public class TerrainLayer : Singleton<TerrainLayer>
     {
         TileMarker.Instance.Clear();
 
-        for (int i = 0; i < tiles.GetLength(0); i++)
+        if (tiles != null)
         {
-            for (int j = 0; j < tiles.GetLength(1); j++)
+
+
+            for (int i = 0; i < tiles.GetLength(0); i++)
             {
-                if (tiles[i, j] != null)
+                for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    //Destroy(tiles[i, j].);
+                    if (tiles[i, j] != null)
+                    {
+                        //Destroy(tiles[i, j].);
+                    }
+                    tiles[i, j] = null;
                 }
-                tiles[i, j] = null;
             }
         }
 

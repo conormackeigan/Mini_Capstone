@@ -43,7 +43,7 @@ public class NetworkingMain : Photon.PunBehaviour
 
             if (GUILayout.Button("Return To Menu"))
             {
-                Disconnect();
+                Disconnect(false);
             }
 
             GUILayout.Label("Session Name:");
@@ -67,12 +67,12 @@ public class NetworkingMain : Photon.PunBehaviour
             GUI.color = Color.yellow;
             GUILayout.Box("Sessions Open");
             GUI.color = Color.red;
-            GUILayout.Space(20);
+            GUILayout.Space(5);
 
             foreach (RoomInfo game in PhotonNetwork.GetRoomList())
             {
                 GUI.color = Color.green;
-                GUILayout.Box(game.name + " " + game.playerCount + "/" + game.maxPlayers + " " + game.visible);
+                GUILayout.Box("Room Name: " + game.name + "\nNum Players: " + game.playerCount + "/" + game.maxPlayers);
                 if (GUILayout.Button("Join Session"))
                 {
                     PhotonNetwork.JoinRoom(game.name);
@@ -93,6 +93,11 @@ public class NetworkingMain : Photon.PunBehaviour
 
             if (GUILayout.Button("Return To Room Select"))
             {
+                if (PhotonNetwork.isMasterClient)
+                {
+                    PhotonNetwork.CloseConnection(PhotonNetwork.playerList[0]);
+                }
+
                 PhotonNetwork.LeaveRoom();
             }
 
@@ -100,7 +105,7 @@ public class NetworkingMain : Photon.PunBehaviour
             GUI.color = Color.yellow;
             GUILayout.Box("Users Joined: ");
             GUI.color = Color.red;
-            GUILayout.Space(20);
+            GUILayout.Space(5);
 
             // Populate list of players
             for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
@@ -115,9 +120,11 @@ public class NetworkingMain : Photon.PunBehaviour
                 if(PhotonNetwork.playerList.Length == 1)
                 {
                     GUI.enabled = false;
+                    GUILayout.Button("Waiting For Second Player");
+                    GUI.enabled = true;
                 }
-                
-                if (GUILayout.Button("Start Game"))
+
+                else if (GUILayout.Button("Start Game"))
                 {
                     if (PhotonNetwork.playerList.Length == 2)
                     {
@@ -154,8 +161,13 @@ public class NetworkingMain : Photon.PunBehaviour
         connecting = true;
     }
 
-    public void Disconnect()
+    public void Disconnect(bool isDisconnect)
     {
+        if(isDisconnect)
+        {
+            gameObject.GetPhotonView().RPC("DisconnectMessageRPC", PhotonTargets.AllBuffered);
+        }
+
         connecting = false;
         startGame = false;
         GameDirector.Instance.gameState = GameDirector.GameState.MAINMENU;
@@ -163,7 +175,6 @@ public class NetworkingMain : Photon.PunBehaviour
         PhotonNetwork.Disconnect();
 
     }
-
 
     public override void OnJoinedLobby()
     {
@@ -184,7 +195,6 @@ public class NetworkingMain : Photon.PunBehaviour
         Debug.Log("OnLeftRoom");
 
         connecting = true;
-
         Debug.Log(PhotonNetwork.player.ID);
     }
 
@@ -206,5 +216,11 @@ public class NetworkingMain : Photon.PunBehaviour
         GameDirector.Instance.purchaseUnits();
     }
 
-    
+    [PunRPC]
+    public void DisconnectMessageRPC()
+    {
+        UIManager.Instance.displayDisconnect();
+    }
+
+
 }

@@ -7,7 +7,7 @@ public class EndGameRPC : Photon.MonoBehaviour
     public GameObject networking;
 
     [PunRPC]
-    public IEnumerator EndGameNetwork()
+    public IEnumerator EndGameNetwork(bool isDisconnect = false)
     {
         Debug.Log("Ending Game for player: " + PhotonNetwork.playerName);
 
@@ -17,6 +17,6 @@ public class EndGameRPC : Photon.MonoBehaviour
         ObjectManager.Instance.endGame();
 
         yield return 0;
-        networking.GetComponent<NetworkingMain>().Disconnect();
+        networking.GetComponent<NetworkingMain>().Disconnect(isDisconnect);
     }
 }

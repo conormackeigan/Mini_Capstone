@@ -69,7 +69,18 @@ public class GameDirector : Singleton<GameDirector>
 
     public void cancelPurchase()
     {
-        PlayerManager.Instance.endGame();
+
+        if(isMultiPlayer())
+        {
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered, true);
+        }
+        else
+        {
+            PlayerManager.Instance.endGame();
+            UnitSelection.Instance.Reset();
+
+        }
+
         gameState = GameState.MAINMENU;
     }
 
@@ -103,7 +114,7 @@ public class GameDirector : Singleton<GameDirector>
         }
         else
         {
-            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered);
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered, true);
         }
     }
 
