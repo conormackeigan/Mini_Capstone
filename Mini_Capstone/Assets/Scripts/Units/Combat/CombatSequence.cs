@@ -156,7 +156,14 @@ public class CombatSequence : Singleton<CombatSequence>
         EnableUI();
 
         // Weapon Select window
-        WeaponSelect(attacker);
+        if (PlayerManager.Instance.players[attacker.playerID - 1].GetComponent<Player>().playerType == Player.PLAYER_TYPE.Human)
+        {
+            WeaponSelect(attacker);
+        }
+        else // don't display CPU's weapon select if they are attacking a human
+        {
+            WeaponSelect(defender);
+        }
     }
 
     // generates weapon select windows for both units (come up w/ badass chart format)
@@ -246,10 +253,13 @@ public class CombatSequence : Singleton<CombatSequence>
     // method fired from weapon select buttons
     public void SelectWeapon(int index)
     {
+        Debug.Log("SelectWeapon");
+        Debug.Log("buff size before: " + attacker.buffs.Count);
         attacker.Equip(attacker.weapons[index - 1]);
         ChangeSelection(index, attacker);
         CalculateStats();
         Display(); // refresh values in combat window
+        Debug.Log("buff: " + attacker.buffs[0].GetType());
     }
 
     void CalculateStats()
@@ -341,9 +351,10 @@ public class CombatSequence : Singleton<CombatSequence>
         }
 
         // REFRESH BUFFS to apply combat effects (in case they offset final calculated values)
-        unit.ApplySpecials();
-
+        //unit.ApplySpecials();
+        GameDirector.Instance.BoardStateChanged();
     }
+
 
     void CheckWeapons()
     {
@@ -353,6 +364,11 @@ public class CombatSequence : Singleton<CombatSequence>
         { // equipped weapon not in range, find one that is (attacker must have one for the sequence to initialize)
             foreach (Weapon w in attacker.weapons)
             {
+                if (w.AoE)
+                {
+                    continue; // do not equip AoE weapons in regular combat sequences
+                }
+
                 if (w.ContainsRange(distance))
                 {
                     if (!w.actionable && attacker.pos != attacker.selectPos)
@@ -368,10 +384,15 @@ public class CombatSequence : Singleton<CombatSequence>
 
         // unlike attacker, defender may not have a weapon within range. if they do equip it, if none tell game defender isn't attacking w/ equipped wep
 
-        if (!defender.equipped.ContainsRange(distance))
+        if (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE)
         { // equipped weapon not in range, try to find one, if not flip retaliation flag
             foreach (Weapon w in defender.weapons)
             {
+                if (w.AoE)
+                {
+                    continue; // do not equip AoE weapons in regular combat sequences
+                }
+
                 if (w.ContainsRange(distance))
                 { // found an appropriate weapon, equip and break out
                     defender.Equip(w);
@@ -531,6 +552,7 @@ public class CombatSequence : Singleton<CombatSequence>
         AoERoot = root;
 
         WeaponSelect(PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>(), true); // display weapon select menu
+
     }
 
     public void AoESelect(int num)
