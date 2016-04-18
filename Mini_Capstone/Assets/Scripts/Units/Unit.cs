@@ -136,12 +136,26 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
             }
             else
             {
-                ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
-                gameObject.SetActive(false);
 		        //destroyUnit();
                 if(GameDirector.Instance.isMultiPlayer())
                 {
                     gameObject.GetPhotonView().RPC("DestroyUnit", PhotonTargets.AllBuffered, pos.x, pos.y);
+                }
+                else
+                {
+                    GameObject unit = ObjectManager.Instance.ObjectGrid[pos.x, pos.y];
+                    ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
+
+                    if (unit.GetComponent<Unit>().playerID == 1)
+                    {
+                        ObjectManager.Instance.PlayerOneUnits.Remove(unit);
+                    }
+                    else
+                    {
+                        ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
+                    }
+
+                    Destroy(this.gameObject);
                 }
 
                 GLOBAL.setLock(false); // unlock user input
