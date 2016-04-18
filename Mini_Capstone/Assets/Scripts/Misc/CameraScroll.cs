@@ -37,10 +37,10 @@ public class CameraScroll : MonoBehaviour {
             transform.Translate(10.0f * speed, 0.0f * speed, 0);
         }
 
-        float minX = 715;
-        float maxX = 825;
+        float minX = 710;
+        float maxX = 1340;
         float minY = 400;
-        float maxY = 430;
+        float maxY = 945;
 
         var v3 = transform.position;
         v3.x = Mathf.Clamp(v3.x, minX, maxX);
