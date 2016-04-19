@@ -101,7 +101,7 @@ public class GameDirector : Singleton<GameDirector>
         Camera.main.GetComponent<AudioSource>().Play();
     }
 
-    public void endGame()
+    public void endGame(bool isDisconnect)
     {
         if(isSinglePlayer())
         {
@@ -109,12 +109,12 @@ public class GameDirector : Singleton<GameDirector>
             PlayerManager.Instance.endGame();
             TerrainLayer.Instance.endGame();
             ObjectManager.Instance.endGame();
-
+            
             gameState = GameState.GAMEOVER;
         }
         else
         {
-            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered, true);
+            gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered, isDisconnect);
         }
     }
 

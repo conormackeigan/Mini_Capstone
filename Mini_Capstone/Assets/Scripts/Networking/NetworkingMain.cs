@@ -170,7 +170,7 @@ public class NetworkingMain : Photon.PunBehaviour
 
         connecting = false;
         startGame = false;
-        GameDirector.Instance.gameState = GameDirector.GameState.MAINMENU;
+        GameDirector.Instance.gameState = (isDisconnect) ? GameDirector.GameState.MAINMENU : GameDirector.GameState.GAMEOVER;
 
         PhotonNetwork.Disconnect();
 
@@ -202,7 +202,7 @@ public class NetworkingMain : Photon.PunBehaviour
     {
         Debug.Log("OnPhotonPlayerDisconnected: " + player);
 
-        GameDirector.Instance.endGame();
+        GameDirector.Instance.endGame(true);
     }
 
     //=================================

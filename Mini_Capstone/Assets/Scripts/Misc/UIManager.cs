@@ -35,6 +35,8 @@ public class UIManager : Singleton<UIManager>
 
         if (gameState == GameDirector.GameState.MAINMENU)
         {
+            deactivateTurnPanel();
+
             for (int i = 0; i < lobbyObjects.Length; i++)
             {
                 lobbyObjects[i].SetActive(true);
@@ -59,6 +61,8 @@ public class UIManager : Singleton<UIManager>
         }
         else if (gameState == GameDirector.GameState.LOBBY)
         {
+            deactivateTurnPanel();
+
             for (int i = 0; i < lobbyObjects.Length; i++)
             {
                 lobbyObjects[i].SetActive(false);
@@ -101,6 +105,8 @@ public class UIManager : Singleton<UIManager>
         }
         else if (gameState == GameDirector.GameState.GAMEOVER)
         {
+            deactivateTurnPanel();
+
             for (int i = 0; i < gameOverObjects.Length; i++)
             {
                 gameOverObjects[i].SetActive(true);
@@ -167,6 +173,12 @@ public class UIManager : Singleton<UIManager>
     {
         turnPanel.SetActive(true);
         GLOBAL.setLock(true);
+    }
+
+    public void deactivateTurnPanel()
+    {
+        turnPanel.SetActive(false);
+        GLOBAL.setLock(false);
     }
 
     public void ActivateFriendPanel(Unit u)

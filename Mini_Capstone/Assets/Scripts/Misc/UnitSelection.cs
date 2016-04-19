@@ -19,6 +19,9 @@ public class UnitSelection : Singleton<UnitSelection>
     public Sprite infantrySprite;
     public Sprite tankSprite;
     public Sprite exoSprite;
+    public Sprite infantrySpriteBlue;
+    public Sprite tankSpriteBlue;
+    public Sprite exoSpriteBlue;
     public Text unitCostText;
 
     public GameObject purchasedTab;
@@ -28,6 +31,10 @@ public class UnitSelection : Singleton<UnitSelection>
     public GameObject previewPanel;
     public GameObject deployButton;
     public GameObject weaponSelect;
+
+    public GameObject infantryPurchase;
+    public GameObject tankPurchase;
+    public GameObject exoPurchase;
 
     public List<GameObject> purchasedUnits;
 
@@ -54,17 +61,45 @@ public class UnitSelection : Singleton<UnitSelection>
 	
 	// Update is called once per frame
 	void Update () {
-        if(GameDirector.Instance.isMultiPlayer())
+        if (GameDirector.Instance.isMultiPlayer())
         {
+            if (PlayerManager.Instance.getCurrentPlayer().playerID == 2)
+            {
+                infantryPurchase.transform.FindChild("InfantryBuyButton").FindChild("Image").GetComponent<Image>().sprite = infantrySpriteBlue;
+                tankPurchase.transform.FindChild("tankBuyButton").FindChild("Image").GetComponent<Image>().sprite = tankSpriteBlue;
+                exoPurchase.transform.FindChild("ExoBuyButton").FindChild("Image").GetComponent<Image>().sprite = exoSpriteBlue;
+            }
+            else
+            {
+                infantryPurchase.transform.FindChild("InfantryBuyButton").FindChild("Image").GetComponent<Image>().sprite = infantrySprite;
+                tankPurchase.transform.FindChild("tankBuyButton").FindChild("Image").GetComponent<Image>().sprite = tankSprite;
+                exoPurchase.transform.FindChild("ExoBuyButton").FindChild("Image").GetComponent<Image>().sprite = exoSprite;
+            }
+
             if (playerOneDeploy && playerTwoDeploy)
             {
+                infantryPurchase.transform.FindChild("InfantryBuyButton").GetComponent<Button>().enabled = true;
+                tankPurchase.transform.FindChild("tankBuyButton").GetComponent<Button>().enabled = true;
+                exoPurchase.transform.FindChild("ExoBuyButton").GetComponent<Button>().enabled = true;
+
                 GameDirector.Instance.startGame();
             }
             else if ((PhotonNetwork.player.ID == 1 && playerOneDeploy) || (PhotonNetwork.player.ID == 2 && playerTwoDeploy))
             {
                 deployButton.GetComponent<Button>().enabled = false;
                 deployButton.GetComponentInChildren<Text>().text = "Waiting for Other Player";
+
+                infantryPurchase.transform.FindChild("InfantryBuyButton").GetComponent<Button>().enabled = false;
+                tankPurchase.transform.FindChild("tankBuyButton").GetComponent<Button>().enabled = false;
+                exoPurchase.transform.FindChild("ExoBuyButton").GetComponent<Button>().enabled = false;
+
             }
+        }
+        else
+        {
+            infantryPurchase.transform.FindChild("InfantryBuyButton").FindChild("Image").GetComponent<Image>().sprite = infantrySprite;
+            tankPurchase.transform.FindChild("tankBuyButton").FindChild("Image").GetComponent<Image>().sprite = tankSprite;
+            exoPurchase.transform.FindChild("ExoBuyButton").FindChild("Image").GetComponent<Image>().sprite = exoSprite;
         }
 	}
 
@@ -162,7 +197,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         selectedUnit = "Infantry";
         purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
-        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = infantrySprite;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = (GameDirector.Instance.isMultiPlayer() && PhotonNetwork.player.ID == 2) ? infantrySpriteBlue : infantrySprite;
         statPoints = 5;
         health = 5;
         attack = 5;
@@ -196,7 +231,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         selectedUnit = "Tank";
         purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
-        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = tankSprite;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = (GameDirector.Instance.isMultiPlayer() && PhotonNetwork.player.ID == 2) ? tankSpriteBlue : tankSprite;
 
         statPoints = 5;
         health = 5;
@@ -231,7 +266,7 @@ public class UnitSelection : Singleton<UnitSelection>
 
         selectedUnit = "Exo";
         purchasePanel.transform.FindChild("UnitName").GetComponent<Text>().text = selectedUnit;
-        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = exoSprite;
+        purchasePanel.transform.FindChild("InfantryImage").FindChild("Image").GetComponent<Image>().sprite = (GameDirector.Instance.isMultiPlayer() && PhotonNetwork.player.ID == 2) ? exoSpriteBlue : exoSprite;
 
         statPoints = 5;
         health = 5;
@@ -602,6 +637,13 @@ public class UnitSelection : Singleton<UnitSelection>
 
     void initWeapon(string s, Unit script)
     {
+
+        if(GameDirector.Instance.isMultiPlayer())
+        {
+            script.gameObject.GetPhotonView().RPC("AddWeapon", PhotonTargets.AllBuffered, s);
+            return;
+        }
+
         if(script.weapons == null)
         {
             script.weapons = new List<Weapon>();
@@ -610,6 +652,7 @@ public class UnitSelection : Singleton<UnitSelection>
         {
             case "Sword":
                 {
+
                     Weapon sword = new BeamSword(script);
                     script.weapons.Add(sword);
                     script.Equip(sword);

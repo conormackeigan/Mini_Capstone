@@ -49,7 +49,7 @@ public class MapEditor : MonoBehaviour {
                 }
             }
         }
-        sr.Close();
+        //sr.Close();
    
 	}
 	

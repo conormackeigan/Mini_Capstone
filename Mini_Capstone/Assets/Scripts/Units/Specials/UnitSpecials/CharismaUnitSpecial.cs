@@ -39,7 +39,7 @@ public class CharismaUnitSpecial : UnitSpecial
             }
 
             // Apply additional commander buff to units with Trooper special
-            if (u.Pos.Distance(unit.Pos) <= 2)
+            if (u.Pos.Distance(unit.Pos) <= 2 && u.equipped != null)
             {
                 foreach (Special s in u.equipped.specials)
                 {

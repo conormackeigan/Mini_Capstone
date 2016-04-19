@@ -53,35 +53,35 @@ public class Player : MonoBehaviour
             uInfantry script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
             script.Init(true);
-            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(3, 10));
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(7, 14));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
             unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
             script.Init(true);
-            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(7, 4));
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 8));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
             unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
             script.Init(true);
-            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(11, 10));
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(15, 14));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
             unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
             script.Init(true);
-            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(5, 12));
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 16));
 
             unitObj = Instantiate(Resources.Load("UInfantryBlue")) as GameObject;
             unitObj.GetComponent<SpriteRenderer>().enabled = true;
             script = unitObj.GetComponent<uInfantry>();
             script.playerID = 2;
             script.Init(true);
-            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(9, 12));
+            ObjectManager.Instance.addObjectAtPos(unitObj, new Vector2i(13, 16));
         }
 
         // Locations to spawn on map
@@ -91,8 +91,8 @@ public class Player : MonoBehaviour
         // Spawn Units for player
         if (units.Count < 1) return;
         if (GameDirector.Instance.isMultiPlayer()) {
-            posX = (playerID == 1) ? 3 : 3;
-            posY = (playerID == 1) ? 3 : 10;
+            posX = (playerID == 1) ? 7 : 7;
+            posY = (playerID == 1) ? 7 : 14;
             units[0].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
@@ -100,14 +100,14 @@ public class Player : MonoBehaviour
             units[0].GetComponent<SpriteRenderer>().enabled = true;
             units[0].GetComponent<Unit>().playerID = playerID;
             units[0].GetComponent<Unit>().Init();
-            ObjectManager.Instance.addObjectAtPos(units[0], new Vector2i(3, 3));
+            ObjectManager.Instance.addObjectAtPos(units[0], new Vector2i(7, 7));
         }
 
         if (units.Count < 2) return;
         if (GameDirector.Instance.isMultiPlayer())
         {
-            posX = (playerID == 1) ? 7 : 7;
-            posY = (playerID == 1) ? 3 : 4;
+            posX = (playerID == 1) ? 11 : 11;
+            posY = (playerID == 1) ? 7 : 8;
             units[1].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
@@ -115,15 +115,15 @@ public class Player : MonoBehaviour
             units[1].GetComponent<SpriteRenderer>().enabled = true;
             units[1].GetComponent<Unit>().playerID = playerID;
             units[1].GetComponent<Unit>().Init();
-            ObjectManager.Instance.addObjectAtPos(units[1], new Vector2i(7, 3));
+            ObjectManager.Instance.addObjectAtPos(units[1], new Vector2i(11, 7));
         }
 
 
         if (units.Count < 3) return;
         if (GameDirector.Instance.isMultiPlayer())
         {
-            posX = (playerID == 1) ? 11 : 11;
-            posY = (playerID == 1) ? 3 : 10;
+            posX = (playerID == 1) ? 15 : 15;
+            posY = (playerID == 1) ? 7 : 14;
             units[2].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
@@ -131,15 +131,15 @@ public class Player : MonoBehaviour
             units[2].GetComponent<SpriteRenderer>().enabled = true;
             units[2].GetComponent<Unit>().playerID = playerID;
             units[2].GetComponent<Unit>().Init();
-            ObjectManager.Instance.addObjectAtPos(units[2], new Vector2i(11, 3));
+            ObjectManager.Instance.addObjectAtPos(units[2], new Vector2i(15, 7));
         }
 
 
         if (units.Count < 4) return;
         if (GameDirector.Instance.isMultiPlayer())
         {
-            posX = (playerID == 1) ? 5 : 5;
-            posY = (playerID == 1) ? 5 : 12;
+            posX = (playerID == 1) ? 9 : 9;
+            posY = (playerID == 1) ? 9 : 16;
             units[3].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
@@ -147,15 +147,15 @@ public class Player : MonoBehaviour
             units[3].GetComponent<SpriteRenderer>().enabled = true;
             units[3].GetComponent<Unit>().playerID = playerID;
             units[3].GetComponent<Unit>().Init();
-            ObjectManager.Instance.addObjectAtPos(units[3], new Vector2i(5, 5));
+            ObjectManager.Instance.addObjectAtPos(units[3], new Vector2i(9, 9));
         }
 
 
         if (units.Count < 5) return;
         if (GameDirector.Instance.isMultiPlayer())
         {
-            posX = (playerID == 1) ? 9 : 9;
-            posY = (playerID == 1) ? 5 : 12;
+            posX = (playerID == 1) ? 13 : 13;
+            posY = (playerID == 1) ? 9 : 16;
             units[4].GetPhotonView().RPC("StartUnit", PhotonTargets.AllBuffered, playerID, posX, posY);
         }
         else
@@ -163,7 +163,7 @@ public class Player : MonoBehaviour
             units[4].GetComponent<SpriteRenderer>().enabled = true;
             units[4].GetComponent<Unit>().playerID = playerID;
             units[4].GetComponent<Unit>().Init();
-            ObjectManager.Instance.addObjectAtPos(units[4], new Vector2i(9, 5));
+            ObjectManager.Instance.addObjectAtPos(units[4], new Vector2i(13, 9));
         }
 
         

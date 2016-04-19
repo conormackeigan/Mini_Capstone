@@ -156,7 +156,7 @@ public class CombatSequence : Singleton<CombatSequence>
         EnableUI();
 
         // Weapon Select window
-        if (PlayerManager.Instance.players[attacker.playerID - 1].GetComponent<Player>().playerType == Player.PLAYER_TYPE.Human)
+        if (GameDirector.instance.isMultiPlayer() || (GameDirector.instance.isSinglePlayer() && PlayerManager.Instance.players[attacker.playerID - 1].GetComponent<Player>().playerType == Player.PLAYER_TYPE.Human))
         {
             WeaponSelect(attacker);
         }
@@ -384,7 +384,7 @@ public class CombatSequence : Singleton<CombatSequence>
 
         // unlike attacker, defender may not have a weapon within range. if they do equip it, if none tell game defender isn't attacking w/ equipped wep
 
-        if (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE)
+        if (defender != null && defender.equipped != null && (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE))
         { // equipped weapon not in range, try to find one, if not flip retaliation flag
             foreach (Weapon w in defender.weapons)
             {

@@ -60,8 +60,7 @@ public class uInfantry : Unit
 
             // WEAPON(S):
             weapons = new List<Weapon>();
-
-            
+        
             Weapon beamsword = new BeamSword(this);
             weapons.Add(beamsword);
             Equip(beamsword);

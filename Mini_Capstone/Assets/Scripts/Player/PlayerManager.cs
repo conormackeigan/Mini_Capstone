@@ -30,6 +30,11 @@ public class PlayerManager : Singleton<PlayerManager>
         players.Clear();
 
         currentPlayersTurn = 1;
+
+        TurnLabelTop.GetComponent<Text>().text = "Your Turn";
+        TurnLabel.GetComponent<Text>().text = "Your Turn";
+        GLOBAL.setLock(false);
+
     }
 
     public void setUpNPlayers(int n)

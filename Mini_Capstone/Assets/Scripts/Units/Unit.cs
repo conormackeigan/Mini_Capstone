@@ -161,7 +161,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 GLOBAL.setLock(false); // unlock user input
                 if(ObjectManager.Instance.isGameOver())
                 {
-                    GameDirector.Instance.endGame();
+                    GameDirector.Instance.endGame(false);
                 }
             }
         }
@@ -425,7 +425,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                 { // reached destination
                     state = UnitState.Waiting;               
 
-                    if (isHuman() || GameDirector.Instance.isMultiPlayer())
+                    if (GameDirector.Instance.isMultiPlayer() || (isHuman() && GameDirector.Instance.isSinglePlayer()))
                     {
                         UIManager.Instance.setUnitUI(true); // display UI now that inputs are 
                     }
@@ -434,7 +434,7 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     TileMarker.Instance.markAttackTiles(this);
                     GameDirector.Instance.BoardStateChanged();
 
-                    if (!isHuman())
+                    if (GameDirector.Instance.isSinglePlayer() && !isHuman())
                     {
                         AI.ReachedDestination();
                     }
