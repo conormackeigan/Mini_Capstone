@@ -172,9 +172,8 @@ public class PriorityQueue<T>
         {
             if (d.Value.Equals(value))
             {
-                KeyValuePair<int, T> entry = new KeyValuePair<int, T>(priority, d.Value);
                 data.Remove(d);
-                data.Add(entry);
+                Add(value, priority);
 
                 break;
             }

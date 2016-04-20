@@ -212,7 +212,8 @@ public class CombatSequence : Singleton<CombatSequence>
                 //if this weapon is not actionable and unit has moved, or the weapon is not in range, disable button and grey out
 
                 if ((!unit.weapons[i - 1].actionable && unit.pos != unit.selectPos) ||
-                     (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE))
+                     (!unit.weapons[i - 1].ContainsRange(distance)) || (unit.weapons[i - 1].AoE) ||
+                     (unit.weapons[i - 1].AoE))
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
                     ui.transform.GetChild(8).gameObject.SetActive(true); // disable button (4th child)
@@ -253,13 +254,10 @@ public class CombatSequence : Singleton<CombatSequence>
     // method fired from weapon select buttons
     public void SelectWeapon(int index)
     {
-        Debug.Log("SelectWeapon");
-        Debug.Log("buff size before: " + attacker.buffs.Count);
         attacker.Equip(attacker.weapons[index - 1]);
         ChangeSelection(index, attacker);
         CalculateStats();
         Display(); // refresh values in combat window
-        Debug.Log("buff: " + attacker.buffs[0].GetType());
     }
 
     void CalculateStats()
@@ -380,28 +378,36 @@ public class CombatSequence : Singleton<CombatSequence>
                     break;
                 }
             }
+
         }
 
         // unlike attacker, defender may not have a weapon within range. if they do equip it, if none tell game defender isn't attacking w/ equipped wep
 
-        if (defender != null && defender.equipped != null && (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE))
-        { // equipped weapon not in range, try to find one, if not flip retaliation flag
-            foreach (Weapon w in defender.weapons)
-            {
-                if (w.AoE)
+        if (defender != null && defender.equipped != null)          
+        { // equipped weapon not in range, try to find one, if not flip retaliation flag           
+            if (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE)
+            {           
+                foreach (Weapon w in defender.weapons)
                 {
-                    continue; // do not equip AoE weapons in regular combat sequences
-                }
+                    if (w.AoE)
+                    {
+                        continue; // do not equip AoE weapons in regular combat sequences
+                    }
 
-                if (w.ContainsRange(distance))
-                { // found an appropriate weapon, equip and break out
-                    defender.Equip(w);
-                    retaliation = true;
-                    break;
+                    if (w.ContainsRange(distance))
+                    { // found an appropriate weapon, equip and break out
+                        defender.Equip(w);
+                        retaliation = true;
+                        break;
+                    }
                 }
             }
+            else
+            {
+                retaliation = true;
+            }
         }
-        else
+        else if (!defender.equipped.AoE)
         {
             retaliation = true; // equipped weapon is already in range
         }
@@ -479,7 +485,7 @@ public class CombatSequence : Singleton<CombatSequence>
                     }
                     else
                     {
-                        if (defender.CheckDead())
+                        if (defender.CheckDead() || !retaliation)
                         {
                             Finish();
                         }

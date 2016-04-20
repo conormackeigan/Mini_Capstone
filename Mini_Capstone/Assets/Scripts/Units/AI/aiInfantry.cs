@@ -50,18 +50,18 @@ public class aiInfantry : aiBase
             if (objectGrid[tile.Key.x, tile.Key.y] != null)
             {
                 Unit other = objectGrid[tile.Key.x, tile.Key.y].GetComponent<Unit>();
+
                 if (other.playerID == 1)
                 {
                     // get all weapons in range of this unit
                     foreach (Weapon w in unit.weapons)
                     {
-                        int dist = unit.pos.Distance(other.pos);
-                        if (dist >= w.rangeMin && dist <= w.rangeMax)
+                        // TEMP: AI cannot use AoE for now (too much extra calculations for time constraints)
+                        if (w.ContainsRange(unit.pos.Distance(other.pos)) && !w.AoE)
                         {
                             possibleAttacks.Add(new Pair<Unit, Weapon>(other, w));
                         }
                     }
-
                 }
             }
         }
@@ -78,7 +78,7 @@ public class aiInfantry : aiBase
                     {
                         for (int j = Mathf.Max(tile.Key.y - w.rangeMax, 0); j <= Mathf.Min(tile.Key.y + w.rangeMax, MapScript.Instance.mapHeight - 1); j++)
                         {
-                            if (objectGrid[i, j] != null && tile.Key.Distance(new Vector2i(i, j)) >= w.rangeMin)
+                            if (objectGrid[i, j] != null && tile.Key.Distance(new Vector2i(i, j)) >= w.rangeMin && tile.Key.Distance(new Vector2i(i, j)) <= w.rangeMax)
                             {
                                 if (objectGrid[i, j].GetComponent<Unit>().playerID == 1)
                                 {
@@ -86,7 +86,7 @@ public class aiInfantry : aiBase
 
                                     bool dupe = false; // not a duplicate until we prove it is
                                     // didn't set up a comparer for the Pair type so here's a jerry-rig
-                                    foreach(Pair<Unit, Weapon> p in possibleAttacks)
+                                    foreach (Pair<Unit, Weapon> p in possibleAttacks)
                                     {
                                         if (pair.first == p.first && pair.second == p.second)
                                         {
@@ -127,29 +127,50 @@ public class aiInfantry : aiBase
         else if (possibleAttacks.Count == 0 && TileMarker.Instance.travTiles.Count != 0)
         {
             // iterate through all player units and decide which unit to pursue
-            //Chase();
-            Wait(); //tmp
+            Chase();
+            //Wait(); //tmp
 
             return;
-        }
-
-        // if there are possible attacks but no trav tiles, simply attack if it's not a horrible attack
-        else if (possibleAttacks.Count > 0 && TileMarker.Instance.travTiles.Count == 0)
-        {
-            if (attackPriority.backPriority() > 0)
-            {
-                Attack(attackPriority.back().first, attackPriority.back().second);
-            }
-            else
-            {
-                Wait();
-            }
         }
 
         // next case is to process possible attacks and either attack or chase (if attacks are all unfavourable)
         else if (possibleAttacks.Count > 0)
         {
             PrioritizeAttacks();
+
+            // priority queue populated, check if we can attack or if we have to move first
+            // DEBUG: print priority queue in order
+            //for (int i = 0; i < attackPriority.data.Count; i++)
+            //{
+            //    Debug.Log(attackPriority.data[i].Value.second.name + " " + attackPriority.data[i].Key);
+            //}
+
+            // if highest priority attack is <= 0, do not attack
+            if (attackPriority.backPriority() <= 0)
+            {
+                // TODO: implement flee behaviour (not in conventional FE games and could be frustrating to player but what a "smart" player would do)
+                // for now just wait
+                Wait();
+
+                return;
+            }
+
+            Unit target = attackPriority.back().first;
+            Weapon weapon = attackPriority.back().second;
+            
+            // if attacking weapon is not actionable (or no possible movements), attack now
+            if (!weapon.actionable || TileMarker.Instance.travTiles.Count == 0)
+            {
+                Attack(target, weapon);
+            }
+            else
+            {
+                if (weapon.actionable)
+                {
+                    // find best spot to attack from
+                    FindAttackPoint(attackPriority.back());
+                }
+            }
         }
 
         else
@@ -160,7 +181,7 @@ public class aiInfantry : aiBase
     }
 
     // adds worst case attack (enemy's best weapon) to possibleAttacks
-    public void CalculateAttackPriority(Pair<Unit, Weapon> attack)
+    public void CalculateAttackPriority(Pair<Unit, Weapon> attack, bool move = false)
     {
         Unit defender = attack.first;
         defender.state = Unit.UnitState.Combat;
@@ -185,7 +206,7 @@ public class aiInfantry : aiBase
             }
 
             defender.Equip(w);
-          
+
             int dmgOut = 0;
             int dmgIn = 0;
             float accOut = 0;
@@ -212,7 +233,7 @@ public class aiInfantry : aiBase
             // apply combat skill offsets
             dmgOut += CombatSequence.Instance.attackerDamage;
             accOut += CombatSequence.Instance.attackerHitrate;
-            
+
 
             //==========================================================
             // ARCANE PRIORITY CALCULATIONS (prepare for nonsense)
@@ -252,6 +273,9 @@ public class aiInfantry : aiBase
             priority -= (int)(75 - accOut);
             priority += (int)((75 - accIn) * 0.5f);
 
+            attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)   
+            //attackPriority.AddOrUpdateIfHigher(attack, priority); //tmp DEBUG
+
             //attackPriority.AddOrUpdateIfLower(attack, priority); // store the lowest priority attack (worst case) for each enemy unit (their best weapon)
             if (!retaliation)
             {
@@ -280,9 +304,9 @@ public class aiInfantry : aiBase
         // sort possibleAttacks list by priority
         foreach (Pair<Unit, Weapon> attack in possibleAttacks)
         {
-            unit.Equip(attack.second);         
-            
-            foreach(KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.travTiles)
+            unit.Equip(attack.second);
+
+            foreach (KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.travTiles)
             {
                 unit.pos = tile.Key;
                 CalculateAttackPriority(attack);
@@ -292,39 +316,6 @@ public class aiInfantry : aiBase
         }
 
         unit.Equip(origWep);
-
-        // priority queue populated, check if we can attack or if we have to move first
-        // DEBUG: print priority queue in order
-        for (int i = 0; i < attackPriority.data.Count; i++)
-        {
-            Debug.Log(attackPriority.data[i].Value.second.name + " " + attackPriority.data[i].Key);
-        }
-
-        // if highest priority attack is <= 0, do not attack
-        if (attackPriority.backPriority() <= 0)
-        {
-            // TODO: implement flee behaviour (not in conventional FE games and could be frustrating to player but what a "smart" player would do)
-            // for now just wait
-            Wait();
-            Debug.Log(attackPriority.backPriority() + "=========================================================");
-            Debug.Log(attackPriority.Count());
-            return;
-        }
-
-        Unit target = attackPriority.back().first;
-        Weapon weapon = attackPriority.back().second;
-
-        // if attacking weapon is not actionable, attack now
-        if (!weapon.actionable)
-        {
-            Attack(target, weapon);
-        }
-        else
-        {
-            // find best spot to attack from
-            FindAttackPoint(attackPriority.back());
-            //Attack(target, weapon); //tmp
-        }
     }
 
 
@@ -343,7 +334,7 @@ public class aiInfantry : aiBase
 
         Vector2i originalPos = unit.pos; // need to move unit around to test different attack points
 
-        // process not-moving case since initial tile is not marked in tilemarker
+        // process not-moving special case since initial tile is not marked in tilemarker
         if (unit.equipped.ContainsRange(unit.pos.Distance(target.pos)))
         {
             // process all possible weapon exchanges with committed weapon vs all of enemy's and store worst case as tile priority
@@ -378,7 +369,6 @@ public class aiInfantry : aiBase
     // called by unit when finished traversing path
     public override void ReachedDestination()
     {
-        Debug.Log("reached destination");
         if (storedAttack != null)
         {
             Attack(storedAttack.first, storedAttack.second);
