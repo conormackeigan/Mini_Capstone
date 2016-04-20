@@ -395,7 +395,118 @@ public class aiInfantry : aiBase
     // computes which unit to chase (in the case of no attacks)
     public void Chase()
     {
-        //
+        // set up A* to find best path to closest unit
+
+        Unit closest = null;
+        int otherPlayer;
+        int dist = 10000; // large number (+infinity essentially)
+
+        if (unit.playerID == 0)
+        {
+            otherPlayer = 1;
+        }
+        else
+        {
+            otherPlayer = 0;
+        }
+
+        foreach(GameObject go in ObjectManager.Instance.playerUnits[otherPlayer])
+        {
+            Unit u = go.GetComponent<Unit>();
+
+            if (unit.pos.Distance(u.pos) < dist)
+            {
+                dist = unit.pos.Distance(u.pos);
+                closest = u;
+            }
+        }
+
+        // got nearest unit, compute path to it
+
+        //safety net
+        if (closest == null)
+        {
+            Debug.Log("no units to chase");
+            Wait();
+        }
+
+        List<Vector2i> path = new List<Vector2i>(); // order doesn't matter for these purposes (will be end-start)
+
+        PriorityQueue<Tile> openList = new PriorityQueue<Tile>();
+        PriorityQueue<Tile> closedList = new PriorityQueue<Tile>();
+
+        foreach (Tile t in TerrainLayer.Instance.Tiles)
+        {
+            t.parent = null;
+            t.cost = 10000;
+            t.h = t.pos.Distance(closest.pos); // heuristic is distance from destination
+        }
+
+        //add unit pos as root and begin search
+        Tile root = TerrainLayer.Instance.Tiles[unit.pos.x, unit.pos.y];
+        root.cost = 0;
+        closedList.Add(root, root.cost);
+        openList.Remove(root);
+
+        // root neighbours
+        foreach (Vector2i neighbour in root.neighbours)
+        {
+            Tile n = TerrainLayer.Instance.Tiles[neighbour.x, neighbour.y];
+
+            n.parent = root;
+
+            n.cost = n.parent.cost + n.weight;
+
+            openList.AddOrUpdate(n, n.cost + n.h);
+        }
+
+        // recursion
+        while (!openList.Empty()) // search entire grid if we have to (but hopefully we don't)
+        {
+            Tile curr = openList.front();
+
+            // reached destination check
+            if (curr.pos == closest.pos)
+            {
+                closedList.Add(curr, curr.cost);
+                break;
+            }
+
+            openList.Remove(curr);
+
+            foreach (Vector2i neighbour in curr.neighbours)
+            {
+                Tile n = TerrainLayer.Instance.Tiles[neighbour.x, neighbour.y];
+
+                if (curr.cost + n.weight < n.cost)
+                {
+                    n.parent = curr;
+                    n.cost = curr.cost + n.weight;
+
+                    openList.AddOrUpdate(n, n.parent.cost + n.weight);
+                }
+            }
+
+            closedList.AddOrUpdate(curr, curr.cost);
+        }
+
+        // got path, click on marked tile furthest along path
+        Tile current = TerrainLayer.Instance.Tiles[closest.pos.x, closest.pos.y].parent;
+
+        while (true)
+        {
+            if (TileMarker.Instance.travTiles.ContainsKey(current.pos))
+            {
+                //found closest tile to goal
+                TerrainLayer.Instance.tileObjects[current.pos.x, current.pos.y].GetComponent<TileResponder>().OnMouseClick();
+                break;
+            }
+            else
+            {
+                current = current.parent;
+            }
+        }
+
     }
 
 

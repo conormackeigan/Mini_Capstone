@@ -11,7 +11,8 @@ public abstract class Tile
     public Vector2i pos;
 
     // Pathfinding:
-    public int cost; // current cheapest cost to travel to this node
+    public int cost; // current cheapest cost to travel to this node (g score)
+    public int h; // heuristic for A*
     public List<Vector2i> neighbours; // all adjacent cells
     public Tile parent; // previous node in shortest path to this tile
 

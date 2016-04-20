@@ -59,6 +59,19 @@ public class PriorityQueue<T>
         }
     }
 
+    // removes first encountered (lowest value priority) instance of item in queue
+    public void Remove(T item)
+    {
+        foreach(KeyValuePair<int, T> d in data)
+        {
+            if (d.Value.Equals(item))
+            {
+                data.Remove(d);
+                return;
+            }
+        }
+    }
+
     public bool Empty()
     {
         if (data.Count < 1)
