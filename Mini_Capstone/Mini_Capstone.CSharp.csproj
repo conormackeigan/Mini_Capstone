@@ -345,9 +345,9 @@
     <Compile Include="Assets\Scripts\Player\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Structures\Structure.cs" />
     <Compile Include="Assets\Scripts\Structures\sBarracks.cs" />
+    <Compile Include="Assets\Scripts\Units\AI\AIManager.cs" />
     <Compile Include="Assets\Scripts\Units\AI\aiBase.cs" />
     <Compile Include="Assets\Scripts\Units\AI\aiInfantry.cs" />
-    <Compile Include="Assets\Scripts\Units\AI\aiManager.cs" />
     <Compile Include="Assets\Scripts\Units\Buffs\AcceleratorBuff.cs" />
     <Compile Include="Assets\Scripts\Units\Buffs\BerserkBuff.cs" />
     <Compile Include="Assets\Scripts\Units\Buffs\Buff.cs" />

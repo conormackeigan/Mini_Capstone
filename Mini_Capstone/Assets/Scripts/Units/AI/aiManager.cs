@@ -7,6 +7,12 @@ public class AIManager : Singleton<AIManager>
     public List<Unit> units;
     private Unit currUnit;
 
+    void Start()
+    {
+        units = new List<Unit>();
+        Debug.Log("units initialized");
+    }
+
     // sets AI Manager active (beginning of computer turn)
     public void startEnemyTurn()
     {
@@ -16,7 +22,7 @@ public class AIManager : Singleton<AIManager>
 
     public void getUnits()
     {
-        units = new List<Unit>();
+        units.Clear();
 
         foreach (GameObject go in ObjectManager.Instance.PlayerTwoUnits)
         {

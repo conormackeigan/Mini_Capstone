@@ -155,15 +155,15 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                         ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
                     }
 
-                    if (AI != null)
-                    { // this is an AI unit so continue the turn sequence after death
-                        AIManager.Instance.callNextUnit();
-                    }
-
                     Destroy(this.gameObject);
                 }
 
-                GLOBAL.setLock(false); // unlock user input
+                if (PlayerManager.Instance.getCurrentPlayer().playerType == Player.PLAYER_TYPE.Human)
+                {
+                    GLOBAL.setLock(false); // unlock user input
+                }
+               
+                
                 if(ObjectManager.Instance.isGameOver())
                 {
                     GameDirector.Instance.endGame(false);
