@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using GooglePlayGames;
+using UnityEngine.SocialPlatforms;
 
 public class UnitSelection : Singleton<UnitSelection>
 {
@@ -707,6 +709,16 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public void purchaseInfantry()
     {
+        Social.ReportProgress("CgkIpqXyhekJEAIQBA", 100.0f, (bool success) => {
+            if (success)
+            {
+                Debug.Log("Achievement Get!");
+            }
+            else {
+                Debug.Log("Authentication failed.");
+            }
+        });
+
         // TODO: Provide feedback for fail
         if (purchasedUnits.Count >= 5 || currentTotal - INFANTRY_BASE_COST - unitTotal < 0)
         {
@@ -762,6 +774,16 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public void purchaseTank()
     {
+        Social.ReportProgress("CgkIpqXyhekJEAIQBA", 100.0f, (bool success) => {
+            if (success)
+            {
+                Debug.Log("Achievement Get!");
+            }
+            else {
+                Debug.Log("Authentication failed.");
+            }
+        });
+
         // TODO: Provide feedback for fail
         if (purchasedUnits.Count >= 5 || currentTotal - TANK_BASE_COST - unitTotal < 0)
         {
@@ -817,6 +839,16 @@ public class UnitSelection : Singleton<UnitSelection>
 
     public void purchaseExo()
     {
+        Social.ReportProgress("CgkIpqXyhekJEAIQBA", 100.0f, (bool success) => {
+            if (success)
+            {
+                Debug.Log("Achievement Get!");
+            }
+            else {
+                Debug.Log("Authentication failed.");
+            }
+        });
+
         // TODO: Provide feedback for fail
         if (purchasedUnits.Count >= 5 || currentTotal - EXO_BASE_COST - unitTotal < 0)
         {

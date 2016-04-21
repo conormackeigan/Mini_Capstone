@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GooglePlayGames;
+using UnityEngine.SocialPlatforms;
 
 public class GameDirector : Singleton<GameDirector>
 {
@@ -88,6 +90,16 @@ public class GameDirector : Singleton<GameDirector>
     {
         if (numOfPlayers == 1 || (numOfPlayers == 2 && GameObject.FindGameObjectWithTag("Network").GetComponent<NetworkingMain>().startGame))
         {
+            Social.ReportProgress("CgkIpqXyhekJEAIQAQ", 100.0f, (bool success) => {
+                if (success)
+                {
+                    Debug.Log("Achievement Get!");
+                }
+                else {
+                    Debug.Log("Authentication failed.");
+                }
+            });
+
             PlayerManager.Instance.getCurrentPlayer().startBoardWithUnits(UnitSelection.Instance.purchasedUnits);
             gameState = GameState.BOARD;
 
@@ -103,7 +115,17 @@ public class GameDirector : Singleton<GameDirector>
 
     public void endGame(bool isDisconnect)
     {
-        if(isSinglePlayer())
+        Social.ReportProgress("CgkIpqXyhekJEAIQAg", 100.0f, (bool success) => {
+            if (success)
+            {
+                Debug.Log("Achievement Get!");
+            }
+            else {
+                Debug.Log("Authentication failed.");
+            }
+        });
+
+        if (isSinglePlayer())
         {
             UnitSelection.Instance.Reset();
             PlayerManager.Instance.endGame();
@@ -116,6 +138,7 @@ public class GameDirector : Singleton<GameDirector>
         {
             gameObject.GetPhotonView().RPC("EndGameNetwork", PhotonTargets.AllBuffered, isDisconnect);
         }
+
     }
 
     public void returnToMenu()

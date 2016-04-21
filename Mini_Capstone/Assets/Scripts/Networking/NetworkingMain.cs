@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Photon;
+using GooglePlayGames;
+using UnityEngine.SocialPlatforms;
 
 public class NetworkingMain : Photon.PunBehaviour
 {
@@ -159,6 +161,16 @@ public class NetworkingMain : Photon.PunBehaviour
         PhotonNetwork.ConnectUsingSettings(GLOBAL.VERSION_NUMBER);
 
         connecting = true;
+
+        Social.ReportProgress("CgkIpqXyhekJEAIQBQ", 100.0f, (bool success) => {
+            if (success)
+            {
+                Debug.Log("Achievement Get!");
+            }
+            else {
+                Debug.Log("Authentication failed.");
+            }
+        });
     }
 
     public void Disconnect(bool isDisconnect)

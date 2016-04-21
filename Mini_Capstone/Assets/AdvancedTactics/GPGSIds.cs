@@ -25,7 +25,11 @@ namespace AdvancedTactics
 {
 public static class GPGSIds
 {
-        public const string achievement_test_achievement = "CgkIpqXyhekJEAIQAQ"; // <GPGSID>
+        public const string achievement_connected = "CgkIpqXyhekJEAIQBQ"; // <GPGSID>
+        public const string achievement_game_over = "CgkIpqXyhekJEAIQAg"; // <GPGSID>
+        public const string achievement_chaching = "CgkIpqXyhekJEAIQBA"; // <GPGSID>
+        public const string achievement_eliminated = "CgkIpqXyhekJEAIQAw"; // <GPGSID>
+        public const string achievement_to_battle = "CgkIpqXyhekJEAIQAQ"; // <GPGSID>
 
 }
 }

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.EventSystems;
+using GooglePlayGames;
+using UnityEngine.SocialPlatforms;
 
 public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 {
@@ -129,6 +131,16 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // fade out on death
         if (isDead)
         {
+            Social.ReportProgress("CgkIpqXyhekJEAIQAw", 100.0f, (bool success) => {
+                if (success)
+                {
+                    Debug.Log("Achievement Get!");
+                }
+                else {
+                    Debug.Log("Authentication failed.");
+                }
+            });
+
             if (gameObject.GetComponent<SpriteRenderer>().color.a > 0)
             {
                 color.a -= Time.deltaTime;
