@@ -33,7 +33,6 @@ public class AIManager : Singleton<AIManager>
     // get next unit in turn order
     public Unit getNext(bool remove = true)
     {
-        Debug.Log("get next units count: " + units.Count);
         if (units.Count > 0)
         {
             Unit unit = units[0];
@@ -62,7 +61,6 @@ public class AIManager : Singleton<AIManager>
     public void receiveActionCall()
     {
         currUnit.AI.SelectAction();
-        Debug.Log("received call");
     }
 
 

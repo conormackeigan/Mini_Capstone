@@ -146,13 +146,16 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                     GameObject unit = ObjectManager.Instance.ObjectGrid[pos.x, pos.y];
                     ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
 
-                    if (unit.GetComponent<Unit>().playerID == 1)
+                    if (unit != null)
                     {
-                        ObjectManager.Instance.PlayerOneUnits.Remove(unit);
-                    }
-                    else
-                    {
-                        ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
+                        if (unit.GetComponent<Unit>().playerID == 1)
+                        {
+                            ObjectManager.Instance.PlayerOneUnits.Remove(unit);
+                        }
+                        else
+                        {
+                            ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
+                        }
                     }
 
                     Destroy(this.gameObject);
@@ -626,6 +629,25 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         {
             if (timer == 0)
             {
+                // remove from lists at beginning of sequence so enemy AI doesnt process attacks before fully disappearing on death
+                if (health - finalDmg <= 0)
+                {
+                    GameObject unit = ObjectManager.Instance.ObjectGrid[pos.x, pos.y];
+                    ObjectManager.Instance.ObjectGrid[pos.x, pos.y] = null;
+
+                    if (unit != null)
+                    {
+                        if (unit.GetComponent<Unit>().playerID == 1)
+                        {
+                            ObjectManager.Instance.PlayerOneUnits.Remove(unit);
+                        }
+                        else
+                        {
+                            ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
+                        }
+                    }
+                }
+
                 health--;
             }
 

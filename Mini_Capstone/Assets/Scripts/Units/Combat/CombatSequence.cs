@@ -691,7 +691,10 @@ public class CombatSequence : Singleton<CombatSequence>
         GLOBAL.setLock(false);
 
         AoESequence = false;
-        PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Deactivate();
+        if (PlayerManager.Instance.getCurrentPlayer().selectedObject != null)
+        {
+            PlayerManager.Instance.getCurrentPlayer().selectedObject.GetComponent<Unit>().Deactivate();
+        }
 
         // refresh board status for combat buffs etc
         GameDirector.Instance.BoardStateChanged();

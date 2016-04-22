@@ -51,7 +51,7 @@ public class aiInfantry : aiBase
             {
                 Unit other = objectGrid[tile.Key.x, tile.Key.y].GetComponent<Unit>();
 
-                if (other.playerID == 1)
+                if (other.playerID != unit.playerID)
                 {
                     // get all weapons in range of this unit
                     foreach (Weapon w in unit.weapons)
@@ -80,7 +80,7 @@ public class aiInfantry : aiBase
                         {
                             if (objectGrid[i, j] != null && tile.Key.Distance(new Vector2i(i, j)) >= w.rangeMin && tile.Key.Distance(new Vector2i(i, j)) <= w.rangeMax)
                             {
-                                if (objectGrid[i, j].GetComponent<Unit>().playerID == 1)
+                                if (objectGrid[i, j].GetComponent<Unit>().playerID != unit.playerID)
                                 {
                                     Pair<Unit, Weapon> pair = new Pair<Unit, Weapon>(objectGrid[i, j].GetComponent<Unit>(), w);
 
@@ -106,6 +106,7 @@ public class aiInfantry : aiBase
             }
         }
 
+        
         // all possible attacks are now stored in possibleAttacks. analyze which one is the most efficient, and make unit move to appropriate space and/or attack
         AIManager.Instance.callAction(unit);
 
@@ -119,7 +120,6 @@ public class aiInfantry : aiBase
         if (possibleAttacks.Count == 0 && TileMarker.Instance.travTiles.Count == 0)
         {
             Wait();
-
             return;
         }
 
@@ -128,7 +128,6 @@ public class aiInfantry : aiBase
         {
             // iterate through all player units and decide which unit to pursue
             Chase();
-            //Wait(); //tmp
 
             return;
         }
@@ -138,19 +137,19 @@ public class aiInfantry : aiBase
         {
             PrioritizeAttacks();
 
-            // priority queue populated, check if we can attack or if we have to move first
-            // DEBUG: print priority queue in order
-            //for (int i = 0; i < attackPriority.data.Count; i++)
-            //{
-            //    Debug.Log(attackPriority.data[i].Value.second.name + " " + attackPriority.data[i].Key);
-            //}
+        // priority queue populated, check if we can attack or if we have to move first
+        // DEBUG: print priority queue in order
+            for (int i = 0; i < attackPriority.data.Count; i++)
+            {
+                Debug.Log(attackPriority.data[i].Value.second.name + " " + attackPriority.data[i].Key);
+            }
 
             // if highest priority attack is <= 0, do not attack
             if (attackPriority.backPriority() <= 0)
             {
                 // TODO: implement flee behaviour (not in conventional FE games and could be frustrating to player but what a "smart" player would do)
                 // for now just wait
-                Wait();
+                Chase(); // hack (fire emblem behaviour)
 
                 return;
             }
@@ -311,6 +310,9 @@ public class aiInfantry : aiBase
         {
             unit.Equip(attack.second);
 
+            //process initial tile special case as it is not marked
+            CalculateAttackPriority(attack);
+
             foreach (KeyValuePair<Vector2i, GameObject> tile in TileMarker.Instance.travTiles)
             {
                 unit.pos = tile.Key;
@@ -360,14 +362,21 @@ public class aiInfantry : aiBase
             // process all possible weapon exchanges with committed weapon vs all of enemy's and store worst case as tile priority
             attackPriority.Clear();
             CalculateAttackPriority(attack);
-            movePriority.Add(unit.pos, attackPriority.backPriority());
+            movePriority.AddOrUpdateIfHigher(unit.pos, attackPriority.backPriority());
         }
 
         // sorted all tiles by how effective the attack is from their vantage, pick the highest priority
         Vector2i targetPos = movePriority.back();
         unit.pos = originalPos;
 
-        TerrainLayer.Instance.tileObjects[targetPos.x, targetPos.y].GetComponent<TileResponder>().OnMouseClick();
+        if (targetPos != unit.pos)
+        {
+            TerrainLayer.Instance.tileObjects[targetPos.x, targetPos.y].GetComponent<TileResponder>().OnMouseClick();
+        }
+        else
+        {
+            ReachedDestination(); // already at destination so call arrive code
+        }
     }
 
 
@@ -403,7 +412,7 @@ public class aiInfantry : aiBase
         // set up A* to find best path to closest unit
 
         Unit closest = null;
-        int otherPlayer;
+
         int dist = 10000; // large number (+infinity essentially)
 
         List<GameObject> other;
@@ -457,6 +466,14 @@ public class aiInfantry : aiBase
         // root neighbours
         foreach (Vector2i neighbour in root.neighbours)
         {
+            if (ObjectManager.Instance.ObjectGrid[neighbour.x, neighbour.y] != null)
+            {
+                if (ObjectManager.Instance.ObjectGrid[neighbour.x, neighbour.y].GetComponent<Unit>().playerID != unit.playerID)
+                {
+                    continue; // cannot traverse enemy-occupied spaces
+                }
+            }
+
             Tile n = TerrainLayer.Instance.Tiles[neighbour.x, neighbour.y];
 
             n.parent = root;
@@ -474,8 +491,12 @@ public class aiInfantry : aiBase
             // reached destination check
             if (curr.pos == closest.pos)
             {
-                closedList.Add(curr, curr.cost);
-                break;
+                // end path at destination if the previous node was free, otherwise continue searching
+                if (ObjectManager.Instance.ObjectGrid[curr.parent.pos.x, curr.parent.pos.y] == null)
+                {
+                    closedList.Add(curr, curr.cost);
+                    break;
+                }
             }
 
             openList.Remove(curr);
@@ -501,7 +522,7 @@ public class aiInfantry : aiBase
 
         while (true)
         {
-            if (TileMarker.Instance.travTiles.ContainsKey(current.pos))
+            if (TileMarker.Instance.travTiles.ContainsKey(current.pos) && ObjectManager.Instance.ObjectGrid[current.pos.x, current.pos.y] == null)
             {
                 //found closest tile to goal
                 TerrainLayer.Instance.tileObjects[current.pos.x, current.pos.y].GetComponent<TileResponder>().OnMouseClick();
@@ -510,6 +531,13 @@ public class aiInfantry : aiBase
             else
             {
                 current = current.parent;
+
+                if (current == null)
+                {
+                    // no possible destinations along path apparently
+                    Wait();
+                    break;
+                }
             }
         }
 
