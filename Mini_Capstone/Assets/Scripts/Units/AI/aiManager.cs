@@ -7,6 +7,12 @@ public class AIManager : Singleton<AIManager>
     public List<Unit> units;
     private Unit currUnit;
 
+    void Start()
+    {
+        units = new List<Unit>();
+        Debug.Log("units initialized");
+    }
+
     // sets AI Manager active (beginning of computer turn)
     public void startEnemyTurn()
     {
@@ -16,7 +22,7 @@ public class AIManager : Singleton<AIManager>
 
     public void getUnits()
     {
-        units = new List<Unit>();
+        units.Clear();
 
         foreach (GameObject go in ObjectManager.Instance.PlayerTwoUnits)
         {
@@ -25,14 +31,20 @@ public class AIManager : Singleton<AIManager>
     }
 
     // get next unit in turn order
-    public Unit getNext()
+    public Unit getNext(bool remove = true)
     {
+        Debug.Log("get next units count: " + units.Count);
         if (units.Count > 0)
         {
             Unit unit = units[0];
-            units.RemoveAt(0);
+
+            if (remove)
+            {
+                units.RemoveAt(0);
+            }
 
             return unit;
+
         }
         else // enemy turn is done
         {
@@ -50,6 +62,7 @@ public class AIManager : Singleton<AIManager>
     public void receiveActionCall()
     {
         currUnit.AI.SelectAction();
+        Debug.Log("received call");
     }
 
 

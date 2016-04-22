@@ -139,10 +139,13 @@ public class UIManager : Singleton<UIManager>
         waitButton.SetActive(false);
     }
 
-    public void deactivateAttackButton()
+    public void deactivateAttackButton(bool wait = true)
     {
         attackButton.SetActive(false);
-        waitButton.SetActive(true);
+        if (wait)
+        {
+            waitButton.SetActive(true);
+        }
     }
 
     public void activateAoEButton()
@@ -221,6 +224,8 @@ public class UIManager : Singleton<UIManager>
             // Regular Combat:
             else if (CombatSequence.Instance.active)
             { // if a combat sequence is active confirm button will initiate the sequence
+                deactivateAttackButton(false); // clear UI for attack
+
                 CombatSequence combat = CombatSequence.Instance;
                 if (combat.preCombat)
                 {

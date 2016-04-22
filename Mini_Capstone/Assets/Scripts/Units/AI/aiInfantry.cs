@@ -157,7 +157,7 @@ public class aiInfantry : aiBase
 
             Unit target = attackPriority.back().first;
             Weapon weapon = attackPriority.back().second;
-            
+
             // if attacking weapon is not actionable (or no possible movements), attack now
             if (!weapon.actionable || TileMarker.Instance.travTiles.Count == 0)
             {
@@ -220,14 +220,19 @@ public class aiInfantry : aiBase
 
             CombatSequence.Instance.Calculate(unit, defender, ref dmgOut, ref accOut);
 
+            CombatSequence.Instance.defender = defender;
+
             if (retaliation)
             {
-                CombatSequence.Instance.defender = defender;
                 CombatSequence.Instance.retaliation = true; // weapon is in range so retaliation guaranteed (TODO: cost checks)
                 CombatSequence.Instance.Calculate(defender, unit, ref dmgIn, ref accIn);
 
                 dmgIn += CombatSequence.Instance.defenderDamage;
                 accIn += CombatSequence.Instance.defenderHitrate;
+            }
+            else
+            {
+                CombatSequence.Instance.retaliation = false;
             }
 
             // apply combat skill offsets
@@ -401,16 +406,18 @@ public class aiInfantry : aiBase
         int otherPlayer;
         int dist = 10000; // large number (+infinity essentially)
 
+        List<GameObject> other;
+
         if (unit.playerID == 0)
         {
-            otherPlayer = 1;
+            other = ObjectManager.Instance.PlayerTwoUnits;
         }
         else
         {
-            otherPlayer = 0;
+            other = ObjectManager.Instance.PlayerOneUnits;
         }
 
-        foreach(GameObject go in ObjectManager.Instance.playerUnits[otherPlayer])
+        foreach (GameObject go in other)
         {
             Unit u = go.GetComponent<Unit>();
 
@@ -428,9 +435,8 @@ public class aiInfantry : aiBase
         {
             Debug.Log("no units to chase");
             Wait();
+            return;
         }
-
-        List<Vector2i> path = new List<Vector2i>(); // order doesn't matter for these purposes (will be end-start)
 
         PriorityQueue<Tile> openList = new PriorityQueue<Tile>();
         PriorityQueue<Tile> closedList = new PriorityQueue<Tile>();
@@ -487,7 +493,7 @@ public class aiInfantry : aiBase
                 }
             }
 
-            closedList.AddOrUpdate(curr, curr.cost);
+            closedList.AddOrUpdateIfLower(curr, curr.cost);
         }
 
         // got path, click on marked tile furthest along path

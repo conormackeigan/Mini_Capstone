@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.EventSystems;
-using GooglePlayGames;
-using UnityEngine.SocialPlatforms;
 
 public class Unit : Photon.MonoBehaviour, IPointerClickHandler
 {
@@ -131,16 +129,6 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
         // fade out on death
         if (isDead)
         {
-            Social.ReportProgress("CgkIpqXyhekJEAIQAw", 100.0f, (bool success) => {
-                if (success)
-                {
-                    Debug.Log("Achievement Get!");
-                }
-                else {
-                    Debug.Log("Authentication failed.");
-                }
-            });
-
             if (gameObject.GetComponent<SpriteRenderer>().color.a > 0)
             {
                 color.a -= Time.deltaTime;
@@ -167,15 +155,15 @@ public class Unit : Photon.MonoBehaviour, IPointerClickHandler
                         ObjectManager.Instance.PlayerTwoUnits.Remove(unit);
                     }
 
-                    if (AI != null)
-                    { // this is an AI unit so continue the turn sequence after death
-                        AIManager.Instance.callNextUnit();
-                    }
-
                     Destroy(this.gameObject);
                 }
 
-                GLOBAL.setLock(false); // unlock user input
+                if (PlayerManager.Instance.getCurrentPlayer().playerType == Player.PLAYER_TYPE.Human)
+                {
+                    GLOBAL.setLock(false); // unlock user input
+                }
+               
+                
                 if(ObjectManager.Instance.isGameOver())
                 {
                     GameDirector.Instance.endGame(false);

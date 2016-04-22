@@ -138,12 +138,13 @@ public class CombatSequence : Singleton<CombatSequence>
         attackerDamageText.text = attackerDamage.ToString();
         attackerAccuracyText.text = attackerHitrate.ToString();
 
+        defenderImage.sprite = defender.sprite;
+        defenderNameText.text = defender.unitName;
+        defenderHealthText.text = defender.health.ToString();
+        defenderManaText.text = "100";
+
         if (retaliation)
         {
-            defenderImage.sprite = defender.sprite;
-            defenderNameText.text = defender.unitName;
-            defenderHealthText.text = defender.health.ToString();
-            defenderManaText.text = "100";
             defenderDamageText.text = defenderDamage.ToString();
             defenderAccuracyText.text = defenderHitrate.ToString();
         }
@@ -216,6 +217,7 @@ public class CombatSequence : Singleton<CombatSequence>
                      (unit.weapons[i - 1].AoE))
                 {
                     ui.transform.GetChild(6).gameObject.SetActive(false); // disable button (4th child)
+                    ui.transform.GetChild(7).gameObject.SetActive(false);
                     ui.transform.GetChild(8).gameObject.SetActive(true); // disable button (4th child)
                 }
             }
@@ -383,10 +385,10 @@ public class CombatSequence : Singleton<CombatSequence>
 
         // unlike attacker, defender may not have a weapon within range. if they do equip it, if none tell game defender isn't attacking w/ equipped wep
 
-        if (defender != null && defender.equipped != null)          
+        if (defender != null && defender.equipped != null)
         { // equipped weapon not in range, try to find one, if not flip retaliation flag           
             if (!defender.equipped.ContainsRange(distance) || defender.equipped.AoE)
-            {           
+            {
                 foreach (Weapon w in defender.weapons)
                 {
                     if (w.AoE)
@@ -402,7 +404,7 @@ public class CombatSequence : Singleton<CombatSequence>
                     }
                 }
             }
-            else
+            else if (!defender.equipped.AoE)
             {
                 retaliation = true;
             }
@@ -671,6 +673,16 @@ public class CombatSequence : Singleton<CombatSequence>
 
         // refresh board status for combat buffs etc
         GameDirector.Instance.BoardStateChanged();
+
+        ObjectManager.Instance.EndTurnForPlayer(attacker.playerID);
+
+        if (PlayerManager.Instance.getCurrentPlayer().playerType == Player.PLAYER_TYPE.Computer)
+        { // this is an AI unit so continue the turn sequence after death
+            if (AIManager.Instance.getNext(false) != null)
+            {
+                AIManager.Instance.callNextUnit();
+            }
+        }
     }
 
     // cleans up when AoE sequence has finished
@@ -683,6 +695,16 @@ public class CombatSequence : Singleton<CombatSequence>
 
         // refresh board status for combat buffs etc
         GameDirector.Instance.BoardStateChanged();
+
+        ObjectManager.Instance.EndTurnForPlayer(attacker.playerID);
+
+        if (PlayerManager.Instance.getCurrentPlayer().playerType == Player.PLAYER_TYPE.Computer)
+        { // this is an AI unit so continue the turn sequence after death
+            if (AIManager.Instance.getNext() != null)
+            {
+                AIManager.Instance.callNextUnit();
+            }
+        }
     }
 
     // cleans up when combat sequence was cancelled before intialization

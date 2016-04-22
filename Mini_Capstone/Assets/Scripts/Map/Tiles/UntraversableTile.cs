@@ -12,7 +12,7 @@ public class UntraversableTile : Tile
     public override bool wTrav { get { return false; } }
     public override bool trav { get { return false; } }
     public override int def { get { return -1000; } }
-    public override int eva { get { return -1000; } }
+    public override int eva { get { return 15; } }
 
     //=================
     // Initialization:
